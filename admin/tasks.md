@@ -4,9 +4,17 @@ For each task or sub-task, record who is responsible, the deadline, and any depe
 Use the entries below as an example.
 
 ## Roles
-All members are developers.
+Matthew - Dev, minutes
+Yushyi - Dev, repo maintenance
+Nick - Dev, code review
 
-Matthew will take minutes in the meetings. Yuhui can do code review. Nick can do repo maintenance.
+## Contact Details
+Matthew - 0431 814 480 
+Nick - 0422 434 489
+Yushyi - 0421 276 072
+
+## Meeting Time
+Friday 1.30pm Marie Reay ground floor
 
 ## Week 4
 
