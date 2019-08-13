@@ -3,6 +3,11 @@
 For each task or sub-task, record who is responsible, the deadline, and any dependencies.
 Use the entries below as an example.
 
+## Roles
+All members are developers.
+
+Matthew will take minutes in the meetings. Yuhui can do code review. Nick can do repo maintenance.
+
 ## Week 4
 
 Everyone: create application skeleton - meeting 14:00 17 Aug
