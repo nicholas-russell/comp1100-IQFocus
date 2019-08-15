@@ -5,13 +5,13 @@ Use the entries below as an example.
 
 ## Roles
 Matthew - Dev, minutes
-Yushyi - Dev, repo maintenance
+Yuhui - Dev, repo maintenance
 Nick - Dev, code review
 
 ## Contact Details
 Matthew - 0431 814 480 
 Nick - 0422 434 489
-Yushyi - 0421 276 072
+Yuhui - 0421 276 072
 
 ## Meeting Time
 Friday 1.30pm Marie Reay ground floor
