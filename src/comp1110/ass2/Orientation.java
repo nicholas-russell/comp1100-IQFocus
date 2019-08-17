@@ -1,5 +1,20 @@
 package comp1110.ass2;
 
 public enum Orientation {
-    //TODO-D2A - Yuhui
+    Zero, One, Two, Three;
+
+    //Translate the orientation to number
+    public int toInt(){
+
+
+    }
+
+    /*
+     * Translate the orientation to the string, used for debugging.
+     * For example, Zero is equal to "North", One is equal to "West" and so on.
+     */
+    @Override
+    public String toString(){
+
+    }
 }
