@@ -6,19 +6,26 @@ import javafx.stage.Stage;
 
 
 public class Board extends Application {
-    //TODO-D2A - Matt
 
     private static final int BOARD_WIDTH = 933;
     private static final int BOARD_HEIGHT = 700;
-    private String challangeSquare;
+    private String challenge; /* challangeSquare is a 9 character String, with each character corresponding to the
+    state of one of the squares that makes up the central 3x3 challange square
+    *
+    *                         [0][1][2]
+    *                         [3][4][5]
+    *                         [6][7][8]
+    */
+
+
     // FIXME Task 7: Implement a basic playable Focus Game in JavaFX that only allows pieces to be placed in valid places
     public boolean isPlacementValid (String placement){
-
+        return false;
 
     }
     /* Firstly needs the usage of another Class for State, which Yuhui has created in his branch.
 
-     * isPLacementValid should intake a placement string with data related to a piece being placed. This method will be
+     * isPlacementValid should intake a placement string with data related to a piece being placed. This method will be
      * mainly made up of if cases which checks that all the slots the piece is being placed in are a State value of empty
      * ;returning false. Otherwise returns true for non-valid placements.
      *
@@ -28,17 +35,27 @@ public class Board extends Application {
      *Note:This method is similar in nature to the one performed in Task 6 of Assignment 1
 
      */
+
     // FIXME Task 8: Implement challenges (you may use challenges and assets provided for you in comp1110.ass2.gui.assets: sq-b.png, sq-g.png, sq-r.png & sq-w.png)
-    public String challangeEncoding (String challangeSquare) {
-        char[] encodingArray = challangeSquare.toCharArray();
+    public String challengeEncoding (String challenge) {
+        char[] encodingArray = challenge.toCharArray();
 
 
         //Example of what encoding would look like, also need to covert Char to Variable Colour, B -> Blue, R -> Red
         /**  Square 0 = encodingArray[0];
 
          */
+        //Setting Corresponding Square on the board to challenge state, say square 0 of challenge square is coords
+        //x = 4  & y = 2
+        
 
-        return ;
+
+        return challenge;
+    }
+
+
+    public String getchallenge() {
+       return challenge;
     }
 
     /* Implementing Challanges from TestUtility.
@@ -59,12 +76,13 @@ public class Board extends Application {
      */
 
     // FIXME Task 10: Implement hints
-    public class
+    public class hints {
 
 
+    }
 
 
-    /* When the User holds down the "/" key, they arte suppose to "see" one or more pieces they can play to help them
+    /* When the User holds down the "/" key, they are suppose to "see" one or more pieces they can play to help them
     * towards the solution!
      * Javafx used in tandem found on line 109
     * This can be done is a number of possible way, the easiest method would be to simply return in the interface the
@@ -81,22 +99,22 @@ public class Board extends Application {
     public String challengeGenerator (int difficulty) {
 
         if (difficulty == 1) {
-            //Generate challangeSquare
+            //Generate challenge
 
-            //Assign challangeSquare
-            challangeSquare = "BBBBBBBBB";
+            //Assign challenge
+            challenge = "BBBBBBBBB";
 
-            return challangeSquare;
+            return challenge;
         }
 
         if (difficulty == 2){
-            return challangeSquare;
+            return challenge;
         }
 
         if (difficulty == 3){
-            return challangeSquare;
+            return challenge;
         }
-        return challangeSquare;
+        return challenge;
 
         /* The current system is crude, but the idea is that the user may input an Int ranging from 1 - 3, 1 = easy
         *2 = medium, 3 = hard, NOTE WE CAN PLAY AROUND WITH THIS AS THE DIFFICULTY AND NUMBERS ARE ARBITRARY
@@ -111,16 +129,16 @@ public class Board extends Application {
     }
     @Override
     public void start(Stage primaryStage) {
-        primaryStage.setTitle("Hints");
-        Scene scene = new Scene (rootStackPabne, 998, 999  );
+
+
+      /**  primaryStage.setTitle("Hints");
+        Scene scene = new Scene (rootStackPane, 998, 999  );
+
         scene.setOnKeyPressed(event ->
-        {
-            if (event.getCharacter() == "/") {
+        {if (event.getCharacter() == "/") {
                 // Hints Coded Here
             }
-
-
-        });
+       }); */
 
     }
 }
