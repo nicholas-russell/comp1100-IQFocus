@@ -1,7 +1,9 @@
 package comp1110.ass2.gui;
 
 import javafx.application.Application;
+import javafx.scene.Scene;
 import javafx.stage.Stage;
+
 
 public class Board extends Application {
     //TODO-D2A - Matt
@@ -27,14 +29,16 @@ public class Board extends Application {
 
      */
     // FIXME Task 8: Implement challenges (you may use challenges and assets provided for you in comp1110.ass2.gui.assets: sq-b.png, sq-g.png, sq-r.png & sq-w.png)
-    public String challangeEncoding(String challangeSquare) {
+    public String challangeEncoding (String challangeSquare) {
         char[] encodingArray = challangeSquare.toCharArray();
 
 
         //Example of what encoding would look like, also need to covert Char to Variable Colour, B -> Blue, R -> Red
-        Square 0 = encodingArray[0];
-        ......
+        /**  Square 0 = encodingArray[0];
 
+         */
+
+        return ;
     }
 
     /* Implementing Challanges from TestUtility.
@@ -55,18 +59,14 @@ public class Board extends Application {
      */
 
     // FIXME Task 10: Implement hints
-    public class userHintInput extends Application
+    public class
 
 
-    scene.setOnKeyTyped(event -> {
-            if (event.getCharacter() == "/")
-           // Hints Coded Here
 
-
-    })
 
     /* When the User holds down the "/" key, they arte suppose to "see" one or more pieces they can play to help them
-    * towards the solution! Javafx
+    * towards the solution!
+     * Javafx used in tandem found on line 109
     * This can be done is a number of possible way, the easiest method would be to simply return in the interface the
     * letter of the corresponding piece/s such as A, G or D.
     *
@@ -99,14 +99,28 @@ public class Board extends Application {
         return challangeSquare;
 
         /* The current system is crude, but the idea is that the user may input an Int ranging from 1 - 3, 1 = easy
-        *2 = medium, 3 = hard. The System then generates a 9 char String which can be read by the challengeEncoding
+        *2 = medium, 3 = hard, NOTE WE CAN PLAY AROUND WITH THIS AS THE DIFFICULTY AND NUMBERS ARE ARBITRARY
+        * . The System then generates a 9 char String which can be read by the challengeEncoding
         * method under task 8.
-
-
+        *
+        *
+        - How To Generate Different levels of difficulty?
+        * Although generating a random 9 char string is not that hard, difficulty depends on the number of solutions
+        * available for a given challenge square.
          */
     }
     @Override
     public void start(Stage primaryStage) {
+        primaryStage.setTitle("Hints");
+        Scene scene = new Scene (rootStackPabne, 998, 999  );
+        scene.setOnKeyPressed(event ->
+        {
+            if (event.getCharacter() == "/") {
+                // Hints Coded Here
+            }
+
+
+        });
 
     }
 }
