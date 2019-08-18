@@ -15,8 +15,7 @@ public enum PieceType {
     * If the position is not on the piece, return null.
     */
     public State GetStateOnPiece(int x, int y, Orientation orientation) {
-
-
+        return null;
     }
 
 
