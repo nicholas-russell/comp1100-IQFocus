@@ -11,7 +11,7 @@ public enum State {
      * i,e.Null cannot update other value and when we put a placement on board, if squares of
      * Null are outside the board, we should delete the Null square.
      */
-    public void ignoreNull(){
+    public void ignoreNull() {
 
     }
 
