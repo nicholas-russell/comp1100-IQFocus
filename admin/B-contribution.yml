@@ -9,18 +9,18 @@ declaration: >-
 # members).  
 contributions:
   - uid: u6963514
-    contribution: 33
-  - uid:
-    contribution:
-  - uid:
-    contribution:
+    contribution: 35
+  - uid: u6951444
+    contribution: 30
+  - uid: u6844258
+    contribution: 35
 
 # Sign *your* name and uids here. (Remove entries if you have fewer
 # than three members)
 signatures:
-  - name:
-    uid:
-  - name:
-    uid:
-  - name:
-    uid:
+  - name: Nicholas Russell
+    uid: u6963514
+  - name: Matthew Tein
+    uid: u6951444
+  - name: Yuhui Wang
+    uid: u6844258
