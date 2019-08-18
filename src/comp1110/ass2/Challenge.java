@@ -13,7 +13,4 @@ public class Challenge {
         return 0;
     }
 
-
-
-
 }
