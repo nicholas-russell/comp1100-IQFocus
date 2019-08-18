@@ -43,11 +43,12 @@ public class Board extends Application {
 
 
         //Example of what encoding would look like, also need to covert Char to Variable Colour, B -> Blue, R -> Red
-        /**  Square 0 = encodingArray[0];
+        /**  ChallengeSquare 0 = encodingArray[0];
+         *
 
          */
-        //Setting Corresponding Square on the board to challenge state, say square 0 of challenge square is coords
-        //x = 4  & y = 2
+
+        //
         
 
 
