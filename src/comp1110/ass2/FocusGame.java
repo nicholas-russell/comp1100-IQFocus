@@ -4,7 +4,7 @@ import java.util.Set;
 
 /**
  * This class provides the text interface for the IQ Focus Game
- * <p>
+ *
  * The game is based directly on Smart Games' IQ-Focus game
  * (https://www.smartgames.eu/uk/one-player-games/iq-focus)
  */
