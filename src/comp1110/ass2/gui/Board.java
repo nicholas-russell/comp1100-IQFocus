@@ -9,6 +9,7 @@ public class Board extends Application {
 
     private static final int BOARD_WIDTH = 933;
     private static final int BOARD_HEIGHT = 700;
+
     private String challenge; /* challangeSquare is a 9 character String, with each character corresponding to the
     state of one of the squares that makes up the central 3x3 challange square
     *
@@ -59,6 +60,7 @@ public class Board extends Application {
     }
 
     /* Implementing Challanges from TestUtility.
+
     *How encoding the objective central 9 squares work. The Objective 3x3 square is split into the 3 rows. Starting from
     * 0, each square is encoded with a number for example 0, then the square to the right is encoded with the next
     * corresponding number e.g. 1. So the encoding for the 3x3 objective square will look like this,
@@ -84,14 +86,13 @@ public class Board extends Application {
 
     /* When the User holds down the "/" key, they are suppose to "see" one or more pieces they can play to help them
     * towards the solution!
-     * Javafx used in tandem found on line 109
-    * This can be done is a number of possible way, the easiest method would be to simply return in the interface the
-    * letter of the corresponding piece/s such as A, G or D.
+     * Used in tandem with Javafx method found on line 131
+     *
+    * The easiest method would be to simply return in the interface the letter of the corresponding piece/s such as A,
+    * G or D.
     *
-    *Second Method would be to somehow highlight the piece, outlining or distinguishing it from the other pieces .
+    * Second Method would be to somehow highlight the piece, outlining or distinguishing it from the other pieces.
     *
-    * Also hints change depending on the Puzzle, So need to somehow figure a method to determine which pieces are hint
-    * pieces
     *
     */
 
@@ -128,11 +129,11 @@ public class Board extends Application {
          */
     }
     @Override
+    //To Be used in Tandem with Task 10
     public void start(Stage primaryStage) {
 
 
       /**  primaryStage.setTitle("Hints");
-        Scene scene = new Scene (rootStackPane, 998, 999  );
 
         scene.setOnKeyPressed(event ->
         {if (event.getCharacter() == "/") {
