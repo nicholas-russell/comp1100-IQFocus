@@ -15,10 +15,10 @@ public class Piece {
 
 
     public static Orientation placementToOrientation(String placement) {
-
+        return null;
     }
 
     public static Operation placementToLocation(String placement) {
-
+        return null;
     }
 }

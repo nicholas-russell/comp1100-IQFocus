@@ -1,9 +1,9 @@
 package comp1110.ass2;
 
 public enum State {
-    White, Red, Blue, Green,// The four colours a square may have
-    Empty,// Locations on board haven't been used by placement
-    Null;// Bottom left and right(not belongs to the board) or the square in piece has no colour
+    WHITE, RED, BLUE, GREEN,// The four colours a square may have
+    EMPTY,// Locations on board haven't been used by placement
+    NULL;// Bottom left and right(not belongs to the board) or the square in piece has no colour
 
     /*
      * Since Null is a hypothesis, we should not consider it.

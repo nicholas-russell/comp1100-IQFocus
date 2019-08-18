@@ -14,22 +14,16 @@ public class Operation {
      * Set the board to the initial state , i.e. Change all the color state to
      * the Empty state.
      */
-    public void resetBoard() {
-
-    }
+    public void resetBoard() {};
 
    /*
     * Give a placement and return the boardstate before the placement is put
     * on the board.
     */
-    public void undoOperation(String placement) {
-
-    }
+    public void undoOperation(String placement) {};
 
 
     //Put the piece on the board and update the boardstate
-    public void addPieceToBoard(String placement) {
-
-    }
+    public void addPieceToBoard(String placement) {};
 
 }

@@ -10,7 +10,7 @@ public class Challenge {
 
     //Decide the difficulty for a given challenge
     public int decideDifficulty(String challenge) {
-
+        return 0;
     }
 
 
