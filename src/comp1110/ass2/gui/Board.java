@@ -8,7 +8,7 @@ public class Board extends Application {
 
     private static final int BOARD_WIDTH = 933;
     private static final int BOARD_HEIGHT = 700;
-
+    private String challangeSquare;
     // FIXME Task 7: Implement a basic playable Focus Game in JavaFX that only allows pieces to be placed in valid places
     public boolean isPlacementValid (String placement){
 
@@ -55,20 +55,56 @@ public class Board extends Application {
      */
 
     // FIXME Task 10: Implement hints
-    public class user
+    public class userHintInput extends Application
+
+
+    scene.setOnKeyTyped(event -> {
+            if (event.getCharacter() == "/")
+           // Hints Coded Here
+
+
+    })
 
     /* When the User holds down the "/" key, they arte suppose to "see" one or more pieces they can play to help them
     * towards the solution! Javafx
     * This can be done is a number of possible way, the easiest method would be to simply return in the interface the
     * letter of the corresponding piece/s such as A, G or D.
     *
-    *Second Method would be to somehow highlight the piece, outlining or distinguishing it from the other pieces.
+    *Second Method would be to somehow highlight the piece, outlining or distinguishing it from the other pieces .
     *
+    * Also hints change depending on the Puzzle, So need to somehow figure a method to determine which pieces are hint
+    * pieces
     *
     */
 
     // FIXME Task 11: Generate interesting challenges (each challenge may have just one solution)
+    public String challengeGenerator (int difficulty) {
 
+        if (difficulty == 1) {
+            //Generate challangeSquare
+
+            //Assign challangeSquare
+            challangeSquare = "BBBBBBBBB";
+
+            return challangeSquare;
+        }
+
+        if (difficulty == 2){
+            return challangeSquare;
+        }
+
+        if (difficulty == 3){
+            return challangeSquare;
+        }
+        return challangeSquare;
+
+        /* The current system is crude, but the idea is that the user may input an Int ranging from 1 - 3, 1 = easy
+        *2 = medium, 3 = hard. The System then generates a 9 char String which can be read by the challengeEncoding
+        * method under task 8.
+
+
+         */
+    }
     @Override
     public void start(Stage primaryStage) {
 
