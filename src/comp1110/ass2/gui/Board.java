@@ -10,7 +10,11 @@ public class Board extends Application {
     private static final int BOARD_HEIGHT = 700;
 
     // FIXME Task 7: Implement a basic playable Focus Game in JavaFX that only allows pieces to be placed in valid places
+    /* Firstly Need Another Class for State 
 
+
+
+     */
     // FIXME Task 8: Implement challenges (you may use challenges and assets provided for you in comp1110.ass2.gui.assets: sq-b.png, sq-g.png, sq-r.png & sq-w.png)
 
     // FIXME Task 10: Implement hints
