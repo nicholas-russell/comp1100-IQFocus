@@ -19,10 +19,10 @@ public class Board extends Application {
     */
 
 
-    public square (enum State) {
-        
+  /**  public square (enum State) {
+        return State;
     }
-
+ **/
 
     // FIXME Task 7: Implement a basic playable Focus Game in JavaFX that only allows pieces to be placed in valid places
     public boolean isPlacementValid (String placement){
@@ -44,7 +44,7 @@ public class Board extends Application {
 
     // FIXME Task 8: Implement challenges (you may use challenges and assets provided for you in comp1110.ass2.gui.assets: sq-b.png, sq-g.png, sq-r.png & sq-w.png)
     public String challengeEncoding (String challenge, String boardState) {
-        private ChallengeSquare ()
+
 
 
         //Example of what encoding would look like, also need to covert Char to Variable Colour, B -> Blue, R -> Red
@@ -56,14 +56,14 @@ public class Board extends Application {
 
         //When Board Updates (e.g piece is placed) the squares of the challenge square are checked against the
         //stored states encoded above. If all states match should end the game and print victory Screen/message.
-        if (ChallengeSquare0 == SameState) {
 
+        return challenge;
         }
         
 
 
-        return challenge;
-    }
+
+
 
 
     public String getchallenge() {
