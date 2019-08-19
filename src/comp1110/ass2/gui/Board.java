@@ -4,22 +4,22 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-
 public class Board extends Application {
 
     private static final int BOARD_WIDTH = 933;
     private static final int BOARD_HEIGHT = 700;
 
-    private String challenge; /* challangeSquare is a 9 character String, with each character corresponding to the
+    /* challangeSquare is a 9 character String, with each character corresponding to the
     state of one of the squares that makes up the central 3x3 challange square
     *
     *                         [0][1][2]
     *                         [3][4][5]
     *                         [6][7][8]
     */
+    private String challenge;
 
 
-  /**  public square (enum State) {
+    /**  public square (enum State) {
         return State;
     }
  **/
@@ -45,8 +45,6 @@ public class Board extends Application {
     // FIXME Task 8: Implement challenges (you may use challenges and assets provided for you in comp1110.ass2.gui.assets: sq-b.png, sq-g.png, sq-r.png & sq-w.png)
     public String challengeEncoding (String challenge, String boardState) {
 
-
-
         //Example of what encoding would look like, also need to covert Char to Variable Colour, B -> Blue, R -> Red
         char[] encodingArray = challenge.toCharArray();
         /**  ChallengeSquare0 = encodingArray[0];
@@ -59,18 +57,12 @@ public class Board extends Application {
 
         return challenge;
         }
-        
 
-
-
-
-
-
-    public String getchallenge() {
+    public String getChallenge() {
        return challenge;
     }
 
-    /* Implementing Challanges from TestUtility.
+    /* Implementing Challeges from TestUtility.
 
     *How encoding the objective central 9 squares work. The Objective 3x3 square is split into the 3 rows. Starting from
     * 0, each square is encoded with a number for example 0, then the square to the right is encoded with the next
