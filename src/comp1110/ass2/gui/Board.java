@@ -1,5 +1,7 @@
 package comp1110.ass2.gui;
 
+import comp1110.ass2.Location;
+import comp1110.ass2.State;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -18,11 +20,13 @@ public class Board extends Application {
     */
     private String challenge;
 
-
-    /**  public square (enum State) {
-        return State;
+    /**
+     * @param location The location on the board that you want the state for
+     * @return The state of the square
+     */
+    public State getStateFromLocation (Location location) {
+        return null;
     }
- **/
 
     // FIXME Task 7: Implement a basic playable Focus Game in JavaFX that only allows pieces to be placed in valid places
     public boolean isPlacementValid (String placement){
