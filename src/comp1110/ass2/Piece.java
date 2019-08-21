@@ -38,4 +38,12 @@ public class Piece {
         int y = Integer.parseInt(placement.substring(2,3));
         return new Location(x,y);
     }
+
+    @Override
+    public String toString() {
+        return "Piece:" +
+                " this piece is of type " + this.pieceType.name() +
+                " and is located at " + this.location +
+                " and is facing " + this.orientation + ".";
+    }
 }
