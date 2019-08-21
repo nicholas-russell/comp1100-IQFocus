@@ -19,7 +19,13 @@ public class Piece {
      * @return Orientation object
      */
     public static Orientation placementToOrientation(String placement) {
-        return null;
+        switch(placement.substring(3,4)) {
+            case "0": return Orientation.Zero;
+            case "1": return Orientation.One;
+            case "2": return Orientation.Two;
+            case "3": return Orientation.Three;
+            default: return null;
+        }
     }
 
     /**
