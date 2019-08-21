@@ -1,5 +1,8 @@
 package comp1110.ass2.gui;
 
+import comp1110.ass2.Location;
+import comp1110.ass2.Piece;
+import comp1110.ass2.PieceType;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -9,6 +12,11 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 /**
@@ -29,6 +37,7 @@ public class Viewer extends Application {
 
     private final Group root = new Group();
     private final Group controls = new Group();
+    private Group pieces = new Group();
     private TextField textField;
 
     /**
@@ -38,6 +47,29 @@ public class Viewer extends Application {
      */
     void makePlacement(String placement) {
         // FIXME Task 4: implement the simple placement viewer
+        pieces.getChildren().clear();
+        System.out.println("Placement: " + placement);
+        if (false) { // insert validation rules here
+            Text error = new Text("Error: placement string invalid!");
+            error.setFont(Font.font("Tahoma", FontWeight.BOLD, 20));
+            error.setFill(Color.RED);
+            HBox errorBox = new HBox();
+            errorBox.getChildren().add(error);
+            errorBox.setLayoutX(200);
+            errorBox.setLayoutY(VIEWER_HEIGHT-100);
+            pieces.getChildren().add(errorBox);
+            return;
+        }
+        int numberOfPieces = placement.length()/4;
+        int i = 0;
+        int pIndex = 0;
+        Piece[] pieces = new Piece[numberOfPieces];
+        while (i < numberOfPieces*4) {
+            pieces[pIndex] = new Piece(placement.substring(i,i+4));
+            System.out.println(pieces[pIndex]);
+            i += 4;
+            pIndex++;
+        }
     }
 
     /**
@@ -68,7 +100,7 @@ public class Viewer extends Application {
         primaryStage.setTitle("FocusGame Viewer");
         Scene scene = new Scene(root, VIEWER_WIDTH, VIEWER_HEIGHT);
 
-        root.getChildren().add(controls);
+        root.getChildren().addAll(controls, pieces);
 
         makeControls();
 
