@@ -13,6 +13,33 @@ public class Piece {
     }
     public PieceType getPieceType() { return pieceType; }
 
+    public Piece(String placement) {
+        this.pieceType = placementToPieceType(placement);
+        this.location = placementToLocation(placement);
+        this.orientation = placementToOrientation(placement);
+    }
+
+    /**
+     * Takes in placement string and returns the PieceType enum
+     * @param placement Placement string for piece
+     * @return PieceType enum
+     */
+    public PieceType placementToPieceType(String placement) {
+        switch (placement.substring(0,1)) {
+            case "a": return PieceType.A;
+            case "b": return PieceType.B;
+            case "c": return PieceType.C;
+            case "d": return PieceType.D;
+            case "e": return PieceType.E;
+            case "f": return PieceType.F;
+            case "g": return PieceType.G;
+            case "h": return PieceType.H;
+            case "i": return PieceType.I;
+            case "j": return PieceType.J;
+            default: return null;
+        }
+    }
+
     /**
      * Get orientation for placement
      * @param placement A placement string
