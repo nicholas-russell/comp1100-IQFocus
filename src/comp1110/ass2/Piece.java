@@ -34,6 +34,8 @@ public class Piece {
      * @return Location object
      */
     public static Location placementToLocation(String placement) {
-        return null;
+        int x = Integer.parseInt(placement.substring(1,2));
+        int y = Integer.parseInt(placement.substring(2,3));
+        return new Location(x,y);
     }
 }
