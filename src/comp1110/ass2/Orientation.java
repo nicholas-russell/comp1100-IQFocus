@@ -17,5 +17,7 @@ public enum Orientation {
      * For example, Zero is equal to "North", One is equal to "West" and so on.
      */
     @Override
-    public String toString(){ return null; }
+    public String toString(){
+        return compassOrientation;
+    }
 }
