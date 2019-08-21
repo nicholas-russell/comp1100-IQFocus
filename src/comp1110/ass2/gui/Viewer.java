@@ -17,6 +17,9 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Shape;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
@@ -43,8 +46,8 @@ public class Viewer extends Application {
 
     private final Group root = new Group();
     private final Group controls = new Group();
-    private StackPane pieces = new StackPane();
-    private StackPane board = new StackPane();
+    private Pane pieces = new Pane();
+    private Pane board = new Pane();
     private TextField textField;
 
     private Text getErrorText(String text) {
@@ -89,8 +92,14 @@ public class Viewer extends Application {
         Image boardImage = new Image(new FileInputStream("assets/board.png"));
         ImageView boardIv = new ImageView(boardImage);
         boardIv.setPreserveRatio(true);
-        board.getChildren().add(boardIv);
-
+        //ImageView testPiece = new ImageView(new Image(new FileInputStream("/src/comp1110.ass2/gui/assets/a.png")));
+        //testPiece.setX(50);
+        //testPiece.setY(100);
+        board.getChildren().addAll(boardIv);
+        Circle circle00 = new Circle(10,Color.RED);
+        circle00.setCenterX(50);
+        circle00.setCenterY(100);
+        board.getChildren().add(circle00);
     }
 
     /**
