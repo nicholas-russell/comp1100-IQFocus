@@ -6,13 +6,14 @@ import comp1110.ass2.PieceType;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -40,6 +41,13 @@ public class Viewer extends Application {
     private Group pieces = new Group();
     private TextField textField;
 
+    private Text getErrorText(String text) {
+        Text error = new Text("ERROR: " + text);
+        error.setFont(Font.font("Tahoma", FontWeight.BOLD, 20));
+        error.setFill(Color.RED);
+        return error;
+    }
+
     /**
      * Draw a placement in the window, removing any previously drawn one
      *
@@ -50,13 +58,12 @@ public class Viewer extends Application {
         pieces.getChildren().clear();
         System.out.println("Placement: " + placement);
         if (false) { // insert validation rules here
-            Text error = new Text("Error: placement string invalid!");
-            error.setFont(Font.font("Tahoma", FontWeight.BOLD, 20));
-            error.setFill(Color.RED);
             HBox errorBox = new HBox();
-            errorBox.getChildren().add(error);
-            errorBox.setLayoutX(200);
-            errorBox.setLayoutY(VIEWER_HEIGHT-100);
+            errorBox.getChildren().add(getErrorText("Placement string NOT VALID"));
+            errorBox.setAlignment(Pos.CENTER);
+            errorBox.setBackground(new Background(new BackgroundFill(Color.BLACK, CornerRadii.EMPTY, Insets.EMPTY)));
+            errorBox.setLayoutX(0);
+            errorBox.setLayoutY(0);
             pieces.getChildren().add(errorBox);
             return;
         }
