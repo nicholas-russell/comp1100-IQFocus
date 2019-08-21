@@ -13,12 +13,17 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+
+import java.io.FileInputStream;
+import java.io.IOException;
 
 /**
  * A very simple viewer for piece placements in the IQ-Focus game.
@@ -32,13 +37,14 @@ public class Viewer extends Application {
     /* board layout */
     private static final int SQUARE_SIZE = 60;
     private static final int VIEWER_WIDTH = 720;
-    private static final int VIEWER_HEIGHT = 480;
+    private static final int VIEWER_HEIGHT = 520;
 
     private static final String URI_BASE = "assets/";
 
     private final Group root = new Group();
     private final Group controls = new Group();
-    private Group pieces = new Group();
+    private StackPane pieces = new StackPane();
+    private StackPane board = new StackPane();
     private TextField textField;
 
     private Text getErrorText(String text) {
@@ -79,6 +85,14 @@ public class Viewer extends Application {
         }
     }
 
+    private void makeBoard() throws IOException {
+        Image boardImage = new Image(new FileInputStream("assets/board.png"));
+        ImageView boardIv = new ImageView(boardImage);
+        boardIv.setPreserveRatio(true);
+        board.getChildren().add(boardIv);
+
+    }
+
     /**
      * Create a basic text field for input and a refresh button.
      */
@@ -107,9 +121,10 @@ public class Viewer extends Application {
         primaryStage.setTitle("FocusGame Viewer");
         Scene scene = new Scene(root, VIEWER_WIDTH, VIEWER_HEIGHT);
 
-        root.getChildren().addAll(controls, pieces);
+        root.getChildren().addAll(controls, pieces, board);
 
         makeControls();
+        makeBoard();
 
         primaryStage.setScene(scene);
         primaryStage.show();
