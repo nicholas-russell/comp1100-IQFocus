@@ -1,7 +1,13 @@
 package comp1110.ass2;
 
 public enum Orientation {
-    Zero, One, Two, Three;
+    Zero("North"), One("West"), Two("South"), Three("East");
+
+    private String compassOrientation;
+
+    private Orientation(String compassOrientation) {
+        this.compassOrientation = compassOrientation;
+    }
 
     /** Translate the orientation to number */
     public int toInt(){ return 0; };
