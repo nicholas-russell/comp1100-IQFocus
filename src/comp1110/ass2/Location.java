@@ -12,4 +12,8 @@ public class Location {
     public int getX() {return X;}
     public int getY() {return Y;}
 
+    @Override
+    public String toString() {
+        return "x:" + getX() + ", y:" + getY();
+    }
 }
