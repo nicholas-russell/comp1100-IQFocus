@@ -1,5 +1,6 @@
 package comp1110.ass2;
 
+import java.util.Arrays;
 import java.util.Set;
 
 /**
@@ -24,7 +25,21 @@ public class FocusGame {
      */
     static boolean isPiecePlacementWellFormed(String piecePlacement) {
         // FIXME Task 2: determine whether a piece placement is well-formed
-        return false;
+        if (piecePlacement.length() != 4)
+            return false;
+        else {
+            if (piecePlacement.charAt(0) < 'a' || piecePlacement.charAt(0) > 'j')
+                return false;
+            if (piecePlacement.charAt(1) - '0' < 0 || piecePlacement.charAt(1) - '0' > 8)
+                return false;
+            if (piecePlacement.charAt(2) - '0' < 0 || piecePlacement.charAt(2) - '0' > 4)
+                return false;
+            if (piecePlacement.charAt(3) - '0' < 0 || piecePlacement.charAt(3) - '0' > 3)
+                return false;
+        }
+
+        return true;
+
     }
 
     /**
@@ -38,7 +53,22 @@ public class FocusGame {
      */
     public static boolean isPlacementStringWellFormed(String placement) {
         // FIXME Task 3: determine whether a placement is well-formed
-        return false;
+        String [] appear = new String[placement.length()/4];
+        if (placement.length() % 4 != 0 || placement.length() / 4 < 1 || placement.length() / 4 > 10) {
+            return false;
+        }
+        for (int i = 0; i < placement.length(); i += 4) {
+            if (Arrays.asList(appear).contains(String.valueOf(placement.charAt(i))))
+                return false;
+            else if (!isPiecePlacementWellFormed(placement.substring(i, i + 4)))
+                return false;
+            else
+                appear[i / 4] = String.valueOf(placement.charAt(i));
+
+        }
+
+        return true;
+
     }
 
     /**
