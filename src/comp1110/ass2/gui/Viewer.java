@@ -27,6 +27,7 @@ import javafx.stage.Stage;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * A very simple viewer for piece placements in the IQ-Focus game.
@@ -92,14 +93,17 @@ public class Viewer extends Application {
         Image boardImage = new Image(new FileInputStream("assets/board.png"));
         ImageView boardIv = new ImageView(boardImage);
         boardIv.setPreserveRatio(true);
-        //ImageView testPiece = new ImageView(new Image(new FileInputStream("/src/comp1110.ass2/gui/assets/a.png")));
-        //testPiece.setX(50);
-        //testPiece.setY(100);
-        board.getChildren().addAll(boardIv);
+        InputStream image = getClass().getResourceAsStream("assets/a.png");
+        ImageView testPiece = new ImageView(new Image(image));
+        testPiece.setX(52);
+        testPiece.setY(93);
+        testPiece.setPreserveRatio(true);
+        testPiece.setFitHeight(130);
+        board.getChildren().addAll(boardIv, testPiece);
         Circle circle00 = new Circle(10,Color.RED);
         circle00.setCenterX(50);
         circle00.setCenterY(100);
-        board.getChildren().add(circle00);
+        //board.getChildren().add(circle00);
     }
 
     /**
