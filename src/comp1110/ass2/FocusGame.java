@@ -86,8 +86,66 @@ public class FocusGame {
      */
     public static boolean isPlacementStringValid(String placement) {
         // FIXME Task 5: determine whether a placement string is valid
+
+        int numberPiecePlacements = placement.length() / 4;
+        int w;
+        int u;
+        int acc = 0;
+        int p = 0;
+
+
+        int a = 4;
+        int b = 5;
+        int c = 5;
+        int d = 4;
+        int e = 5;
+        int f = 3;
+        int g = 4;
+        int h = 5;
+        int i = 3;
+        int j = 5;
+
+        // convert pieces into number of squares!
+       /* public static void numberOfSquares(String placement) {
+
+            for (u =0, u < placement.length(), u+= 4){
+                if (placement.charAt(u) == 'a' ) {
+                   p = p + 4;
+                }
+                if (placement.charAt(u) == 'd'){
+                    p = p + 4
+
+                }
+            }
+
+        } */
+
+
+        // String[] xCoords = new String[];
+        // String[] yCoords = new String[];
+
+        // adds Coord to Respective Array
+      /*  public static String[] addToArray (String[]){
+
+            for (w = 2, w < placement.length(), w += 4) {
+
+                char coord = placement.charAt(w);
+
+                acc++;
+
+            }
+        }
+
+        */
+        // Checkes both placement and pieceplacement are true then checks state
+        if (isPiecePlacementWellFormed(placement) == true && isPlacementStringWellFormed(placement) == true) {
+            return false;
+
+
+        }
         return false;
     }
+
 
     /**
      * Given a string describing a placement of pieces and a string describing
