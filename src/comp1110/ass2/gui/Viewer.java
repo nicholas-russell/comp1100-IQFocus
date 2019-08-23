@@ -1,5 +1,6 @@
 package comp1110.ass2.gui;
 
+import comp1110.ass2.FocusGame;
 import comp1110.ass2.Location;
 import comp1110.ass2.Piece;
 import comp1110.ass2.PieceType;
@@ -67,14 +68,14 @@ public class Viewer extends Application {
         // FIXME Task 4: implement the simple placement viewer
         pieces.getChildren().clear();
         System.out.println("Placement: " + placement);
-        if (false) { // insert validation rules here
+        if (!FocusGame.isPlacementStringWellFormed(placement)) { // insert validation rules here
             HBox errorBox = new HBox();
             errorBox.getChildren().add(getErrorText("Placement string NOT VALID"));
             errorBox.setAlignment(Pos.CENTER);
             errorBox.setBackground(new Background(new BackgroundFill(Color.BLACK, CornerRadii.EMPTY, Insets.EMPTY)));
             errorBox.setLayoutX(0);
             errorBox.setLayoutY(0);
-            pieces.getChildren().add(errorBox);
+            board.getChildren().add(errorBox);
             return;
         }
         int numberOfPieces = placement.length()/4;
