@@ -2,6 +2,7 @@ package comp1110.ass2;
 
 import java.util.Arrays;
 import java.util.Set;
+import static comp1110.ass2.State.*;
 
 /**
  * This class provides the text interface for the IQ Focus Game
@@ -10,6 +11,19 @@ import java.util.Set;
  * (https://www.smartgames.eu/uk/one-player-games/iq-focus)
  */
 public class FocusGame {
+    /**
+     * Create all the states on the board, only bottom left and bottom right will
+     * be the state Null(in fact not belongs to the board) and other state will
+     * be Empty at the start(can be replaced by other colors).
+     */
+    //private State[][] board = new State [5][9];
+    private State[][] board = {
+            {EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY},
+            {EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY},
+            {EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY},
+            {EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY},
+            {NULL,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,NULL},
+    };
 
     /**
      * Determine whether a piece placement is well-formed according to the
@@ -139,4 +153,25 @@ public class FocusGame {
         // FIXME Task 9: determine the solution to the game, given a particular challenge
         return null;
     }
+
+    /**
+     * Set the board to the initial state , i.e. Change all the color state to
+     * the Empty state.
+     */
+    public void resetBoard() {}
+
+    /**
+     * Give a placement and return the boardstate before the placement is put
+     * on the board.
+     * @param placement The placement string to undo
+     */
+    public void undoOperation(String placement) {}
+
+
+    /**
+     * Put the piece on the board and update the board state
+     *
+     * @param placement The placement string to add piece to board
+     */
+    public void addPieceToBoard(String placement) {}
 }
