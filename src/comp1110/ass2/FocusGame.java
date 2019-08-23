@@ -106,7 +106,7 @@ public class FocusGame {
         int j = 5;
 
         // convert pieces into number of squares!
-       /* public static void numberOfSquares(String placement) {
+       public static void numberOfSquares(String placement) {
 
             for (u =0, u < placement.length(), u+= 4){
                 if (placement.charAt(u) == 'a' ) {
@@ -118,14 +118,13 @@ public class FocusGame {
                 }
             }
 
-        } */
+        }
 
-
-        // String[] xCoords = new String[];
-        // String[] yCoords = new String[];
+        String[] xCoords = new String[];
+         String[] yCoords = new String[];
 
         // adds Coord to Respective Array
-      /*  public static String[] addToArray (String[]){
+        public static String[] addToArray (String[]){
 
             for (w = 2, w < placement.length(), w += 4) {
 
@@ -136,7 +135,7 @@ public class FocusGame {
             }
         }
 
-        */
+
         // Checkes both placement and pieceplacement are true then checks state
         if (isPiecePlacementWellFormed(placement) == true && isPlacementStringWellFormed(placement) == true) {
             return false;
