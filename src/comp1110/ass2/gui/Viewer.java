@@ -59,6 +59,22 @@ public class Viewer extends Application {
         return error;
     }
 
+    private Piece[] getPiecesFromPlacement(String placement) {
+        if (!FocusGame.isPlacementStringWellFormed(placement)) {
+            return null;
+        }
+        int numberOfPieces = placement.length()/4;
+        int i = 0;
+        int pIndex = 0;
+        Piece[] pieces = new Piece[numberOfPieces];
+        while (i < numberOfPieces*4) {
+            pieces[pIndex] = new Piece(placement.substring(i,i+4));
+            i += 4;
+            pIndex++;
+        }
+        return pieces;
+    }
+
     /**
      * Draw a placement in the window, removing any previously drawn one
      *
@@ -78,16 +94,7 @@ public class Viewer extends Application {
             board.getChildren().add(errorBox);
             return;
         }
-        int numberOfPieces = placement.length()/4;
-        int i = 0;
-        int pIndex = 0;
-        Piece[] pieces = new Piece[numberOfPieces];
-        while (i < numberOfPieces*4) {
-            pieces[pIndex] = new Piece(placement.substring(i,i+4));
-            System.out.println(pieces[pIndex]);
-            i += 4;
-            pIndex++;
-        }
+        Piece[] p = getPiecesFromPlacement(placement);
     }
 
     private void makeBoard() throws IOException {
