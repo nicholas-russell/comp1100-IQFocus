@@ -59,6 +59,12 @@ public class Viewer extends Application {
         return error;
     }
 
+    /**
+     * Gives an array of pieces from a placement string
+     * @param placement Placement string
+     * @return Array of Piece's from placement string
+     */
+
     private Piece[] getPiecesFromPlacement(String placement) {
         if (!FocusGame.isPlacementStringWellFormed(placement)) {
             return null;
@@ -94,7 +100,10 @@ public class Viewer extends Application {
             board.getChildren().add(errorBox);
             return;
         }
-        Piece[] p = getPiecesFromPlacement(placement);
+        Piece[] pieceList = getPiecesFromPlacement(placement);
+        for (Piece piece : pieceList) {
+            System.out.println(piece);
+        }
     }
 
     private void makeBoard() throws IOException {
