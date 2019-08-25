@@ -100,7 +100,8 @@ public class FocusGame {
      */
     public static boolean isPlacementStringValid(String placement) {
         // FIXME Task 5: determine whether a placement string is valid
-        return false;
+        boolean result = new FocusGame().addPieceToBoard(placement);
+        return result;
     }
 
     /**
@@ -173,5 +174,25 @@ public class FocusGame {
      *
      * @param placement The placement string to add piece to board
      */
-    public void addPieceToBoard(String placement) {}
+    public boolean addPieceToBoard(String placement) {
+        boolean result = true;
+        result = isPlacementStringWellFormed(placement);
+        if(result) {
+            for (int i = 0; i < placement.length(); i += 4) {
+                Piece p = new Piece(placement.substring(i, i + 4));
+                int x = p.getLocation().getX();
+                int y = p.getLocation().getY();
+
+
+                for (int j = 0; j < 16; j++) {
+                    if (y + j % 4 < 5 && x + j / 4 < 9 && board[y + j % 4][x + j / 4] == EMPTY)
+                        board[y + j % 4][x + j / 4] = p.getPieceType().getStateOnPiece(j / 4, j % 4, p.getOrientation());
+                    else if (p.getPieceType().getStateOnPiece(j / 4, j % 4, p.getOrientation()) != EMPTY) {
+                        result = false;
+                    }
+                }
+            }
+        }
+        return result;
+    }
 }
