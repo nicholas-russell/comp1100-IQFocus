@@ -102,15 +102,23 @@ public class Viewer extends Application {
         ImageView[] images = new ImageView[pieceList.length];
         int i = 0;
         for (Piece p : pieceList) {
-
+            images[i] = getImageFromFile(p.getPieceType());
+            images[i].setX(BOARD_MARGIN_LEFT+p.getLocation().getX()*SQUARE_SIZE);
+            images[i].setY(BOARD_MARGIN_TOP+p.getLocation().getY()*SQUARE_SIZE);
+            i++;
         }
-
-        return null;
+        return images;
     }
 
     private ImageView getImageFromFile(PieceType p) {
-        InputStream image = getClass().getResourceAsStream(URI_BASE + p.toString() + ".png");
-        return new ImageView(new Image(image));
+        InputStream pieceFile = getClass().getResourceAsStream(URI_BASE + p.toString().toLowerCase() + ".png");
+        Image pieceImage = new Image(pieceFile);
+        double imageHeight = pieceImage.getHeight();
+
+        ImageView pieceImageView = new ImageView(pieceImage);
+        pieceImageView.setFitHeight(SQUARE_SCALE_FACTOR*imageHeight);
+        pieceImageView.setPreserveRatio(true);
+        return pieceImageView;
     }
 
     /**
@@ -128,29 +136,14 @@ public class Viewer extends Application {
         }
         Piece[] pieceList = getPiecesFromPlacement(placement);
         ImageView[] imageList = getImageFromPiece(pieceList);
-        board.getChildren().addAll(imageList);
+        pieces.getChildren().addAll(imageList);
     }
 
     private void makeBoard() throws IOException {
         Image boardImage = new Image(new FileInputStream(URI_BASE + "board.png"));
         ImageView boardIv = new ImageView(boardImage);
         boardIv.setPreserveRatio(true);
-
-        InputStream image2 = getClass().getResourceAsStream(URI_BASE + "f.png");
-        ImageView testPiece2 = new ImageView(new Image(image2));
-        testPiece2.setX(BOARD_MARGIN_LEFT+0*SQUARE_SIZE);
-        testPiece2.setY(BOARD_MARGIN_TOP+0*SQUARE_SIZE);
-        testPiece2.setPreserveRatio(true);
-        testPiece2.setFitHeight(SQUARE_SCALE_FACTOR*100);
-
-        InputStream image = getClass().getResourceAsStream(URI_BASE + "f.png");
-        ImageView testPiece = new ImageView(new Image(image));
-        testPiece.setX(BOARD_MARGIN_LEFT+0*SQUARE_SIZE);
-        testPiece.setY(BOARD_MARGIN_TOP+1*SQUARE_SIZE);
-        testPiece.setPreserveRatio(true);
-        testPiece.setFitHeight(SQUARE_SCALE_FACTOR*100);
-
-        board.getChildren().addAll(boardIv, testPiece2, testPiece);
+        board.getChildren().addAll(boardIv);
     }
 
     /**
@@ -181,7 +174,7 @@ public class Viewer extends Application {
         primaryStage.setTitle("FocusGame Viewer");
         Scene scene = new Scene(root, VIEWER_WIDTH, VIEWER_HEIGHT);
 
-        root.getChildren().addAll(controls, pieces, board, errors);
+        root.getChildren().addAll(controls, board, pieces, errors);
 
         makeControls();
         makeBoard();
