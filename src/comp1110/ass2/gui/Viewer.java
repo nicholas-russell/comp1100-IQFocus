@@ -1,9 +1,6 @@
 package comp1110.ass2.gui;
 
-import comp1110.ass2.FocusGame;
-import comp1110.ass2.Location;
-import comp1110.ass2.Piece;
-import comp1110.ass2.PieceType;
+import comp1110.ass2.*;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -98,8 +95,82 @@ public class Viewer extends Application {
         errors.getChildren().add(errorBox);
     }
 
-    private Location getXPosition(Piece piece) {
-        return null;
+    private int[] getOrientationOffsets(PieceType pieceType, Orientation orientation) {
+        int[] offsets = new int[]{0, 0};
+        switch (orientation) {
+            case Zero:
+                break;
+            case One:
+                switch (pieceType) {
+                    case A:
+                    case B:
+                    case C:
+                    case D:
+                    case E:
+                    case G:
+                    case I:
+                    case J:
+                        offsets[0] = 2;
+                        break;
+                    case F:
+                        offsets[0] = -1;
+                        break;
+                    case H:
+                        offsets[0] = 3;
+                        break;
+                }
+                break;
+            case Two:
+                switch (pieceType) {
+                    case A:
+                    case D:
+                    case E:
+                    case G:
+                        offsets[0] = 3;
+                        offsets[1] = 2;
+                        break;
+                    case B:
+                    case C:
+                    case J:
+                        offsets[0] = 4;
+                        offsets[1] = 2;
+                        break;
+                    case F:
+                        offsets[0] = 3;
+                        offsets[1] = 1;
+                        break;
+                    case H:
+                        offsets[0] = 3;
+                        offsets[1] = 3;
+                    case I:
+                        offsets[0] = 2;
+                        offsets[1] = 2;
+                        break;
+                }
+                break;
+            case Three:
+                switch (pieceType) {
+                    case A:
+                    case D:
+                    case E:
+                    case F:
+                    case G:
+                    case H:
+                        offsets[1] = 3;
+                        break;
+                    case B:
+                    case C:
+                    case J:
+                        offsets[1] = 4;
+                        break;
+                    case I:
+                        offsets[1] = 2;
+                        break;
+                }
+                break;
+            default: break;
+        }
+        return offsets;
     }
 
     private ImageView[] getImageFromPiece(Piece[] pieceList) {
@@ -108,14 +179,16 @@ public class Viewer extends Application {
         int i = 0;
         for (Piece p : pieceList) {
             images[i] = getImageFromFile(p.getPieceType());
+            int[] offsets = getOrientationOffsets(p.getPieceType(), p.getOrientation());
+            System.out.println(offsets[0] + " " + offsets[1]);
             int xPos = BOARD_MARGIN_LEFT+p.getLocation().getX()*SQUARE_SIZE;
             int yPos = BOARD_MARGIN_TOP+p.getLocation().getY()*SQUARE_SIZE;
             int angle = p.getOrientation().toInt()*90;
             Rotate rotation = new Rotate(angle,xPos,yPos);
-
-            images[i].setX(xPos);
-            images[i].setY(yPos);
-            images[i].getTransforms().add(rotation);
+            //images[i].getTransforms().add(rotation);
+            images[i].setRotate(angle);
+            images[i].setX(xPos-SQUARE_SIZE/2);
+            images[i].setY(yPos+SQUARE_SIZE/2);
             i++;
         }
         return images;
