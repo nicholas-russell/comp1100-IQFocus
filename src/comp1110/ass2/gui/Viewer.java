@@ -40,9 +40,14 @@ import java.io.InputStream;
 public class Viewer extends Application {
 
     /* board layout */
-    private static final int SQUARE_SIZE = 60;
+    private static final int SQUARE_SIZE = 70;
     private static final int VIEWER_WIDTH = 720;
     private static final int VIEWER_HEIGHT = 520;
+    private static final int BOARD_MARGIN_TOP = 87;
+    private static final int BOARD_MARGIN_LEFT = 41;
+    private static final int BOARD_MARGIN_RIGHT = 43;
+    private static final int BOARD_MARGIN_BOTTOM = 25;
+    private static final double SQUARE_SCALE_FACTOR = 0.70;
 
     private static final String URI_BASE = "assets/";
 
@@ -50,6 +55,7 @@ public class Viewer extends Application {
     private final Group controls = new Group();
     private Pane pieces = new Pane();
     private Pane board = new Pane();
+    private Pane errors = new Pane();
     private TextField textField;
 
     private Text getErrorText(String text) {
@@ -81,46 +87,70 @@ public class Viewer extends Application {
         return pieces;
     }
 
+    private void drawErrorBox(String err) {
+        HBox errorBox = new HBox();
+        errorBox.getChildren().add(getErrorText(err));
+        errorBox.setAlignment(Pos.CENTER);
+        errorBox.setBackground(new Background(new BackgroundFill(Color.BLACK, CornerRadii.EMPTY, Insets.EMPTY)));
+        errorBox.setLayoutX(0);
+        errorBox.setLayoutY(0);
+        errors.getChildren().add(errorBox);
+    }
+
+    private ImageView[] getImageFromPiece(Piece[] pieceList) {
+
+        ImageView[] images = new ImageView[pieceList.length];
+        int i = 0;
+        for (Piece p : pieceList) {
+
+        }
+
+        return null;
+    }
+
+    private ImageView getImageFromFile(PieceType p) {
+        InputStream image = getClass().getResourceAsStream(URI_BASE + p.toString() + ".png");
+        return new ImageView(new Image(image));
+    }
+
     /**
      * Draw a placement in the window, removing any previously drawn one
      *
      * @param placement A valid placement string
      */
     void makePlacement(String placement) {
-        // FIXME Task 4: implement the simple placement viewer
+        errors.getChildren().clear();
         pieces.getChildren().clear();
         System.out.println("Placement: " + placement);
         if (!FocusGame.isPlacementStringWellFormed(placement)) { // insert validation rules here
-            HBox errorBox = new HBox();
-            errorBox.getChildren().add(getErrorText("Placement string NOT VALID"));
-            errorBox.setAlignment(Pos.CENTER);
-            errorBox.setBackground(new Background(new BackgroundFill(Color.BLACK, CornerRadii.EMPTY, Insets.EMPTY)));
-            errorBox.setLayoutX(0);
-            errorBox.setLayoutY(0);
-            board.getChildren().add(errorBox);
+            drawErrorBox("Placement string not valid");
             return;
         }
         Piece[] pieceList = getPiecesFromPlacement(placement);
-        for (Piece piece : pieceList) {
-            System.out.println(piece);
-        }
+        ImageView[] imageList = getImageFromPiece(pieceList);
+        board.getChildren().addAll(imageList);
     }
 
     private void makeBoard() throws IOException {
-        Image boardImage = new Image(new FileInputStream("assets/board.png"));
+        Image boardImage = new Image(new FileInputStream(URI_BASE + "board.png"));
         ImageView boardIv = new ImageView(boardImage);
         boardIv.setPreserveRatio(true);
-        InputStream image = getClass().getResourceAsStream("assets/a.png");
+
+        InputStream image2 = getClass().getResourceAsStream(URI_BASE + "f.png");
+        ImageView testPiece2 = new ImageView(new Image(image2));
+        testPiece2.setX(BOARD_MARGIN_LEFT+0*SQUARE_SIZE);
+        testPiece2.setY(BOARD_MARGIN_TOP+0*SQUARE_SIZE);
+        testPiece2.setPreserveRatio(true);
+        testPiece2.setFitHeight(SQUARE_SCALE_FACTOR*100);
+
+        InputStream image = getClass().getResourceAsStream(URI_BASE + "f.png");
         ImageView testPiece = new ImageView(new Image(image));
-        testPiece.setX(52);
-        testPiece.setY(93);
+        testPiece.setX(BOARD_MARGIN_LEFT+0*SQUARE_SIZE);
+        testPiece.setY(BOARD_MARGIN_TOP+1*SQUARE_SIZE);
         testPiece.setPreserveRatio(true);
-        testPiece.setFitHeight(130);
-        board.getChildren().addAll(boardIv, testPiece);
-        Circle circle00 = new Circle(10,Color.RED);
-        circle00.setCenterX(50);
-        circle00.setCenterY(100);
-        //board.getChildren().add(circle00);
+        testPiece.setFitHeight(SQUARE_SCALE_FACTOR*100);
+
+        board.getChildren().addAll(boardIv, testPiece2, testPiece);
     }
 
     /**
@@ -151,7 +181,7 @@ public class Viewer extends Application {
         primaryStage.setTitle("FocusGame Viewer");
         Scene scene = new Scene(root, VIEWER_WIDTH, VIEWER_HEIGHT);
 
-        root.getChildren().addAll(controls, pieces, board);
+        root.getChildren().addAll(controls, pieces, board, errors);
 
         makeControls();
         makeBoard();
