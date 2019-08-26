@@ -100,63 +100,9 @@ public class FocusGame {
      */
     public static boolean isPlacementStringValid(String placement) {
         // FIXME Task 5: determine whether a placement string is valid
+        boolean result = new FocusGame().addPieceToBoard(placement);
+        return result;
 
-        int numberPiecePlacements = placement.length() / 4;
-        int w;
-        int u;
-        int acc = 0;
-        int p = 0;
-
-
-        int a = 4;
-        int b = 5;
-        int c = 5;
-        int d = 4;
-        int e = 5;
-        int f = 3;
-        int g = 4;
-        int h = 5;
-        int i = 3;
-        int j = 5;
-
-        // convert pieces into number of squares!
-       public static void numberOfSquares(String placement) {
-
-            for (u =0, u < placement.length(), u+= 4){
-                if (placement.charAt(u) == 'a' ) {
-                   p = p + 4;
-                }
-                if (placement.charAt(u) == 'd'){
-                    p = p + 4
-
-                }
-            }
-
-        }
-
-        String[] xCoords = new String[];
-         String[] yCoords = new String[];
-
-        // adds Coord to Respective Array
-        public static String[] addToArray (String[]){
-
-            for (w = 2, w < placement.length(), w += 4) {
-
-                char coord = placement.charAt(w);
-
-                acc++;
-
-            }
-        }
-
-
-        // Checkes both placement and pieceplacement are true then checks state
-        if (isPiecePlacementWellFormed(placement) == true && isPlacementStringWellFormed(placement) == true) {
-            return false;
-
-
-        }
-        return false;
     }
 
 
@@ -226,9 +172,31 @@ public class FocusGame {
 
 
     /**
-     * Put the piece on the board and update the board state
-     *
+     * Puts the piece on the board and updates the board state; only after checking boardState of each board square for
+     * empty.
      * @param placement The placement string to add piece to board
      */
-    public void addPieceToBoard(String placement) {}
+    public boolean addPieceToBoard(String placement) {
+        boolean result = true;
+        result = isPlacementStringWellFormed(placement);
+        if(result) {
+            for (int i = 0; i < placement.length(); i += 4) {
+                Piece p = new Piece(placement.substring(i, i + 4));
+                int x = p.getLocation().getX();
+                int y = p.getLocation().getY();
+
+                /*This Loop checks if board location where piece is being placed has the boardstate empty, then replaces
+                with corresponding square on PieceColorMap if found true*/
+
+                for (int j = 0; j < 16; j++) {
+                    if (y + j % 4 < 5 && x + j / 4 < 9 && board[y + j % 4][x + j / 4] == EMPTY)
+                        board[y + j % 4][x + j / 4] = p.getPieceType().getStateOnPiece(j / 4, j % 4, p.getOrientation());
+                    else if (p.getPieceType().getStateOnPiece(j / 4, j % 4, p.getOrientation()) != EMPTY) {
+                        result = false;
+                    }
+                }
+            }
+        }
+        return result;
+    }
 }
