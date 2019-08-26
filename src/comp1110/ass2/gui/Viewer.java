@@ -24,6 +24,7 @@ import javafx.scene.shape.Shape;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import javafx.scene.transform.Rotate;
 import javafx.stage.Stage;
 
 import java.io.FileInputStream;
@@ -97,14 +98,24 @@ public class Viewer extends Application {
         errors.getChildren().add(errorBox);
     }
 
+    private Location getXPosition(Piece piece) {
+        return null;
+    }
+
     private ImageView[] getImageFromPiece(Piece[] pieceList) {
 
         ImageView[] images = new ImageView[pieceList.length];
         int i = 0;
         for (Piece p : pieceList) {
             images[i] = getImageFromFile(p.getPieceType());
-            images[i].setX(BOARD_MARGIN_LEFT+p.getLocation().getX()*SQUARE_SIZE);
-            images[i].setY(BOARD_MARGIN_TOP+p.getLocation().getY()*SQUARE_SIZE);
+            int xPos = BOARD_MARGIN_LEFT+p.getLocation().getX()*SQUARE_SIZE;
+            int yPos = BOARD_MARGIN_TOP+p.getLocation().getY()*SQUARE_SIZE;
+            int angle = p.getOrientation().toInt()*90;
+            Rotate rotation = new Rotate(angle,xPos,yPos);
+
+            images[i].setX(xPos);
+            images[i].setY(yPos);
+            images[i].getTransforms().add(rotation);
             i++;
         }
         return images;
