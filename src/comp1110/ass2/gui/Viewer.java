@@ -71,9 +71,9 @@ public class Viewer extends Application {
      */
 
     private Piece[] getPiecesFromPlacement(String placement) {
-        /*if (!FocusGame.isPlacementStringWellFormed(placement)) {
+        if (!FocusGame.isPlacementStringWellFormed(placement)) {
             return null;
-        }*/
+        }
         int numberOfPieces = placement.length()/4;
         int i = 0;
         int pIndex = 0;
@@ -208,10 +208,10 @@ public class Viewer extends Application {
         errors.getChildren().clear();
         pieces.getChildren().clear();
         System.out.println("Placement: " + placement);
-        /*if (!FocusGame.isPlacementStringWellFormed(placement)) { // insert validation rules here
+        if (!FocusGame.isPlacementStringWellFormed(placement)) { // insert validation rules here
             drawErrorBox("Placement string not valid");
             return;
-        }*/
+        }
         Piece[] pieceList = getPiecesFromPlacement(placement);
         for (Piece p : pieceList) {
             System.out.println(p);
