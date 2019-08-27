@@ -140,13 +140,6 @@ public class Board extends Application {
     public void start(Stage primaryStage) {
 
 
-      /**  primaryStage.setTitle("Hints");
-
-        scene.setOnKeyPressed(event ->
-        {if (event.getCharacter() == "/") {
-                // Hints Coded Here
-            }
-       }); */
 
     }
 }

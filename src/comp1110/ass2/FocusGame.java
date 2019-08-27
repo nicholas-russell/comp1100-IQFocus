@@ -1,6 +1,8 @@
 package comp1110.ass2;
 
+import java.util.Arrays;
 import java.util.Set;
+import static comp1110.ass2.State.*;
 
 /**
  * This class provides the text interface for the IQ Focus Game
@@ -9,6 +11,19 @@ import java.util.Set;
  * (https://www.smartgames.eu/uk/one-player-games/iq-focus)
  */
 public class FocusGame {
+    /**
+     * Create all the states on the board, only bottom left and bottom right will
+     * be the state Null(in fact not belongs to the board) and other state will
+     * be Empty at the start(can be replaced by other colors).
+     */
+    //private State[][] board = new State [5][9];
+    private State[][] board = {
+            {EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY},
+            {EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY},
+            {EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY},
+            {EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY},
+            {NULL,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,NULL},
+    };
 
     /**
      * Determine whether a piece placement is well-formed according to the
@@ -24,7 +39,21 @@ public class FocusGame {
      */
     static boolean isPiecePlacementWellFormed(String piecePlacement) {
         // FIXME Task 2: determine whether a piece placement is well-formed
-        return false;
+        if (piecePlacement.length() != 4)
+            return false;
+        else {
+            if (piecePlacement.charAt(0) < 'a' || piecePlacement.charAt(0) > 'j')
+                return false;
+            if (piecePlacement.charAt(1) - '0' < 0 || piecePlacement.charAt(1) - '0' > 8)
+                return false;
+            if (piecePlacement.charAt(2) - '0' < 0 || piecePlacement.charAt(2) - '0' > 4)
+                return false;
+            if (piecePlacement.charAt(3) - '0' < 0 || piecePlacement.charAt(3) - '0' > 3)
+                return false;
+        }
+
+        return true;
+
     }
 
     /**
@@ -38,7 +67,22 @@ public class FocusGame {
      */
     public static boolean isPlacementStringWellFormed(String placement) {
         // FIXME Task 3: determine whether a placement is well-formed
-        return false;
+        String [] appear = new String[placement.length()/4];
+        if (placement.length() % 4 != 0 || placement.length() / 4 < 1 || placement.length() / 4 > 10) {
+            return false;
+        }
+        for (int i = 0; i < placement.length(); i += 4) {
+            if (Arrays.asList(appear).contains(String.valueOf(placement.charAt(i))))
+                return false;
+            else if (!isPiecePlacementWellFormed(placement.substring(i, i + 4)))
+                return false;
+            else
+                appear[i / 4] = String.valueOf(placement.charAt(i));
+
+        }
+
+        return true;
+
     }
 
     /**
@@ -56,8 +100,11 @@ public class FocusGame {
      */
     public static boolean isPlacementStringValid(String placement) {
         // FIXME Task 5: determine whether a placement string is valid
-        return false;
+        boolean result = new FocusGame().addPieceToBoard(placement);
+        return result;
+
     }
+
 
     /**
      * Given a string describing a placement of pieces and a string describing
@@ -108,5 +155,48 @@ public class FocusGame {
     public static String getSolution(String challenge) {
         // FIXME Task 9: determine the solution to the game, given a particular challenge
         return null;
+    }
+
+    /**
+     * Set the board to the initial state , i.e. Change all the color state to
+     * the Empty state.
+     */
+    public void resetBoard() {}
+
+    /**
+     * Give a placement and return the boardstate before the placement is put
+     * on the board.
+     * @param placement The placement string to undo
+     */
+    public void undoOperation(String placement) {}
+
+
+    /**
+     * Puts the piece on the board and updates the board state; only after checking boardState of each board square for
+     * empty.
+     * @param placement The placement string to add piece to board
+     */
+    public boolean addPieceToBoard(String placement) {
+        boolean result = true;
+        result = isPlacementStringWellFormed(placement);
+        if(result) {
+            for (int i = 0; i < placement.length(); i += 4) {
+                Piece p = new Piece(placement.substring(i, i + 4));
+                int x = p.getLocation().getX();
+                int y = p.getLocation().getY();
+
+                /*This Loop checks if board location where piece is being placed has the boardstate empty, then replaces
+                with corresponding square on PieceColorMap if found true*/
+
+                for (int j = 0; j < 16; j++) {
+                    if (y + j % 4 < 5 && x + j / 4 < 9 && board[y + j % 4][x + j / 4] == EMPTY)
+                        board[y + j % 4][x + j / 4] = p.getPieceType().getStateOnPiece(j / 4, j % 4, p.getOrientation());
+                    else if (p.getPieceType().getStateOnPiece(j / 4, j % 4, p.getOrientation()) != EMPTY) {
+                        result = false;
+                    }
+                }
+            }
+        }
+        return result;
     }
 }
