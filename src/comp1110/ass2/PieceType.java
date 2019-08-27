@@ -3,7 +3,11 @@ package comp1110.ass2;
 import static comp1110.ass2.State.*;
 
 public enum PieceType {
-    A,B,C,D,E,F,G,H,I,J;
+    A('A'),B('B'),C('C'),D('D'),E('E'),F('F'),G('G'),H('H'),I('I'),J('J');
+
+    State[] colorMap;
+    int height;
+    int length;
 
     /**
      * Build a colormap has 10 arrays, each array represents a PieceType.
@@ -17,19 +21,92 @@ public enum PieceType {
      *
      */
     //private static State[][] colorMap = new State[10][12];
-    private static State[][] colorMap = {
-            {   GREEN,WHITE,RED,NULL,
-                NULL,RED,NULL,NULL,
-                NULL,NULL,NULL,NULL,
-            },
-            {   NULL,NULL,NULL,NULL,
-                NULL,NULL,NULL,NULL,
-                NULL,NULL,NULL,NULL,
-            },
-
-
-
-    };
+            PieceType(char ch){
+                switch(ch){
+                    case 'A':
+                        this.colorMap = new State[]{GREEN,WHITE,RED,EMPTY,
+                                                    EMPTY,RED,EMPTY,EMPTY,
+                                                    EMPTY,EMPTY,EMPTY,EMPTY,
+                                                    EMPTY,EMPTY,EMPTY,EMPTY};
+                        this.length = 3;
+                        this.height = 2;
+                        break;
+                    case 'B':
+                        this.colorMap = new State[]{EMPTY,BLUE,GREEN,GREEN,
+                                                    WHITE,WHITE,EMPTY,EMPTY,
+                                                    EMPTY,EMPTY,EMPTY,EMPTY,
+                                                    EMPTY,EMPTY,EMPTY,EMPTY};
+                        this.length = 4;
+                        this.height = 2;
+                        break;
+                    case 'C':
+                        this.colorMap = new State[]{EMPTY,EMPTY,GREEN,EMPTY,
+                                                    RED,RED,WHITE,BLUE,
+                                                    EMPTY,EMPTY,EMPTY,EMPTY,
+                                                    EMPTY,EMPTY,EMPTY,EMPTY};
+                        this.length = 4;
+                        this.height = 2;
+                        break;
+                    case 'D':
+                        this.colorMap = new State[]{RED,RED,RED,EMPTY,
+                                                    EMPTY,EMPTY,BLUE,EMPTY,
+                                                    EMPTY,EMPTY,EMPTY,EMPTY,
+                                                    EMPTY,EMPTY,EMPTY,EMPTY};
+                        this.length = 3;
+                        this.height = 2;
+                        break;
+                    case 'E':
+                        this.colorMap = new State[]{BLUE,BLUE,BLUE,EMPTY,
+                                                    RED,RED,EMPTY,EMPTY,
+                                                    EMPTY,EMPTY,EMPTY,EMPTY,
+                                                    EMPTY,EMPTY,EMPTY,EMPTY};
+                        this.length = 3;
+                        this.height = 2;
+                        break;
+                    case 'F':
+                        this.colorMap = new State[]{WHITE,WHITE,WHITE,EMPTY,
+                                                    EMPTY,EMPTY,EMPTY,EMPTY,
+                                                    EMPTY,EMPTY,EMPTY,EMPTY,
+                                                    EMPTY,EMPTY,EMPTY,EMPTY};
+                        this.length = 3;
+                        this.height = 1;
+                        break;
+                    case 'G':
+                        this.colorMap = new State[]{WHITE,BLUE,EMPTY,EMPTY,
+                                                    EMPTY,BLUE,WHITE,EMPTY,
+                                                    EMPTY,EMPTY,EMPTY,EMPTY,
+                                                    EMPTY,EMPTY,EMPTY,EMPTY};
+                        this.length = 3;
+                        this.height = 2;
+                        break;
+                    case 'H':
+                        this.colorMap = new State[]{RED,GREEN,GREEN,EMPTY,
+                                                    WHITE,EMPTY,EMPTY,EMPTY,
+                                                    WHITE,EMPTY,EMPTY,EMPTY,
+                                                    EMPTY,EMPTY,EMPTY,EMPTY};
+                        this.length = 3;
+                        this.height = 3;
+                        break;
+                    case 'I':
+                        this.colorMap = new State[]{BLUE,BLUE,EMPTY,EMPTY,
+                                                    EMPTY,WHITE,EMPTY,EMPTY,
+                                                    EMPTY,EMPTY,EMPTY,EMPTY,
+                                                    EMPTY,EMPTY,EMPTY,EMPTY};
+                        this.length = 2;
+                        this.height = 2;
+                        break;
+                    case 'J':
+                        this.colorMap = new State[]{GREEN,GREEN,WHITE,RED,
+                                                    GREEN,EMPTY,EMPTY,EMPTY,
+                                                    EMPTY,EMPTY,EMPTY,EMPTY,
+                                                    EMPTY,EMPTY,EMPTY,EMPTY};
+                        this.length = 4;
+                        this.height = 2;
+                        break;
+                }
+                height--;
+                length--;
+            }
 
    /**
     * Give x-offset, y-offset and the orientation of the piece, return a state on the piece.
@@ -40,7 +117,26 @@ public enum PieceType {
     * @param orientation The orientation of the piece
     */
     public State getStateOnPiece(int x, int y, Orientation orientation) {
-        return null;
+        int newx = x;
+        int newy = y;
+        switch (orientation){
+            case One:
+                newx = y;
+                newy = height - x;
+                break;
+            case Two:
+                newx = length - x;
+                newy = height - y;
+                break;
+            case Three:
+                newx = length - y;
+                newy = x;
+
+        }
+        if(newx <= length  && newy <= height && newx >= 0 && newy >= 0)
+            return colorMap[newy * 4 + newx];
+        else
+            return EMPTY;
     }
 
 
