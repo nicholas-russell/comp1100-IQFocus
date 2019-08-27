@@ -56,7 +56,11 @@ public class Viewer extends Application {
     private Pane errors = new Pane();
     private TextField textField;
 
-
+    /**
+     *  Returns JavaFX Text object for error, styled to be red and bold.
+     * @param text String that should be displayed for error.
+     * @return JavaFX Text object styled as error.
+     */
     private Text getErrorText(String text) {
         Text error = new Text("ERROR: " + text);
         error.setFont(Font.font("Tahoma", FontWeight.BOLD, 20));
@@ -65,11 +69,24 @@ public class Viewer extends Application {
     }
 
     /**
-     * Gives an array of pieces from a placement string
+     * Draws error box onto viewer
+     * @param err Error string
+     */
+    private void drawErrorBox(String err) {
+        HBox errorBox = new HBox();
+        errorBox.getChildren().add(getErrorText(err));
+        errorBox.setAlignment(Pos.CENTER);
+        errorBox.setBackground(new Background(new BackgroundFill(Color.BLACK, CornerRadii.EMPTY, Insets.EMPTY)));
+        errorBox.setLayoutX(0);
+        errorBox.setLayoutY(0);
+        errors.getChildren().add(errorBox);
+    }
+
+    /**
+     * Gives an array of Piece objects from a placement string
      * @param placement Placement string
      * @return Array of Piece's from placement string
      */
-
     private Piece[] getPiecesFromPlacement(String placement) {
         if (!FocusGame.isPlacementStringWellFormed(placement)) {
             return null;
@@ -86,16 +103,13 @@ public class Viewer extends Application {
         return pieces;
     }
 
-    private void drawErrorBox(String err) {
-        HBox errorBox = new HBox();
-        errorBox.getChildren().add(getErrorText(err));
-        errorBox.setAlignment(Pos.CENTER);
-        errorBox.setBackground(new Background(new BackgroundFill(Color.BLACK, CornerRadii.EMPTY, Insets.EMPTY)));
-        errorBox.setLayoutX(0);
-        errorBox.setLayoutY(0);
-        errors.getChildren().add(errorBox);
-    }
-
+    /**
+     * Returns x & y offset values depending on PieceType and Orientation.
+     * These are multiplied by the SQUARE_SIZE to give a real pixel value.
+     * @param pieceType The PieceType of the piece being drawn
+     * @param orientation The Orientation of the piece being drawn
+     * @return Array of two doubles, the first for the x offset and the second for the y offset.
+     */
     private double[] getOrientationOffsets(PieceType pieceType, Orientation orientation) {
         double[] offsets = new double[]{0, 0};
         switch (orientation) {
@@ -168,26 +182,11 @@ public class Viewer extends Application {
         return offsets;
     }
 
-    private ImageView[] getImageFromPiece(Piece[] pieceList) {
-
-        ImageView[] images = new ImageView[pieceList.length];
-        int i = 0;
-        for (Piece p : pieceList) {
-            images[i] = getImageFromFile(p.getPieceType());
-            double[] offsets = getOrientationOffsets(p.getPieceType(), p.getOrientation());
-            System.out.println(offsets[0] + " " + offsets[1]);
-            double xPos = BOARD_MARGIN_LEFT+p.getLocation().getX()*SQUARE_SIZE;
-            double yPos = BOARD_MARGIN_TOP+p.getLocation().getY()*SQUARE_SIZE;
-            int angle = p.getOrientation().toInt()*90;
-
-            images[i].setRotate(angle);
-            images[i].setX(xPos+(SQUARE_SIZE*offsets[0]));
-            images[i].setY(yPos+(SQUARE_SIZE*offsets[1]));
-            i++;
-        }
-        return images;
-    }
-
+    /**
+     * Gets JavaFX ImageView object for a piece and scales it.
+     * @param p The PieceType
+     * @return Scaled ImageView of the piece object.
+     */
     private ImageView getImageFromFile(PieceType p) {
         InputStream pieceFile = getClass().getResourceAsStream(URI_BASE + p.toString().toLowerCase() + ".png");
         Image pieceImage = new Image(pieceFile);
@@ -200,6 +199,28 @@ public class Viewer extends Application {
     }
 
     /**
+     * Generates ImageViews for all Piece's in an array
+     * @param pieceList The array of Piece's to be generated
+     * @return An array of ImageView's to display
+     */
+    private ImageView[] getImageFromPiece(Piece[] pieceList) {
+        ImageView[] images = new ImageView[pieceList.length];
+        int i = 0;
+        for (Piece p : pieceList) {
+            images[i] = getImageFromFile(p.getPieceType());
+            double[] offsets = getOrientationOffsets(p.getPieceType(), p.getOrientation());
+            double xPos = BOARD_MARGIN_LEFT+p.getLocation().getX()*SQUARE_SIZE;
+            double yPos = BOARD_MARGIN_TOP+p.getLocation().getY()*SQUARE_SIZE;
+            int angle = p.getOrientation().toInt()*90;
+            images[i].setRotate(angle);
+            images[i].setX(xPos+(SQUARE_SIZE*offsets[0]));
+            images[i].setY(yPos+(SQUARE_SIZE*offsets[1]));
+            i++;
+        }
+        return images;
+    }
+
+    /**
      * Draw a placement in the window, removing any previously drawn one
      *
      * @param placement A valid placement string
@@ -207,19 +228,19 @@ public class Viewer extends Application {
     void makePlacement(String placement) {
         errors.getChildren().clear();
         pieces.getChildren().clear();
-        System.out.println("Placement: " + placement);
-        if (!FocusGame.isPlacementStringWellFormed(placement)) { // insert validation rules here
+        if (!FocusGame.isPlacementStringWellFormed(placement)) {
             drawErrorBox("Placement string not valid");
             return;
         }
         Piece[] pieceList = getPiecesFromPlacement(placement);
-        for (Piece p : pieceList) {
-            System.out.println(p);
-        }
         ImageView[] imageList = getImageFromPiece(pieceList);
         pieces.getChildren().addAll(imageList);
     }
 
+    /**
+     * Draw the game board
+     * @throws IOException
+     */
     private void makeBoard() throws IOException {
         Image boardImage = new Image(new FileInputStream(URI_BASE + "board.png"));
         ImageView boardIv = new ImageView(boardImage);
