@@ -38,7 +38,7 @@ import java.io.InputStream;
 public class Viewer extends Application {
 
     /* board layout */
-    private static final int SQUARE_SIZE = 70;
+    private static final double SQUARE_SIZE = 70;
     private static final int VIEWER_WIDTH = 720;
     private static final int VIEWER_HEIGHT = 520;
     private static final int BOARD_MARGIN_TOP = 87;
@@ -55,6 +55,7 @@ public class Viewer extends Application {
     private Pane board = new Pane();
     private Pane errors = new Pane();
     private TextField textField;
+
 
     private Text getErrorText(String text) {
         Text error = new Text("ERROR: " + text);
@@ -95,56 +96,44 @@ public class Viewer extends Application {
         errors.getChildren().add(errorBox);
     }
 
-    private int[] getOrientationOffsets(PieceType pieceType, Orientation orientation) {
-        int[] offsets = new int[]{0, 0};
+    private double[] getOrientationOffsets(PieceType pieceType, Orientation orientation) {
+        double[] offsets = new double[]{0, 0};
         switch (orientation) {
-            case Zero:
-                break;
             case One:
                 switch (pieceType) {
                     case A:
-                    case B:
-                    case C:
                     case D:
                     case E:
                     case G:
-                    case I:
-                    case J:
-                        offsets[0] = 2;
+                        offsets[0] = -0.5;
+                        offsets[1] = 0.5;
                         break;
+                    case B:
+                    case C:
                     case F:
+                    case J:
                         offsets[0] = -1;
+                        offsets[1] = 1;
                         break;
+                    case I:
                     case H:
-                        offsets[0] = 3;
                         break;
                 }
                 break;
             case Two:
                 switch (pieceType) {
                     case A:
-                    case D:
-                    case E:
-                    case G:
-                        offsets[0] = 3;
-                        offsets[1] = 2;
-                        break;
                     case B:
                     case C:
-                    case J:
-                        offsets[0] = 4;
-                        offsets[1] = 2;
-                        break;
+                    case D:
+                    case E:
                     case F:
-                        offsets[0] = 3;
-                        offsets[1] = 1;
-                        break;
+                    case G:
                     case H:
-                        offsets[0] = 3;
-                        offsets[1] = 3;
                     case I:
-                        offsets[0] = 2;
-                        offsets[1] = 2;
+                    case J:
+                        offsets[0] = 0;
+                        offsets[1] = 0;
                         break;
                 }
                 break;
@@ -153,22 +142,28 @@ public class Viewer extends Application {
                     case A:
                     case D:
                     case E:
-                    case F:
                     case G:
+                        offsets[0] = -0.5;
+                        offsets[1] = 0.5;
+                        break;
+                    case F:
+                    case J:
+                        offsets[0] = -1;
+                        offsets[0] = 1;
+                        break;
                     case H:
-                        offsets[1] = 3;
+                    case I:
                         break;
                     case B:
                     case C:
-                    case J:
-                        offsets[1] = 4;
-                        break;
-                    case I:
-                        offsets[1] = 2;
+                        offsets[0] = -1;
+                        offsets[1] = 1;
                         break;
                 }
                 break;
-            default: break;
+            case Zero:
+            default:
+                break;
         }
         return offsets;
     }
@@ -179,16 +174,15 @@ public class Viewer extends Application {
         int i = 0;
         for (Piece p : pieceList) {
             images[i] = getImageFromFile(p.getPieceType());
-            int[] offsets = getOrientationOffsets(p.getPieceType(), p.getOrientation());
+            double[] offsets = getOrientationOffsets(p.getPieceType(), p.getOrientation());
             System.out.println(offsets[0] + " " + offsets[1]);
-            int xPos = BOARD_MARGIN_LEFT+p.getLocation().getX()*SQUARE_SIZE;
-            int yPos = BOARD_MARGIN_TOP+p.getLocation().getY()*SQUARE_SIZE;
+            double xPos = BOARD_MARGIN_LEFT+p.getLocation().getX()*SQUARE_SIZE;
+            double yPos = BOARD_MARGIN_TOP+p.getLocation().getY()*SQUARE_SIZE;
             int angle = p.getOrientation().toInt()*90;
-            Rotate rotation = new Rotate(angle,xPos,yPos);
-            //images[i].getTransforms().add(rotation);
+
             images[i].setRotate(angle);
-            images[i].setX(xPos-SQUARE_SIZE/2);
-            images[i].setY(yPos+SQUARE_SIZE/2);
+            images[i].setX(xPos+(SQUARE_SIZE*offsets[0]));
+            images[i].setY(yPos+(SQUARE_SIZE*offsets[1]));
             i++;
         }
         return images;
