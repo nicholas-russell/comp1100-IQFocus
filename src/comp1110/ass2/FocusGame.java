@@ -1,6 +1,8 @@
 package comp1110.ass2;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Set;
 import static comp1110.ass2.State.*;
 
@@ -133,7 +135,48 @@ public class FocusGame {
      */
     static Set<String> getViablePiecePlacements(String placement, String challenge, int col, int row) {
         // FIXME Task 6: determine the set of all viable piece placements given existing placements and a challenge
+        Set result = new HashSet();
+        System.out.println(placement);
+        ArrayList<PieceType> AvaliablePiece = new ArrayList<PieceType>();
+        for(int i=0+'a';i<'a'+10;i++){
+            if(!placement.contains(String.valueOf((char)i)))
+                AvaliablePiece.add(PieceType.valueOf(String.valueOf((char)(i+'A'-'a'))));
+        }
+        System.out.println(AvaliablePiece);
         return null;
+    }
+
+    public boolean pieceCover(String placement,int col, int row){
+        FocusGame Board =  new FocusGame();
+        boolean valid = Board.addPieceToBoard(placement);
+        boolean cover = (Board.board[col][row] != EMPTY);
+        boolean result = valid && cover;
+        return result;
+    }
+
+    public boolean consistentWithChallenge(String placement, String challenge){
+        FocusGame Board = new FocusGame();
+        if(Board.addPieceToBoard(placement)){
+            for(int i=0;i<9;i++){
+                State tmp = Board.board[1+i/3][3+i%3];
+                switch(challenge.charAt(i)){
+                    case 'R':
+                        if(tmp!=RED) return false;
+                        break;
+                    case 'W':
+                        if(tmp!=WHITE) return false;
+                        break;
+                    case 'B':
+                        if(tmp!=BLUE) return false;
+                        break;
+                    case 'G':
+                        if(tmp!=GREEN) return false;
+                        break;
+                }
+            }
+            return true;
+        }
+        else return false;
     }
 
     /**
