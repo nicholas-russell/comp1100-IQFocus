@@ -362,6 +362,23 @@ public class Board extends Application {
         controlImages[8] = getImageFromFile(PieceType.I);
         controlImages[9] = getImageFromFile(PieceType.J);
 
+        double yOff = BOARD_Y + BOARD_HEIGHT + BOARD_MARGIN_BOTTOM;
+        double squareOff = BOARD_SCALE_FACTOR*SQUARE_SCALE_FACTOR*100;
+        controlImages[0].setY(yOff);
+        controlImages[0].setX(10);
+        controlImages[1].setY(yOff);
+        controlImages[1].setX(10+squareOff*3);
+        controlImages[2].setY(yOff);
+        controlImages[2].setX(10+squareOff*7);
+        controlImages[3].setY(yOff);
+        controlImages[3].setX(10+squareOff*11);
+        controlImages[4].setY(yOff);
+        controlImages[4].setX(10+squareOff*15);
+
+
+
+
+
         controlPieces.getChildren().addAll(controlImages);
     }
 
