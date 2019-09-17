@@ -21,19 +21,24 @@ import java.io.InputStream;
 
 public class Board extends Application {
 
-    /* board layout */
     private static final double SQUARE_SIZE = 70;
     private static final int VIEWER_WIDTH = 720;
     private static final int VIEWER_HEIGHT = 520;
-    private static final int BOARD_MARGIN_TOP = 87;
-    private static final int BOARD_MARGIN_LEFT = 41;
+    private static final int BOARD_PADDING_TOP = 87;
+    private static final int BOARD_PADDING_LEFT = 41;
     private static final int BOARD_MARGIN_RIGHT = 43;
-    private static final int BOARD_MARGIN_BOTTOM = 25;
+    private static final int BOARD_MARGIN_BOTTOM = 20;
     private static final double SQUARE_SCALE_FACTOR = 0.70;
-    private static final int BOARD_WIDTH = 933;
-    private static final int BOARD_HEIGHT = 650;
+    private static final int WINDOW_WIDTH = 933;
+    private static final int WINDOW_HEIGHT = 650;
+    private static final double BOARD_SCALE_FACTOR = 0.75;
+
     private int BOARD_X;
     private int BOARD_Y;
+    private double BOARD_HEIGHT;
+    private double BOARD_WIDTH;
+
+    private ImageView[] controlImages = new ImageView[10];
 
     private static final String URI_BASE = "assets/";
 
@@ -288,9 +293,8 @@ public class Board extends Application {
         InputStream pieceFile = getClass().getResourceAsStream(URI_BASE + p.toString().toLowerCase() + ".png");
         Image pieceImage = new Image(pieceFile);
         double imageHeight = pieceImage.getHeight();
-
         ImageView pieceImageView = new ImageView(pieceImage);
-        pieceImageView.setFitHeight(SQUARE_SCALE_FACTOR*imageHeight);
+        pieceImageView.setFitHeight(BOARD_SCALE_FACTOR*SQUARE_SCALE_FACTOR*imageHeight);
         pieceImageView.setPreserveRatio(true);
         return pieceImageView;
     }
@@ -306,8 +310,8 @@ public class Board extends Application {
         for (Piece p : pieceList) {
             images[i] = getImageFromFile(p.getPieceType());
             double[] offsets = getOrientationOffsets(p.getPieceType(), p.getOrientation());
-            double xPos = BOARD_MARGIN_LEFT+p.getLocation().getX()*SQUARE_SIZE;
-            double yPos = BOARD_MARGIN_TOP+p.getLocation().getY()*SQUARE_SIZE;
+            double xPos = BOARD_PADDING_LEFT +p.getLocation().getX()*SQUARE_SIZE;
+            double yPos = BOARD_PADDING_TOP +p.getLocation().getY()*SQUARE_SIZE;
             int angle = p.getOrientation().toInt()*90;
             images[i].setRotate(angle);
             images[i].setX(xPos+(SQUARE_SIZE*offsets[0]));
@@ -337,20 +341,34 @@ public class Board extends Application {
         Image boardImage = new Image(new FileInputStream(URI_BASE + "board.png"));
         ImageView boardIv = new ImageView(boardImage);
         boardIv.setPreserveRatio(true);
-        boardIv.setX(Math.round((BOARD_WIDTH - boardImage.getWidth())/2));
+        boardIv.setFitHeight(boardImage.getHeight()*BOARD_SCALE_FACTOR);
+        boardIv.setX(Math.round((WINDOW_WIDTH - boardImage.getWidth()*BOARD_SCALE_FACTOR)/2));
         this.BOARD_X = (int)boardIv.getX();
-        this.BOARD_Y = (int)boardIv.getX();
+        this.BOARD_Y = (int)boardIv.getY();
+        this.BOARD_HEIGHT = boardImage.getHeight()*BOARD_SCALE_FACTOR;
+        this.BOARD_WIDTH = boardImage.getWidth()*BOARD_SCALE_FACTOR;
         board.getChildren().addAll(boardIv);
     }
 
     private void makeControlPieces() {
+        controlImages[0] = getImageFromFile(PieceType.A);
+        controlImages[1] = getImageFromFile(PieceType.B);
+        controlImages[2] = getImageFromFile(PieceType.C);
+        controlImages[3] = getImageFromFile(PieceType.D);
+        controlImages[4] = getImageFromFile(PieceType.E);
+        controlImages[5] = getImageFromFile(PieceType.F);
+        controlImages[6] = getImageFromFile(PieceType.G);
+        controlImages[7] = getImageFromFile(PieceType.H);
+        controlImages[8] = getImageFromFile(PieceType.I);
+        controlImages[9] = getImageFromFile(PieceType.J);
 
+        controlPieces.getChildren().addAll(controlImages);
     }
 
     @Override
     public void start(Stage primaryStage) throws Exception {
         primaryStage.setTitle("FocusGame");
-        Scene scene = new Scene(root, BOARD_WIDTH, BOARD_HEIGHT);
+        Scene scene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
 
         root.getChildren().addAll(controls, board, boardPieces, controlPieces, errors);
 
