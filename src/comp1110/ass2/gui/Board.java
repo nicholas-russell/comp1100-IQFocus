@@ -32,8 +32,8 @@ public class Board extends Application {
     private static final int WINDOW_WIDTH = 933;
     private static final int WINDOW_HEIGHT = 650;
     private static final double BOARD_SCALE_FACTOR = 0.69;
-    private static final double CHALLENGE_POS_X = 0;
-    private static final double CHALLENGE_POS_Y = 0;
+    private double CHALLENGE_POS_X;
+    private double CHALLENGE_POS_Y;
 
     private int BOARD_X;
     private int BOARD_Y;
@@ -408,6 +408,8 @@ public class Board extends Application {
         int row = 0;
         int col = 0;
         double sqOff = BOARD_SCALE_FACTOR*SQUARE_SCALE_FACTOR*100;
+        CHALLENGE_POS_X = (WINDOW_WIDTH-BOARD_WIDTH)/4-1.5*sqOff;
+        CHALLENGE_POS_Y = BOARD_HEIGHT/2-1.5*sqOff;
         for (Character c : challengeChar) {
             ImageView chSq = getChallengeSquare(c);
             if (col > 2) {
@@ -419,6 +421,12 @@ public class Board extends Application {
             challengeSquares.getChildren().add(chSq);
             col++;
         }
+        Text challengeTitle = new Text("Challenge");
+        challengeTitle.setFont(Font.font("Tahoma", FontWeight.BOLD, 20));
+        challengeTitle.setFill(Color.BLACK);
+        challengeTitle.setX(CHALLENGE_POS_X);
+        challengeTitle.setY(CHALLENGE_POS_Y-10);
+        challengeSquares.getChildren().add(challengeTitle);
     }
 
     @Override
