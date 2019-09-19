@@ -31,7 +31,9 @@ public class Board extends Application {
     private static final double SQUARE_SCALE_FACTOR = 0.70;
     private static final int WINDOW_WIDTH = 933;
     private static final int WINDOW_HEIGHT = 650;
-    private static final double BOARD_SCALE_FACTOR = 0.75;
+    private static final double BOARD_SCALE_FACTOR = 0.69;
+    private static final double CHALLENGE_POS_X = 0;
+    private static final double CHALLENGE_POS_Y = 0;
 
     private int BOARD_X;
     private int BOARD_Y;
@@ -48,6 +50,7 @@ public class Board extends Application {
     private Pane board = new Pane();
     private Pane errors = new Pane();
     private Pane controlPieces = new Pane();
+    private Pane challengeSquares = new Pane();
 
     /* challangeSquare is a 9 character String, with each character corresponding to the
     state of one of the squares that makes up the central 3x3 challange square
@@ -321,7 +324,7 @@ public class Board extends Application {
         return images;
     }
 
-    void makePlacement(String placement) {
+    private void makePlacement(String placement) {
         errors.getChildren().clear();
         boardPieces.getChildren().clear();
         if (!FocusGame.isPlacementStringWellFormed(placement)) {
@@ -351,19 +354,15 @@ public class Board extends Application {
     }
 
     private void makeControlPieces() {
-        controlImages[0] = getImageFromFile(PieceType.A);
-        controlImages[1] = getImageFromFile(PieceType.B);
-        controlImages[2] = getImageFromFile(PieceType.C);
-        controlImages[3] = getImageFromFile(PieceType.D);
-        controlImages[4] = getImageFromFile(PieceType.E);
-        controlImages[5] = getImageFromFile(PieceType.F);
-        controlImages[6] = getImageFromFile(PieceType.G);
-        controlImages[7] = getImageFromFile(PieceType.H);
-        controlImages[8] = getImageFromFile(PieceType.I);
-        controlImages[9] = getImageFromFile(PieceType.J);
+        int i = 0;
+        for (PieceType p : PieceType.values()) {
+            controlImages[i] = getImageFromFile(p);
+            i++;
+        }
 
         double yOff = BOARD_Y + BOARD_HEIGHT + BOARD_MARGIN_BOTTOM;
         double squareOff = BOARD_SCALE_FACTOR*SQUARE_SCALE_FACTOR*100;
+        double yPadding = 20.0;
         controlImages[0].setY(yOff);
         controlImages[0].setX(10);
         controlImages[1].setY(yOff);
@@ -374,12 +373,27 @@ public class Board extends Application {
         controlImages[3].setX(10+squareOff*11);
         controlImages[4].setY(yOff);
         controlImages[4].setX(10+squareOff*15);
-
-
-
+        controlImages[5].setY(yOff+squareOff*2+yPadding);
+        controlImages[5].setX(10);
+        controlImages[6].setY(yOff+squareOff*2+yPadding);
+        controlImages[6].setX(10+squareOff*4);
+        controlImages[7].setY(yOff+squareOff*2+yPadding);
+        controlImages[7].setX(10+squareOff*8);
+        controlImages[8].setY(yOff+squareOff*2+yPadding);
+        controlImages[8].setX(10+squareOff*12);
+        controlImages[9].setY(yOff+squareOff*2+yPadding);
+        controlImages[9].setX(10+squareOff*15);
 
 
         controlPieces.getChildren().addAll(controlImages);
+    }
+
+    private ImageView getChallengeSquare() {
+        return null;
+    }
+
+    private void makeChallenge(String challengeString) {
+        char[] challengeChar = challengeString.toCharArray();
     }
 
     @Override
@@ -387,11 +401,19 @@ public class Board extends Application {
         primaryStage.setTitle("FocusGame");
         Scene scene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
 
-        root.getChildren().addAll(controls, board, boardPieces, controlPieces, errors);
+        root.getChildren().addAll(
+                controls,
+                board,
+                boardPieces,
+                controlPieces,
+                errors,
+                challengeSquares
+        );
 
         makeControls();
         makeBoard();
         makeControlPieces();
+        makeChallenge("RRRBWBBRB");
 
         primaryStage.setScene(scene);
         primaryStage.show();
