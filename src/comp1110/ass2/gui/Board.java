@@ -323,8 +323,8 @@ public class Board extends Application {
         for (Piece p : pieceList) {
             images[i] = getPieceImageFromFile(p.getPieceType());
             double[] offsets = getOrientationOffsets(p.getPieceType(), p.getOrientation());
-            double xPos = BOARD_PADDING_LEFT +p.getLocation().getX()*SQUARE_SIZE;
-            double yPos = BOARD_PADDING_TOP +p.getLocation().getY()*SQUARE_SIZE;
+            double xPos = BOARD_X + BOARD_PADDING_LEFT +p.getLocation().getX()*SQUARE_SIZE;
+            double yPos = BOARD_Y + BOARD_PADDING_TOP +p.getLocation().getY()*SQUARE_SIZE;
             int angle = p.getOrientation().toInt()*90;
             images[i].setRotate(angle);
             images[i].setX(xPos+(SQUARE_SIZE*offsets[0]));
@@ -447,6 +447,7 @@ public class Board extends Application {
         makeBoard();
         makeControlPieces();
         makeChallenge("RRRBWBBRB");
+        makePlacement("a000");
 
         primaryStage.setScene(scene);
         primaryStage.show();
