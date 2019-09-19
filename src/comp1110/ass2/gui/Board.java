@@ -292,7 +292,7 @@ public class Board extends Application {
      * @param p The PieceType
      * @return Scaled ImageView of the piece object.
      */
-    private ImageView getImageFromFile(PieceType p) {
+    private ImageView getPieceImageFromFile(PieceType p) {
         InputStream pieceFile = getClass().getResourceAsStream(URI_BASE + p.toString().toLowerCase() + ".png");
         Image pieceImage = new Image(pieceFile);
         double imageHeight = pieceImage.getHeight();
@@ -300,6 +300,16 @@ public class Board extends Application {
         pieceImageView.setFitHeight(BOARD_SCALE_FACTOR*SQUARE_SCALE_FACTOR*imageHeight);
         pieceImageView.setPreserveRatio(true);
         return pieceImageView;
+    }
+
+    private ImageView getSquareImageFromFile(Character c) {
+        InputStream squareFile = getClass().getResourceAsStream(URI_BASE + "sq-" + c.toString().toLowerCase() + ".png");
+        Image squareImage = new Image(squareFile);
+        double imageHeight = squareImage.getHeight();
+        ImageView squareImageView = new ImageView(squareImage);
+        squareImageView.setFitHeight(BOARD_SCALE_FACTOR*SQUARE_SCALE_FACTOR*imageHeight);
+        squareImageView.setPreserveRatio(true);
+        return squareImageView;
     }
 
     /**
@@ -311,7 +321,7 @@ public class Board extends Application {
         ImageView[] images = new ImageView[pieceList.length];
         int i = 0;
         for (Piece p : pieceList) {
-            images[i] = getImageFromFile(p.getPieceType());
+            images[i] = getPieceImageFromFile(p.getPieceType());
             double[] offsets = getOrientationOffsets(p.getPieceType(), p.getOrientation());
             double xPos = BOARD_PADDING_LEFT +p.getLocation().getX()*SQUARE_SIZE;
             double yPos = BOARD_PADDING_TOP +p.getLocation().getY()*SQUARE_SIZE;
@@ -356,7 +366,7 @@ public class Board extends Application {
     private void makeControlPieces() {
         int i = 0;
         for (PieceType p : PieceType.values()) {
-            controlImages[i] = getImageFromFile(p);
+            controlImages[i] = getPieceImageFromFile(p);
             i++;
         }
 
@@ -388,12 +398,27 @@ public class Board extends Application {
         controlPieces.getChildren().addAll(controlImages);
     }
 
-    private ImageView getChallengeSquare() {
-        return null;
+    private ImageView getChallengeSquare(Character c) {
+        ImageView challengeSq = getSquareImageFromFile(c);
+        return challengeSq;
     }
 
     private void makeChallenge(String challengeString) {
         char[] challengeChar = challengeString.toCharArray();
+        int row = 0;
+        int col = 0;
+        double sqOff = BOARD_SCALE_FACTOR*SQUARE_SCALE_FACTOR*100;
+        for (Character c : challengeChar) {
+            ImageView chSq = getChallengeSquare(c);
+            if (col > 2) {
+                col = 0;
+                row++;
+            }
+            chSq.setX(CHALLENGE_POS_X+col*sqOff);
+            chSq.setY(CHALLENGE_POS_Y+row*sqOff);
+            challengeSquares.getChildren().add(chSq);
+            col++;
+        }
     }
 
     @Override
