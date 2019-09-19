@@ -20,27 +20,30 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public class Board extends Application {
+    //Class constants
+    private static final double SQUARE_SIZE = 100; // square size from image
+    private static final double SQUARE_SCALE_FACTOR = 0.70; // factor to scale to full size board
 
-    private static final double SQUARE_SIZE = 70;
-    private static final int VIEWER_WIDTH = 720;
-    private static final int VIEWER_HEIGHT = 520;
-    private static final int BOARD_PADDING_TOP = 87;
-    private static final int BOARD_PADDING_LEFT = 41;
-    private static final int BOARD_MARGIN_RIGHT = 43;
-    private static final int BOARD_MARGIN_BOTTOM = 20;
-    private static final double SQUARE_SCALE_FACTOR = 0.70;
     private static final int WINDOW_WIDTH = 933;
     private static final int WINDOW_HEIGHT = 650;
-    private static final double BOARD_SCALE_FACTOR = 0.69;
+
+    private static final int BOARD_PADDING_TOP = 87; // grey part of board on top
+    private static final int BOARD_PADDING_LEFT = 41; // grey part of board on left
+    private static final int BOARD_PADDING_RIGHT = 43;
+
+    private static final double BOARD_MARGIN_TOP = 0; // margin of board to top of screen
+    private static final int BOARD_MARGIN_BOTTOM = 20; // margin of board underneath
+    private static final double BOARD_SCALE_FACTOR = 0.69; // scale factor NOTE: will scale everything else.
+
+
+    // Class variables that are set upon initialisation functions
     private double CHALLENGE_POS_X;
     private double CHALLENGE_POS_Y;
-
     private int BOARD_X;
     private int BOARD_Y;
     private double BOARD_HEIGHT;
     private double BOARD_WIDTH;
 
-    private ImageView[] controlImages = new ImageView[10];
 
     private static final String URI_BASE = "assets/";
 
@@ -51,6 +54,7 @@ public class Board extends Application {
     private Pane errors = new Pane();
     private Pane controlPieces = new Pane();
     private Pane challengeSquares = new Pane();
+    private ImageView[] controlImages = new ImageView[10];
 
     /* challangeSquare is a 9 character String, with each character corresponding to the
     state of one of the squares that makes up the central 3x3 challange square
@@ -60,14 +64,6 @@ public class Board extends Application {
     *                         [6][7][8]
     */
     private String challenge;
-
-    /**
-     * @param location The location on the board that you want the state for
-     * @return The state of the square
-     */
-    public State getStateFromLocation (Location location) {
-        return null;
-    }
 
     // FIXME Task 8: Implement challenges (you may use challenges and assets provided for you in comp1110.ass2.gui.assets: sq-b.png, sq-g.png, sq-r.png & sq-w.png)
     public String challengeEncoding (String challenge, String boardState) {
@@ -112,7 +108,6 @@ public class Board extends Application {
 
 
     }
-
 
     /* When the User holds down the "/" key, they are suppose to "see" one or more boardPieces they can play to help them
     * towards the solution!
@@ -159,6 +154,16 @@ public class Board extends Application {
          */
     }
 
+    //==========================================================================//
+
+    /**
+     * TODO: Move to game logic
+     * @param location The location on the board that you want the state for
+     * @return The state of the square
+     */
+    public State getStateFromLocation (Location location) {
+        return null;
+    }
 
     /**
      *  Returns JavaFX Text object for error, styled to be red and bold.
@@ -286,7 +291,6 @@ public class Board extends Application {
         return offsets;
     }
 
-
     /**
      * Gets JavaFX ImageView object for a piece and scales it.
      * @param p The PieceType
@@ -320,20 +324,50 @@ public class Board extends Application {
     private ImageView[] getImageFromPiece(Piece[] pieceList) {
         ImageView[] images = new ImageView[pieceList.length];
         int i = 0;
+        System.out.println("DEBUG");
+        System.out.println("===========================================");
         for (Piece p : pieceList) {
+            System.out.println("Placing " + p.toString());
             images[i] = getPieceImageFromFile(p.getPieceType());
             double[] offsets = getOrientationOffsets(p.getPieceType(), p.getOrientation());
-            double xPos = BOARD_X + BOARD_PADDING_LEFT +p.getLocation().getX()*SQUARE_SIZE;
-            double yPos = BOARD_Y + BOARD_PADDING_TOP +p.getLocation().getY()*SQUARE_SIZE;
+            double xPos = BOARD_X + BOARD_PADDING_LEFT*BOARD_SCALE_FACTOR + p.getLocation().getX()* SQUARE_SIZE*SQUARE_SCALE_FACTOR*BOARD_SCALE_FACTOR;
+            double yPos = BOARD_Y + BOARD_PADDING_TOP*BOARD_SCALE_FACTOR + p.getLocation().getY()* SQUARE_SIZE*SQUARE_SCALE_FACTOR*BOARD_SCALE_FACTOR;
+            System.out.println("xPos " + xPos + ", yPos " + yPos);
             int angle = p.getOrientation().toInt()*90;
             images[i].setRotate(angle);
-            images[i].setX(xPos+(SQUARE_SIZE*offsets[0]));
-            images[i].setY(yPos+(SQUARE_SIZE*offsets[1]));
+            images[i].setX(xPos+(SQUARE_SCALE_FACTOR*BOARD_SCALE_FACTOR*SQUARE_SIZE*offsets[0]));
+            images[i].setY(yPos+(SQUARE_SCALE_FACTOR*BOARD_SCALE_FACTOR*SQUARE_SIZE*offsets[1]));
             i++;
         }
         return images;
     }
 
+    /**
+     * Gets ImageViews of individual colour squares to show the Challenge
+     * @param c Char representing colour of square (R W B G)
+     * @return ImageView of individual square
+     */
+    private ImageView getSquareImage(Character c) {
+        ImageView challengeSq = getSquareImageFromFile(c);
+        return challengeSq;
+    }
+
+    /**
+     * TODO
+     * Gets board location given location of top left of image view
+     * @param iX screen x value of top left of a piece's ImageView
+     * @param iY screen y value of top left of a piece's ImageView
+     * @return Instance of Location with valid x,y co-ords, or FALSE/NULL if not valid
+     */
+    private Location getLocationFromPointer(int iX, int iY) {
+        return null;
+    }
+
+    /**
+     * TODO: remove piece from controls
+     * Make a piece placement on the board (graphically)
+     * @param placement
+     */
     private void makePlacement(String placement) {
         errors.getChildren().clear();
         boardPieces.getChildren().clear();
@@ -346,16 +380,25 @@ public class Board extends Application {
         boardPieces.getChildren().addAll(imageList);
     }
 
+    /**
+     * TODO
+     * Makes game controls
+     */
     private void makeControls() {
 
     }
 
+    /**
+     * Loads board image and displays it
+     * @throws IOException
+     */
     private void makeBoard() throws IOException {
         Image boardImage = new Image(new FileInputStream(URI_BASE + "board.png"));
         ImageView boardIv = new ImageView(boardImage);
         boardIv.setPreserveRatio(true);
         boardIv.setFitHeight(boardImage.getHeight()*BOARD_SCALE_FACTOR);
         boardIv.setX(Math.round((WINDOW_WIDTH - boardImage.getWidth()*BOARD_SCALE_FACTOR)/2));
+        boardIv.setY(BOARD_MARGIN_TOP);
         this.BOARD_X = (int)boardIv.getX();
         this.BOARD_Y = (int)boardIv.getY();
         this.BOARD_HEIGHT = boardImage.getHeight()*BOARD_SCALE_FACTOR;
@@ -363,6 +406,10 @@ public class Board extends Application {
         board.getChildren().addAll(boardIv);
     }
 
+    /**
+     * TODO: make draggable
+     * Displays control pieces on screen
+     */
     private void makeControlPieces() {
         int i = 0;
         for (PieceType p : PieceType.values()) {
@@ -398,11 +445,10 @@ public class Board extends Application {
         controlPieces.getChildren().addAll(controlImages);
     }
 
-    private ImageView getChallengeSquare(Character c) {
-        ImageView challengeSq = getSquareImageFromFile(c);
-        return challengeSq;
-    }
-
+    /**
+     * Displays 9 square challenge on screen
+     * @param challengeString 9 character challenge string
+     */
     private void makeChallenge(String challengeString) {
         char[] challengeChar = challengeString.toCharArray();
         int row = 0;
@@ -411,7 +457,7 @@ public class Board extends Application {
         CHALLENGE_POS_X = (WINDOW_WIDTH-BOARD_WIDTH)/4-1.5*sqOff;
         CHALLENGE_POS_Y = BOARD_HEIGHT/2-1.5*sqOff;
         for (Character c : challengeChar) {
-            ImageView chSq = getChallengeSquare(c);
+            ImageView chSq = getSquareImage(c);
             if (col > 2) {
                 col = 0;
                 row++;
@@ -429,6 +475,18 @@ public class Board extends Application {
         challengeSquares.getChildren().add(challengeTitle);
     }
 
+    /**
+     * Prints debug statements
+     */
+    private void debug() {
+        System.out.println("DEBUG");
+        System.out.println("===========================================");
+        System.out.println("BOARD_X " + BOARD_X + ", BOARD_Y " + BOARD_Y);
+        System.out.println("BOARD_WIDTH " + BOARD_WIDTH + ", BOARD_HEIGHT " + BOARD_HEIGHT);
+        System.out.println("Est BOARD_WIDTH =" + (BOARD_PADDING_LEFT*BOARD_SCALE_FACTOR*2+BOARD_SCALE_FACTOR*SQUARE_SIZE*SQUARE_SCALE_FACTOR*9));
+        System.out.println("Full size BOARD_WIDTH=" + (BOARD_PADDING_LEFT*2+SQUARE_SIZE*SQUARE_SCALE_FACTOR*9));
+
+    }
     @Override
     public void start(Stage primaryStage) throws Exception {
         primaryStage.setTitle("FocusGame");
@@ -445,10 +503,10 @@ public class Board extends Application {
 
         makeControls();
         makeBoard();
+        debug();
         makeControlPieces();
         makeChallenge("RRRBWBBRB");
-        makePlacement("a000");
-
+        makePlacement("a000b013c113d302e323f400g420h522i613j701");
         primaryStage.setScene(scene);
         primaryStage.show();
     }
