@@ -306,6 +306,11 @@ public class Board extends Application {
         return pieceImageView;
     }
 
+    /**
+     * Gets ImageViews of individual colour squares to show the Challenge
+     * @param c Char representing colour of square (R W B G)
+     * @return ImageView of individual square
+     */
     private ImageView getSquareImageFromFile(Character c) {
         InputStream squareFile = getClass().getResourceAsStream(URI_BASE + "sq-" + c.toString().toLowerCase() + ".png");
         Image squareImage = new Image(squareFile);
@@ -340,16 +345,6 @@ public class Board extends Application {
             i++;
         }
         return images;
-    }
-
-    /**
-     * Gets ImageViews of individual colour squares to show the Challenge
-     * @param c Char representing colour of square (R W B G)
-     * @return ImageView of individual square
-     */
-    private ImageView getSquareImage(Character c) {
-        ImageView challengeSq = getSquareImageFromFile(c);
-        return challengeSq;
     }
 
     /**
@@ -457,7 +452,7 @@ public class Board extends Application {
         CHALLENGE_POS_X = (WINDOW_WIDTH-BOARD_WIDTH)/4-1.5*sqOff;
         CHALLENGE_POS_Y = BOARD_HEIGHT/2-1.5*sqOff;
         for (Character c : challengeChar) {
-            ImageView chSq = getSquareImage(c);
+            ImageView chSq = getSquareImageFromFile(c);
             if (col > 2) {
                 col = 0;
                 row++;
