@@ -14,6 +14,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import java.util.Random;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -122,7 +123,25 @@ public class Board extends Application {
     */
 
     // FIXME Task 11: Generate interesting challenges (each challenge may have just one solution)
+    private final Random randomThing = new Random();
+    private int g;
+    private String[] pack = new String[9];
+
     public String challengeGenerator (int difficulty) {
+
+
+        //Generate Completely Random String
+        if (difficulty == 0){
+            for(int j = 0; j < 9; j++){
+                String g = generateRandomColor();
+                pack[j] = g;
+            }
+            challenge = pack[0] + pack[1] + pack[2] + pack[3] + pack[4] + pack[5] + pack[6] + pack[7] + pack[8];
+            return challenge;
+
+
+        }
+
 
         if (difficulty == 1) {
             //Generate challenge
@@ -132,8 +151,9 @@ public class Board extends Application {
 
             return challenge;
         }
-
         if (difficulty == 2){
+
+
             return challenge;
         }
 
@@ -151,8 +171,30 @@ public class Board extends Application {
         - How To Generate Different levels of difficulty?
         * Although generating a random 9 char string is not that hard, difficulty depends on the number of solutions
         * available for a given challenge square.
+        *
          */
     }
+
+
+    //Generates a random color, random numbers 0-3 corresponding to one of the 4 colors states
+    public String generateRandomColor() {
+
+        int g = randomThing.nextInt(4);
+
+        switch (g) {
+            case 0:
+                return "B";
+            case 1:
+                return "R";
+            case 2:
+                return "G";
+            case 3:
+                return "W";
+            default:
+                return "L";
+        }
+    }
+
 
     //==========================================================================//
 
