@@ -177,7 +177,7 @@ public class Board extends Application {
 
 
     //Generates a random color, random numbers 0-3 corresponding to one of the 4 colors states
-    public String generateRandomColor() {
+    private String generateRandomColor() {
 
         int g = randomThing.nextInt(4);
 
@@ -194,7 +194,6 @@ public class Board extends Application {
                 return "L";
         }
     }
-
 
     //==========================================================================//
 
