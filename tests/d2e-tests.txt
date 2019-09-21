@@ -1,0 +1,16 @@
+TESTS
+
+Board
+getLocationFromPointer
+onBoard
+
+Challenge
+
+FocusGame
+addPieceToBoard
+undoOperation
+consistentWithChallenge
+pieceCover
+
+Piece
+placementToLocation
