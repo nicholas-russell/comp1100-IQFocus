@@ -523,6 +523,7 @@ public class Board extends Application {
         System.out.println("Full size BOARD_WIDTH=" + (BOARD_PADDING_LEFT*2+SQUARE_SIZE*SQUARE_SCALE_FACTOR*9));
 
     }
+
     @Override
     public void start(Stage primaryStage) throws Exception {
         primaryStage.setTitle("FocusGame");

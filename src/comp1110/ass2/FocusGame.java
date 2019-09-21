@@ -40,7 +40,6 @@ public class FocusGame {
      * @return True if the piece placement is well-formed
      */
     static boolean isPiecePlacementWellFormed(String piecePlacement) {
-        // FIXME Task 2: determine whether a piece placement is well-formed
         if (piecePlacement.length() != 4)
             return false;
         else {
@@ -68,7 +67,6 @@ public class FocusGame {
      * @return True if the placement is well-formed
      */
     public static boolean isPlacementStringWellFormed(String placement) {
-        // FIXME Task 3: determine whether a placement is well-formed
         String [] appear = new String[placement.length()/4];
         if (placement.length() % 4 != 0 || placement.length() / 4 < 1 || placement.length() / 4 > 10) {
             return false;
@@ -101,10 +99,8 @@ public class FocusGame {
      * @return True if the placement sequence is valid
      */
     public static boolean isPlacementStringValid(String placement) {
-        // FIXME Task 5: determine whether a placement string is valid
         boolean result = new FocusGame().addPieceToBoard(placement);
         return result;
-
     }
 
 
@@ -212,7 +208,6 @@ public class FocusGame {
      * @param placement The placement string to undo
      */
     public void undoOperation(String placement) {}
-
 
     /**
      * Puts the piece on the board and updates the board state; only after checking boardState of each board square for
