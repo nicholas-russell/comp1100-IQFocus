@@ -229,7 +229,7 @@ public class Viewer extends Application {
     void makePlacement(String placement) {
         errors.getChildren().clear();
         pieces.getChildren().clear();
-        if (!FocusGame.isPlacementStringWellFormed(placement)) {
+        if (!FocusGame.isPlacementStringValid(placement)) {
             drawErrorBox("Placement string not valid");
             return;
         }
