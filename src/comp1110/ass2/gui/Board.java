@@ -528,6 +528,7 @@ public class Board extends Application {
         System.out.println("BOARD_WIDTH " + BOARD_WIDTH + ", BOARD_HEIGHT " + BOARD_HEIGHT);
         System.out.println("Est BOARD_WIDTH =" + (BOARD_PADDING_LEFT*BOARD_SCALE_FACTOR*2+BOARD_SCALE_FACTOR*SQUARE_SIZE*SQUARE_SCALE_FACTOR*9));
         System.out.println("Full size BOARD_WIDTH=" + (BOARD_PADDING_LEFT*2+SQUARE_SIZE*SQUARE_SCALE_FACTOR*9));
+        System.out.println("Scaled square size=" + SCALED_SQUARE_SIZE);
 
     }
 
