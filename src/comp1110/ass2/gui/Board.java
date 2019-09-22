@@ -401,6 +401,15 @@ public class Board extends Application {
     }
 
     /**
+     * TODO
+     * Returns true if x/y location is on the board
+     * @param x x location in window
+     * @param y y location in window
+     * @return
+     */
+    private boolean xyOnBoard(int x, int y) { return false; }
+
+    /**
      * TODO: remove piece from controls
      * Make a piece placement on the board (graphically)
      * @param placement
