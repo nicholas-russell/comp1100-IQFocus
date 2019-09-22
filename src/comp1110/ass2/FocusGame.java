@@ -18,8 +18,9 @@ public class FocusGame {
      * be the state Null(in fact not belongs to the board) and other state will
      * be Empty at the start(can be replaced by other colors).
      */
-    //private State[][] board = new State [5][9];
-    private State[][] board = {
+    //public State[][] board = new State [5][9];
+            State[][] saved = new State[5][9];
+    public State[][] board = {
             {EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY},
             {EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY},
             {EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY},
@@ -134,7 +135,7 @@ public class FocusGame {
         Set result = new HashSet();
         System.out.println(placement);
         ArrayList<PieceType> AvaliablePiece = new ArrayList<PieceType>();
-        for(int i=0+'a';i<'a'+10;i++){
+        for(int i='a';i<'a'+10;i++){
             if(!placement.contains(String.valueOf((char)i)))
                 AvaliablePiece.add(PieceType.valueOf(String.valueOf((char)(i+'A'-'a'))));
         }
@@ -149,6 +150,7 @@ public class FocusGame {
         boolean result = valid && cover;
         return result;
     }
+
 
     public boolean consistentWithChallenge(String placement, String challenge){
         FocusGame Board = new FocusGame();
@@ -200,24 +202,68 @@ public class FocusGame {
      * Set the board to the initial state , i.e. Change all the color state to
      * the Empty state.
      */
-    public void resetBoard() {}
+    public void resetBoard(){
+        board = new State[][]{
+                {EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY},
+                {EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY},
+                {EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY},
+                {EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY},
+                {NULL,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,EMPTY,NULL}
+        };
 
+    }
+
+    public void saveState() {
+         saved = board.clone();
+        for(int i=0;i<board.length;i++)
+            saved[i] = board[i].clone();
+    }
+    public void loadState() {
+
+        for(int i=0;i<board.length;i++)
+            board[i] = saved[i].clone();
+    }
     /**
      * Give a placement and return the boardstate before the placement is put
      * on the board.
      * @param placement The placement string to undo
      */
-    public void undoOperation(String placement) {}
+
+
+    public void undoOperation(String placement,String piece) {
+        boolean result = true;
+        result = placement.contains(piece);
+        if(result) {
+            Piece p = new Piece(piece);
+            int x = p.getLocation().getX();
+            int y = p.getLocation().getY();
+
+                /*This Loop checks if board location where piece is being placed has the boardstate empty, then replaces
+                with corresponding square on PieceColorMap if found true*/
+
+                for (int j = 0; j < 16; j++) {
+                    if ( y + j % 4>=0 && x + j / 4 >=0 &&
+                            y + j % 4 < 5 && x + j / 4 < 9 &&
+                            p.getPieceType().getStateOnPiece(j / 4, j % 4, p.getOrientation()) != EMPTY )
+                        board[y + j % 4][x + j / 4] = EMPTY;
+
+                }
+            }
+        }
+
+
 
     /**
      * Puts the piece on the board and updates the board state; only after checking boardState of each board square for
      * empty.
      * @param placement The placement string to add piece to board
      */
+
     public boolean addPieceToBoard(String placement) {
         boolean result = true;
         result = isPlacementStringWellFormed(placement);
-        if(result) {
+        saveState();
+        if (result) {
             for (int i = 0; i < placement.length(); i += 4) {
                 Piece p = new Piece(placement.substring(i, i + 4));
                 int x = p.getLocation().getX();
@@ -225,16 +271,22 @@ public class FocusGame {
 
                 /*This Loop checks if board location where piece is being placed has the boardstate empty, then replaces
                 with corresponding square on PieceColorMap if found true*/
-
                 for (int j = 0; j < 16; j++) {
-                    if (y + j % 4 < 5 && x + j / 4 < 9 && board[y + j % 4][x + j / 4] == EMPTY)
-                        board[y + j % 4][x + j / 4] = p.getPieceType().getStateOnPiece(j / 4, j % 4, p.getOrientation());
-                    else if (p.getPieceType().getStateOnPiece(j / 4, j % 4, p.getOrientation()) != EMPTY) {
+
+                    if (  ( p.getPieceType().getStateOnPiece(j / 4, j % 4, p.getOrientation()) != EMPTY) && (y + j % 4 < 0 || x + j / 4 < 0 || y + j % 4 >= 5 || x + j / 4 >= 9 || (board[y + j % 4][x + j / 4] != EMPTY  ))) {
                         result = false;
+                    }
+                }
+                if (result) {
+                    for (int j = 0; j < 16; j++) {
+                        if(y + j % 4 >= 0 && x + j / 4 >= 0 && y + j % 4 < 5 && x + j / 4 < 9  && board[y + j % 4][x + j / 4] !=NULL && p.getPieceType().getStateOnPiece(j / 4, j % 4, p.getOrientation()) != EMPTY)
+                        board[y + j % 4][x + j / 4] = p.getPieceType().getStateOnPiece(j / 4, j % 4, p.getOrientation());
                     }
                 }
             }
         }
+        if(!result)
+            loadState();
         return result;
     }
 }
