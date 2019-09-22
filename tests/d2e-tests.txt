@@ -3,6 +3,7 @@ TESTS
 Board
 getLocationFromPointer
 onBoard
+getPiecesFromPlacement
 
 Challenge
 

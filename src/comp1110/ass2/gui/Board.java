@@ -238,7 +238,7 @@ public class Board extends Application {
      * @param placement Placement string
      * @return Array of Piece's from placement string
      */
-    private Piece[] getPiecesFromPlacement(String placement) {
+    public static Piece[] getPiecesFromPlacement(String placement) {
         if (!FocusGame.isPlacementStringWellFormed(placement)) {
             return null;
         }
@@ -396,7 +396,7 @@ public class Board extends Application {
      * @param iY screen y value of top left of a piece's ImageView
      * @return Instance of Location with valid x,y co-ords, or FALSE/NULL if not valid
      */
-    private Location getLocationFromPointer(int iX, int iY) {
+    public static Location getLocationFromPointer(double iX, double iY) {
         return null;
     }
 
@@ -407,7 +407,7 @@ public class Board extends Application {
      * @param y y location in window
      * @return
      */
-    private boolean xyOnBoard(int x, int y) { return false; }
+    public static boolean xyOnBoard(double x, double y) { return false; }
 
     /**
      * TODO: remove piece from controls

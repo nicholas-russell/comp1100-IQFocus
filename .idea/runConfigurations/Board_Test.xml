@@ -8,7 +8,7 @@
       </pattern>
     </extension>
     <option name="PACKAGE_NAME" value="comp1110.ass2" />
-    <option name="MAIN_CLASS_NAME" value="comp1110.ass2.BoardTest" />
+    <option name="MAIN_CLASS_NAME" value="comp1110.ass2.XYtoBoardLocation" />
     <option name="METHOD_NAME" value="" />
     <option name="TEST_OBJECT" value="class" />
     <option name="PARAMETERS" value="" />
