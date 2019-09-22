@@ -36,7 +36,6 @@ public class Board extends Application {
     private static final int BOARD_MARGIN_BOTTOM = 20; // margin of board underneath
     private static final double BOARD_SCALE_FACTOR = 0.69; // scale factor NOTE: will scale everything else.
 
-
     // Class variables that are set upon initialisation functions
     private double CHALLENGE_POS_X;
     private double CHALLENGE_POS_Y;
