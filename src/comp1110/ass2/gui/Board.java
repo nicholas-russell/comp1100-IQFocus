@@ -197,6 +197,16 @@ public class Board extends Application {
 
     //==========================================================================//
 
+
+    class GPiece extends ImageView {
+        char pieceType;
+
+    }
+
+    class DraggablePiece extends GPiece {
+
+    }
+
     /**
      * TODO: Move to game logic
      * @param location The location on the board that you want the state for
@@ -254,85 +264,6 @@ public class Board extends Application {
     }
 
     /**
-     * Returns x & y offset values depending on PieceType and Orientation.
-     * These are multiplied by the SQUARE_SIZE to give a real pixel value.
-     * @param pieceType The PieceType of the piece being drawn
-     * @param orientation The Orientation of the piece being drawn
-     * @return Array of two doubles, the first for the x offset and the second for the y offset.
-     */
-    private double[] getOrientationOffsets(PieceType pieceType, Orientation orientation) {
-        double[] offsets = new double[]{0, 0};
-        switch (orientation) {
-            case One:
-                switch (pieceType) {
-                    case A:
-                    case D:
-                    case E:
-                    case G:
-                        offsets[0] = -0.5;
-                        offsets[1] = 0.5;
-                        break;
-                    case B:
-                    case C:
-                    case F:
-                    case J:
-                        offsets[0] = -1;
-                        offsets[1] = 1;
-                        break;
-                    case I:
-                    case H:
-                        break;
-                }
-                break;
-            case Two:
-                switch (pieceType) {
-                    case A:
-                    case B:
-                    case C:
-                    case D:
-                    case E:
-                    case F:
-                    case G:
-                    case H:
-                    case I:
-                    case J:
-                        offsets[0] = 0;
-                        offsets[1] = 0;
-                        break;
-                }
-                break;
-            case Three:
-                switch (pieceType) {
-                    case A:
-                    case D:
-                    case E:
-                    case G:
-                        offsets[0] = -0.5;
-                        offsets[1] = 0.5;
-                        break;
-                    case F:
-                    case J:
-                        offsets[0] = -1;
-                        offsets[0] = 1;
-                        break;
-                    case H:
-                    case I:
-                        break;
-                    case B:
-                    case C:
-                        offsets[0] = -1;
-                        offsets[1] = 1;
-                        break;
-                }
-                break;
-            case Zero:
-            default:
-                break;
-        }
-        return offsets;
-    }
-
-    /**
      * Gets JavaFX ImageView object for a piece and scales it.
      * @param p The PieceType
      * @return Scaled ImageView of the piece object.
@@ -375,7 +306,7 @@ public class Board extends Application {
         for (Piece p : pieceList) {
             System.out.println("Placing " + p.toString());
             images[i] = getPieceImageFromFile(p.getPieceType());
-            double[] offsets = getOrientationOffsets(p.getPieceType(), p.getOrientation());
+            double[] offsets = Viewer.getOrientationOffsets(p.getPieceType(), p.getOrientation());
             double xPos = BOARD_X + BOARD_PADDING_LEFT*BOARD_SCALE_FACTOR + p.getLocation().getX()* SQUARE_SIZE*SQUARE_SCALE_FACTOR*BOARD_SCALE_FACTOR;
             double yPos = BOARD_Y + BOARD_PADDING_TOP*BOARD_SCALE_FACTOR + p.getLocation().getY()* SQUARE_SIZE*SQUARE_SCALE_FACTOR*BOARD_SCALE_FACTOR;
             System.out.println("xPos " + xPos + ", yPos " + yPos);

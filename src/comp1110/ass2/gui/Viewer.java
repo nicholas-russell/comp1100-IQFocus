@@ -111,7 +111,7 @@ public class Viewer extends Application {
      * @param orientation The Orientation of the piece being drawn
      * @return Array of two doubles, the first for the x offset and the second for the y offset.
      */
-    private double[] getOrientationOffsets(PieceType pieceType, Orientation orientation) {
+    static double[] getOrientationOffsets(PieceType pieceType, Orientation orientation) {
         double[] offsets = new double[]{0, 0};
         switch (orientation) {
             case One:
