@@ -44,6 +44,7 @@ public class Board extends Application {
     private int BOARD_Y;
     private double BOARD_HEIGHT;
     private double BOARD_WIDTH;
+    private double SCALED_SQUARE_SIZE;
 
 
     private static final String URI_BASE = "assets/";
@@ -489,17 +490,14 @@ public class Board extends Application {
         char[] challengeChar = challengeString.toCharArray();
         int row = 0;
         int col = 0;
-        double sqOff = BOARD_SCALE_FACTOR*SQUARE_SCALE_FACTOR*100;
-        CHALLENGE_POS_X = (WINDOW_WIDTH-BOARD_WIDTH)/4-1.5*sqOff;
-        CHALLENGE_POS_Y = BOARD_HEIGHT/2-1.5*sqOff;
         for (Character c : challengeChar) {
             ImageView chSq = getSquareImageFromFile(c);
             if (col > 2) {
                 col = 0;
                 row++;
             }
-            chSq.setX(CHALLENGE_POS_X+col*sqOff);
-            chSq.setY(CHALLENGE_POS_Y+row*sqOff);
+            chSq.setX(CHALLENGE_POS_X+col*SCALED_SQUARE_SIZE);
+            chSq.setY(CHALLENGE_POS_Y+row*SCALED_SQUARE_SIZE);
             challengeSquares.getChildren().add(chSq);
             col++;
         }
@@ -524,6 +522,15 @@ public class Board extends Application {
 
     }
 
+    /**
+     * Initialises class variables for positioning pieces.
+     */
+    private void initVariables() {
+        SCALED_SQUARE_SIZE = BOARD_SCALE_FACTOR*SQUARE_SCALE_FACTOR*SQUARE_SIZE;
+        CHALLENGE_POS_X = (WINDOW_WIDTH-BOARD_WIDTH)/4-1.5*SCALED_SQUARE_SIZE;
+        CHALLENGE_POS_Y = BOARD_HEIGHT/2-1.5*SCALED_SQUARE_SIZE;
+    }
+
     @Override
     public void start(Stage primaryStage) throws Exception {
         primaryStage.setTitle("FocusGame");
@@ -538,8 +545,9 @@ public class Board extends Application {
                 challengeSquares
         );
 
-        makeControls();
         makeBoard();
+        initVariables();
+        makeControls();
         debug();
         makeControlPieces();
         makeChallenge("RRRBWBBRB");
@@ -547,4 +555,5 @@ public class Board extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
     }
+
 }
