@@ -36,7 +36,6 @@ public class Board extends Application {
     private static final int BOARD_MARGIN_BOTTOM = 20; // margin of board underneath
     private static final double BOARD_SCALE_FACTOR = 0.69; // scale factor NOTE: will scale everything else.
 
-
     // Class variables that are set upon initialisation functions
     private double CHALLENGE_POS_X;
     private double CHALLENGE_POS_Y;
@@ -44,6 +43,7 @@ public class Board extends Application {
     private int BOARD_Y;
     private double BOARD_HEIGHT;
     private double BOARD_WIDTH;
+    private double SCALED_SQUARE_SIZE;
 
 
     private static final String URI_BASE = "assets/";
@@ -237,7 +237,7 @@ public class Board extends Application {
      * @param placement Placement string
      * @return Array of Piece's from placement string
      */
-    private Piece[] getPiecesFromPlacement(String placement) {
+    public static Piece[] getPiecesFromPlacement(String placement) {
         if (!FocusGame.isPlacementStringWellFormed(placement)) {
             return null;
         }
@@ -395,9 +395,18 @@ public class Board extends Application {
      * @param iY screen y value of top left of a piece's ImageView
      * @return Instance of Location with valid x,y co-ords, or FALSE/NULL if not valid
      */
-    private Location getLocationFromPointer(int iX, int iY) {
+    public static Location getLocationFromPointer(double iX, double iY) {
         return null;
     }
+
+    /**
+     * TODO
+     * Returns true if x/y location is on the board
+     * @param x x location in window
+     * @param y y location in window
+     * @return
+     */
+    public static boolean xyOnBoard(double x, double y) { return false; }
 
     /**
      * TODO: remove piece from controls
@@ -489,17 +498,14 @@ public class Board extends Application {
         char[] challengeChar = challengeString.toCharArray();
         int row = 0;
         int col = 0;
-        double sqOff = BOARD_SCALE_FACTOR*SQUARE_SCALE_FACTOR*100;
-        CHALLENGE_POS_X = (WINDOW_WIDTH-BOARD_WIDTH)/4-1.5*sqOff;
-        CHALLENGE_POS_Y = BOARD_HEIGHT/2-1.5*sqOff;
         for (Character c : challengeChar) {
             ImageView chSq = getSquareImageFromFile(c);
             if (col > 2) {
                 col = 0;
                 row++;
             }
-            chSq.setX(CHALLENGE_POS_X+col*sqOff);
-            chSq.setY(CHALLENGE_POS_Y+row*sqOff);
+            chSq.setX(CHALLENGE_POS_X+col*SCALED_SQUARE_SIZE);
+            chSq.setY(CHALLENGE_POS_Y+row*SCALED_SQUARE_SIZE);
             challengeSquares.getChildren().add(chSq);
             col++;
         }
@@ -521,7 +527,17 @@ public class Board extends Application {
         System.out.println("BOARD_WIDTH " + BOARD_WIDTH + ", BOARD_HEIGHT " + BOARD_HEIGHT);
         System.out.println("Est BOARD_WIDTH =" + (BOARD_PADDING_LEFT*BOARD_SCALE_FACTOR*2+BOARD_SCALE_FACTOR*SQUARE_SIZE*SQUARE_SCALE_FACTOR*9));
         System.out.println("Full size BOARD_WIDTH=" + (BOARD_PADDING_LEFT*2+SQUARE_SIZE*SQUARE_SCALE_FACTOR*9));
+        System.out.println("Scaled square size=" + SCALED_SQUARE_SIZE);
 
+    }
+
+    /**
+     * Initialises class variables for positioning pieces.
+     */
+    private void initVariables() {
+        SCALED_SQUARE_SIZE = BOARD_SCALE_FACTOR*SQUARE_SCALE_FACTOR*SQUARE_SIZE;
+        CHALLENGE_POS_X = (WINDOW_WIDTH-BOARD_WIDTH)/4-1.5*SCALED_SQUARE_SIZE;
+        CHALLENGE_POS_Y = BOARD_HEIGHT/2-1.5*SCALED_SQUARE_SIZE;
     }
 
     @Override
@@ -538,8 +554,9 @@ public class Board extends Application {
                 challengeSquares
         );
 
-        makeControls();
         makeBoard();
+        initVariables();
+        makeControls();
         debug();
         makeControlPieces();
         makeChallenge("RRRBWBBRB");
@@ -547,4 +564,5 @@ public class Board extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
     }
+
 }
