@@ -8,6 +8,7 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -198,12 +199,59 @@ public class Board extends Application {
     //==========================================================================//
 
 
-    class GPiece extends ImageView {
-        char pieceType;
+    class PieceTile extends ImageView {
 
-    }
+        double xHome;
+        double yHome;
+        boolean placed;
+        PieceType pieceType;
 
-    class DraggablePiece extends GPiece {
+        /**
+         *
+         * @param p PieceType
+         */
+        PieceTile(PieceType p) {
+
+            this.pieceType = p;
+
+            InputStream pieceFile = getClass().getResourceAsStream(URI_BASE + p.toString().toLowerCase() + ".png");
+            Image pieceImage = new Image(pieceFile);
+            double imageHeight = pieceImage.getHeight();
+            setImage(pieceImage);
+            setFitHeight(BOARD_SCALE_FACTOR*SQUARE_SCALE_FACTOR*imageHeight);
+            setPreserveRatio(true);
+
+            double[] homeLocation = getHomeLocation(p);
+            this.xHome = homeLocation[0];
+            this.yHome = homeLocation[1];
+
+            this.placed = false;
+
+            setLayoutX(xHome);
+            setLayoutY(yHome);
+
+            // Rotating (by pressing Z)
+            setOnKeyPressed(key -> {
+                KeyCode keyPressed = key.getCode();
+                if (keyPressed == KeyCode.Z) {
+                    System.out.println("You're rotating piece " + pieceType.toString());
+                } else {
+                    return;
+                }
+            });
+            // Dragging beginning
+            setOnMousePressed(event -> {
+                System.out.println("You've pressed on " + pieceType.toString());
+            });
+            // Dragging
+            setOnMouseDragged(event -> {
+                System.out.println("You're dragging on " + pieceType.toString());
+            });
+            // Dragging ended
+            setOnMouseReleased(event -> {
+                System.out.println("You've let go of " + pieceType.toString());
+            });
+        }
 
     }
 
@@ -389,11 +437,11 @@ public class Board extends Application {
     private void makeControlPieces() {
         int i = 0;
         for (PieceType p : PieceType.values()) {
-            controlImages[i] = getPieceImageFromFile(p);
+            controlImages[i] = new PieceTile(p);
             i++;
         }
 
-        double yOff = BOARD_Y + BOARD_HEIGHT + BOARD_MARGIN_BOTTOM;
+        /*double yOff = BOARD_Y + BOARD_HEIGHT + BOARD_MARGIN_BOTTOM;
         double squareOff = BOARD_SCALE_FACTOR*SQUARE_SCALE_FACTOR*100;
         double yPadding = 20.0;
         controlImages[0].setY(yOff);
@@ -415,10 +463,61 @@ public class Board extends Application {
         controlImages[8].setY(yOff+squareOff*2+yPadding);
         controlImages[8].setX(10+squareOff*12);
         controlImages[9].setY(yOff+squareOff*2+yPadding);
-        controlImages[9].setX(10+squareOff*15);
-
+        controlImages[9].setX(10+squareOff*15);*/
 
         controlPieces.getChildren().addAll(controlImages);
+    }
+
+    private double[] getHomeLocation(PieceType p) {
+        double yOff = BOARD_Y + BOARD_HEIGHT + BOARD_MARGIN_BOTTOM;
+        double xPadding = 10.0;
+        double yPadding = 20.0;
+        double[] c = new double[2];
+        switch (p) {
+            case A:
+                c[0] = xPadding;
+                c[1] = yOff;
+                break;
+            case B:
+                c[0] = xPadding + SCALED_SQUARE_SIZE*3;
+                c[1] = yOff;
+                break;
+            case C:
+                c[0] = xPadding + SCALED_SQUARE_SIZE*7;
+                c[1] = yOff;
+                break;
+            case D:
+                c[0] = xPadding + SCALED_SQUARE_SIZE*11;
+                c[1] = yOff;
+                break;
+            case E:
+                c[0] = xPadding + SCALED_SQUARE_SIZE*15;
+                c[1] = yOff;
+                break;
+            case F:
+                c[0] = xPadding;
+                c[1] = yOff+SCALED_SQUARE_SIZE*2+yPadding;
+                break;
+            case G:
+                c[0] = xPadding + SCALED_SQUARE_SIZE*4;
+                c[1] = yOff+SCALED_SQUARE_SIZE*2+yPadding;
+                break;
+            case H:
+                c[0] = xPadding + SCALED_SQUARE_SIZE*8;
+                c[1] = yOff+SCALED_SQUARE_SIZE*2+yPadding;
+                break;
+            case I:
+                c[0] = xPadding + SCALED_SQUARE_SIZE*12;
+                c[1] = yOff+SCALED_SQUARE_SIZE*2+yPadding;
+                break;
+            case J:
+                c[0] = xPadding + SCALED_SQUARE_SIZE*15;
+                c[1] = yOff+SCALED_SQUARE_SIZE*2+yPadding;
+                break;
+            default:
+                break;
+        }
+        return c;
     }
 
     /**
