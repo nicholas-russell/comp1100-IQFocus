@@ -58,6 +58,8 @@ public class Board extends Application {
     private Pane challengeSquares = new Pane();
     private ImageView[] controlImages = new ImageView[10];
 
+    FocusGame game = new FocusGame();
+
     /* challangeSquare is a 9 character String, with each character corresponding to the
     state of one of the squares that makes up the central 3x3 challange square
     *
@@ -457,6 +459,7 @@ public class Board extends Application {
      */
     private void makePlacement(String placement) {
         System.out.println("Making placement " + placement);
+        game.addPieceToBoard(placement);
     }
 
     /**
