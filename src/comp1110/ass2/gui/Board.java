@@ -16,7 +16,6 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
-import java.util.ArrayList;
 import java.util.Random;
 
 import java.io.FileInputStream;
@@ -242,6 +241,8 @@ public class Board extends Application {
                 e.consume();
             });
             setOnMousePressed(e -> {
+                System.out.println("===============================");
+                System.out.println("NEW PIECE MOVEMENT");
                 System.out.println("You've pressed on " + pieceType.toString());
                 mX = e.getSceneX();
                 mY = e.getSceneY();
@@ -266,19 +267,22 @@ public class Board extends Application {
 
         private void snapToBoard() {
             String placement;
-            System.out.println(getLayoutX() + ", " + getLayoutY());
             if (!xyOnBoard(getLayoutX(),getLayoutY())) {
                 snapToHome();
             } else {
-                location = getLocationFromPointer(getLayoutX(),getLayoutY());
-                placement = pieceType.toString() + location.getX() + location.getY() + orientation.toInt();
-                System.out.println(placement);
+                location = getLocationFromSceneXY(getLayoutX(),getLayoutY());
+                placement = pieceType.toString().toLowerCase() + location.getX() + location.getY() + orientation.toInt();
                 if (FocusGame.isPlacementStringValid(placement)) {
-                    setLayoutX(BOARD_X + BOARD_PADDING_LEFT*BOARD_SCALE_FACTOR + location.getX()* SQUARE_SIZE*SQUARE_SCALE_FACTOR*BOARD_SCALE_FACTOR);
-                    setLayoutX(BOARD_Y + BOARD_PADDING_LEFT*BOARD_SCALE_FACTOR + location.getY()* SQUARE_SIZE*SQUARE_SCALE_FACTOR*BOARD_SCALE_FACTOR);
+                    System.out.println("Placement " + placement + " is valid.");
+                    setLayoutX(BOARD_X + BOARD_PADDING_LEFT*BOARD_SCALE_FACTOR + location.getX()*SCALED_SQUARE_SIZE);
+                    setLayoutY(BOARD_Y + BOARD_PADDING_TOP*BOARD_SCALE_FACTOR + location.getY()*SCALED_SQUARE_SIZE);
                     this.placed = true;
                     makePlacement(placement);
+                } else {
+                    System.out.println("Placement " + placement + " is NOT valid.");
+                    snapToHome();
                 }
+                System.out.println("===============================");
             }
         }
 
@@ -420,12 +424,15 @@ public class Board extends Application {
     /**
      * TODO
      * Gets board location given location of top left of image view
-     * @param iX screen x value of top left of a piece's ImageView
-     * @param iY screen y value of top left of a piece's ImageView
+     * @param mX screen x value of top left of a piece's ImageView
+     * @param mY screen y value of top left of a piece's ImageView
      * @return Instance of Location with valid x,y co-ords, or FALSE/NULL if not valid
      */
-    public static Location getLocationFromPointer(double iX, double iY) {
-        return new Location(0,0);
+    public Location getLocationFromSceneXY(double mX, double mY) {
+        double approxX = (mX-BOARD_X-BOARD_PADDING_LEFT*BOARD_SCALE_FACTOR)/SCALED_SQUARE_SIZE;
+        double approxY = (mY-BOARD_Y-BOARD_PADDING_TOP*BOARD_SCALE_FACTOR)/SCALED_SQUARE_SIZE;
+        System.out.println("Approx location: " + Math.round(approxX) + ", " + Math.round(approxY));
+        return new Location((int)Math.round(approxX),(int)Math.round(approxY));
     }
 
     /**
@@ -442,20 +449,12 @@ public class Board extends Application {
     }
 
     /**
-     * TODO: remove piece from controls
-     * Make a piece placement on the board (graphically)
+     * TODO: work in
+     * Make a piece placement on the board logic
      * @param placement
      */
     private void makePlacement(String placement) {
-        errors.getChildren().clear();
-        boardPieces.getChildren().clear();
-        if (!FocusGame.isPlacementStringWellFormed(placement)) {
-            drawErrorBox("Placement string not valid");
-            return;
-        }
-        Piece[] pieceList = getPiecesFromPlacement(placement);
-        ImageView[] imageList = getImageFromPiece(pieceList);
-        boardPieces.getChildren().addAll(imageList);
+        System.out.println("Making placement " + placement);
     }
 
     /**
