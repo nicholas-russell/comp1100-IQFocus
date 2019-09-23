@@ -241,11 +241,15 @@ public class Board extends Application {
                 e.consume();
             });
             setOnMousePressed(e -> {
-                System.out.println("===============================");
-                System.out.println("NEW PIECE MOVEMENT");
-                System.out.println("You've pressed on " + pieceType.toString());
-                mX = e.getSceneX();
-                mY = e.getSceneY();
+                if (e.getClickCount() == 2) {
+                    snapToHome();
+                } else {
+                    System.out.println("===============================");
+                    System.out.println("NEW PIECE MOVEMENT");
+                    System.out.println("You've pressed on " + pieceType.toString());
+                    mX = e.getSceneX();
+                    mY = e.getSceneY();
+                }
             });
             // Dragging
             setOnMouseDragged(e -> {
