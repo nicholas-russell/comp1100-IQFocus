@@ -8,7 +8,8 @@ import org.junit.rules.Timeout;
 import static org.junit.Assert.*;
 
 public class BoardTest {
-/*
+
+    Board board;
 
     // taken from output of running Board class
     private double BOARD_X = 218.0;
@@ -24,17 +25,17 @@ public class BoardTest {
     public Timeout globalTimeout = Timeout.millis(500);
 
     void xyOnBoardTest(double x, double y, boolean expected) {
-        //boolean out = Board.xyOnBoard(x, y);
-        //assertTrue("Input was x:" + x + ", y:" + y +" and " + expected + " was expected but got " + out +" instead.", out == expected);
+        boolean out = board.xyOnBoard(x, y);
+        assertTrue("Input was x:" + x + ", y:" + y +" and " + expected + " was expected but got " + out +" instead.", out == expected);
     }
 
     private void getPiecesTest(String placement, Piece[] expected) {
-        Piece[] out = Board.getPiecesFromPlacement(placement);
+        Piece[] out = board.getPiecesFromPlacement(placement);
         assertArrayEquals(expected, out);
     }
 
     private void getLocationTest(double x, double y, Location expected) {
-        Location out = Board.getLocationFromSceneXY(x,y);
+        Location out = board.getLocationFromSceneXY(x,y);
         assertEquals(expected,out);
     }
 
@@ -83,6 +84,5 @@ public class BoardTest {
         getLocationTest(BOARD_X+BOARD_PADDING_LEFT+1000,BOARD_Y+BOARD_PADDING_TOP+1000,null);
 
     }
-*/
 
 }
