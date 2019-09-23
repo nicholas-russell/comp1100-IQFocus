@@ -15,6 +15,8 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+
+import java.util.ArrayList;
 import java.util.Random;
 
 import java.io.FileInputStream;
@@ -40,12 +42,13 @@ public class Board extends Application {
     // Class variables that are set upon initialisation functions
     private double CHALLENGE_POS_X;
     private double CHALLENGE_POS_Y;
-    private int BOARD_X;
-    private int BOARD_Y;
+    private double BOARD_X;
+    private double BOARD_Y;
     private double BOARD_HEIGHT;
     private double BOARD_WIDTH;
     private double SCALED_SQUARE_SIZE;
 
+    private KeyCode CURRENT_KEY;
 
     private static final String URI_BASE = "assets/";
 
@@ -204,15 +207,17 @@ public class Board extends Application {
         double xHome;
         double yHome;
         boolean placed;
-        PieceType pieceType;
+        double mX;
+        double mY;
 
-        /**
-         *
-         * @param p PieceType
-         */
+        PieceType pieceType;
+        Orientation orientation;
+        Location location;
+
         PieceTile(PieceType p) {
 
             this.pieceType = p;
+            this.orientation = Orientation.Zero;
 
             InputStream pieceFile = getClass().getResourceAsStream(URI_BASE + p.toString().toLowerCase() + ".png");
             Image pieceImage = new Image(pieceFile);
@@ -230,27 +235,72 @@ public class Board extends Application {
             setLayoutX(xHome);
             setLayoutY(yHome);
 
-            // Rotating (by pressing Z)
-            setOnKeyPressed(key -> {
-                KeyCode keyPressed = key.getCode();
-                if (keyPressed == KeyCode.Z) {
-                    System.out.println("You're rotating piece " + pieceType.toString());
-                } else {
-                    return;
-                }
-            });
             // Dragging beginning
-            setOnMousePressed(event -> {
+            setOnScroll(e -> {
+                System.out.println("You're rotating piece " + pieceType.toString());
+                rotate();
+                e.consume();
+            });
+            setOnMousePressed(e -> {
                 System.out.println("You've pressed on " + pieceType.toString());
+                mX = e.getSceneX();
+                mY = e.getSceneY();
             });
             // Dragging
-            setOnMouseDragged(event -> {
+            setOnMouseDragged(e -> {
                 System.out.println("You're dragging on " + pieceType.toString());
+                toFront();
+                double deltaX = e.getSceneX() - mX;
+                double deltaY = e.getSceneY() - mY;
+                setLayoutX(getLayoutX() + deltaX);
+                setLayoutY(getLayoutY() + deltaY);
+                mX = e.getSceneX();
+                mY = e.getSceneY();
+                e.consume();
             });
             // Dragging ended
-            setOnMouseReleased(event -> {
+            setOnMouseReleased(e -> {
                 System.out.println("You've let go of " + pieceType.toString());
+                snapToBoard();
             });
+        }
+
+        private void snapToBoard() {
+            String placement;
+            if (!xyOnBoard(getLayoutX(),getLayoutY())) {
+                snapToHome();
+            } else {
+                location = getLocationFromPointer(getLayoutX(),getLayoutY());
+                placement = pieceType.toString() + location.getX() + location.getY() + orientation.toInt();
+                System.out.println(placement);
+                if (FocusGame.isPlacementStringValid(placement)) {
+                    setLayoutX(BOARD_X + BOARD_PADDING_LEFT*BOARD_SCALE_FACTOR + location.getX()* SQUARE_SIZE*SQUARE_SCALE_FACTOR*BOARD_SCALE_FACTOR);
+                    setLayoutX(BOARD_Y + BOARD_PADDING_LEFT*BOARD_SCALE_FACTOR + location.getY()* SQUARE_SIZE*SQUARE_SCALE_FACTOR*BOARD_SCALE_FACTOR);
+                    this.placed = true;
+                    makePlacement(placement);
+                }
+            }
+        }
+
+        private void snapToHome() {
+            setLayoutX(xHome);
+            setLayoutY(yHome);
+            orientation = Orientation.Zero;
+            setRotate(0);
+        }
+
+        private void rotate() {
+            setRotate(orientation.toInt()*90);
+            if (orientation == Orientation.Zero) {
+                orientation = Orientation.One;
+            } else if (orientation == Orientation.One) {
+                orientation = Orientation.Two;
+            } else if (orientation == Orientation.Two) {
+                orientation = Orientation.Three;
+            } else {
+                orientation = Orientation.Zero;
+            }
+
         }
 
     }
@@ -385,7 +435,9 @@ public class Board extends Application {
      * @param y y location in window
      * @return
      */
-    public static boolean xyOnBoard(double x, double y) { return false; }
+    public static boolean xyOnBoard(double x, double y) {
+        return x >
+    }
 
     /**
      * TODO: remove piece from controls
@@ -431,7 +483,6 @@ public class Board extends Application {
     }
 
     /**
-     * TODO: make draggable
      * Displays control pieces on screen
      */
     private void makeControlPieces() {
@@ -440,30 +491,6 @@ public class Board extends Application {
             controlImages[i] = new PieceTile(p);
             i++;
         }
-
-        /*double yOff = BOARD_Y + BOARD_HEIGHT + BOARD_MARGIN_BOTTOM;
-        double squareOff = BOARD_SCALE_FACTOR*SQUARE_SCALE_FACTOR*100;
-        double yPadding = 20.0;
-        controlImages[0].setY(yOff);
-        controlImages[0].setX(10);
-        controlImages[1].setY(yOff);
-        controlImages[1].setX(10+squareOff*3);
-        controlImages[2].setY(yOff);
-        controlImages[2].setX(10+squareOff*7);
-        controlImages[3].setY(yOff);
-        controlImages[3].setX(10+squareOff*11);
-        controlImages[4].setY(yOff);
-        controlImages[4].setX(10+squareOff*15);
-        controlImages[5].setY(yOff+squareOff*2+yPadding);
-        controlImages[5].setX(10);
-        controlImages[6].setY(yOff+squareOff*2+yPadding);
-        controlImages[6].setX(10+squareOff*4);
-        controlImages[7].setY(yOff+squareOff*2+yPadding);
-        controlImages[7].setX(10+squareOff*8);
-        controlImages[8].setY(yOff+squareOff*2+yPadding);
-        controlImages[8].setX(10+squareOff*12);
-        controlImages[9].setY(yOff+squareOff*2+yPadding);
-        controlImages[9].setX(10+squareOff*15);*/
 
         controlPieces.getChildren().addAll(controlImages);
     }
@@ -577,11 +604,11 @@ public class Board extends Application {
 
         root.getChildren().addAll(
                 controls,
+                challengeSquares,
                 board,
                 boardPieces,
                 controlPieces,
-                errors,
-                challengeSquares
+                errors
         );
 
         makeBoard();
@@ -591,6 +618,11 @@ public class Board extends Application {
         makeControlPieces();
         makeChallenge("RRRBWBBRB");
         makePlacement("a000b013c113d302e323f400g420h522i613j701");
+
+        scene.setOnKeyPressed(e -> {
+            CURRENT_KEY = e.getCode();
+        });
+
         primaryStage.setScene(scene);
         primaryStage.show();
     }
