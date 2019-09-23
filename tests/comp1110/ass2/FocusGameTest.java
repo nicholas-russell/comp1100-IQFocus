@@ -10,9 +10,9 @@ import static org.junit.Assert.*;
 
 public class FocusGameTest {
     FocusGame game = new FocusGame();
-    // Original duration < 0.05sec * 10 = 0.5sec
+    // Original duration < 0.05sec * 7 = 0.35sec
     @Rule
-    public Timeout globalTimeout = Timeout.millis(500);
+    public Timeout globalTimeout = Timeout.millis(350);
 
     private void checkBoard(State[][] initboard, State[][] changedboard) {
         for (int i = 0; i < 45; i++) {
@@ -143,7 +143,7 @@ public class FocusGameTest {
     }
 
     @Test
-    public void undo() {
+    public void undo_simpleCase() {
         FocusGame gametmp = new FocusGame();
         for (int i = 0; i < simplePieceValid.length; i++) {
             for (int j = simplePieceValid.length - 1; j > i; j--) {
@@ -155,5 +155,21 @@ public class FocusGameTest {
                 checkBoard(game.board, gametmp.board);
             }
         }
+    }
+    /*
+     The board state include a piece which is never showed in the placement and it cannot be undone.
+     */
+    @Test
+    public void undo_interestingCase(){
+        FocusGame gametmp1 = new FocusGame();
+        gametmp1.addPieceToBoard("c112j502i520");
+        gametmp1.undoOperation("c112j502i520","d310");
+        checkBoard(game.board,gametmp1.board);
+
+        FocusGame gametmp2 = new FocusGame();
+        gametmp2.addPieceToBoard("h200i232");
+        gametmp2.undoOperation("h200i232","f211");
+        checkBoard(game.board,gametmp1.board);
+
     }
 }

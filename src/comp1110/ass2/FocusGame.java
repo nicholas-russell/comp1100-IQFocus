@@ -213,23 +213,32 @@ public class FocusGame {
 
     }
 
+    /**
+     * Save the current board state of the game.(An necessary function for a game and also important
+     * method for finding solution)
+     */
     public void saveState() {
          saved = board.clone();
-        for(int i=0;i<board.length;i++)
+        for(int i = 0; i < board.length; i++)
             saved[i] = board[i].clone();
     }
+
+    /**
+     * Load the current board state of the game.(An necessary function for a game and also important
+     * method for finding solution)
+     */
     public void loadState() {
 
-        for(int i=0;i<board.length;i++)
+        for(int i = 0; i < board.length; i++)
             board[i] = saved[i].clone();
     }
+
     /**
      * Give a placement and return the boardstate before the placement is put
      * on the board.
-     * @param placement The placement string to undo
+     * @param placement The string placement represents the current board state
+     * @param piece The piece placement need to be undone.
      */
-
-
     public void undoOperation(String placement,String piece) {
         boolean result = true;
         result = placement.contains(piece);
@@ -238,27 +247,21 @@ public class FocusGame {
             int x = p.getLocation().getX();
             int y = p.getLocation().getY();
 
-                /*This Loop checks if board location where piece is being placed has the boardstate empty, then replaces
-                with corresponding square on PieceColorMap if found true*/
-
-                for (int j = 0; j < 16; j++) {
-                    if ( y + j % 4>=0 && x + j / 4 >=0 &&
-                            y + j % 4 < 5 && x + j / 4 < 9 &&
-                            p.getPieceType().getStateOnPiece(j / 4, j % 4, p.getOrientation()) != EMPTY )
-                        board[y + j % 4][x + j / 4] = EMPTY;
-
-                }
+            for (int i = 0; i < 16; i++) {
+                if (y + i % 4 >= 0 && x + i / 4 >=0 && y + i % 4 < 5 && x + i / 4 < 9 &&
+                        p.getPieceType().getStateOnPiece(i / 4, i % 4, p.getOrientation()) != EMPTY )
+                        board[y + i % 4][x + i / 4] = EMPTY; }
             }
         }
 
 
 
     /**
-     * Puts the piece on the board and updates the board state; only after checking boardState of each board square for
-     * empty.
+     * Put the pieces on the board and update the board state.Only when all the pieces in the placement string
+     * can be added to board,if one piece cannot be added to the board then there will be no change.
      * @param placement The placement string to add piece to board
+     * @return True if all the pieces in the placement string can be added to the board.
      */
-
     public boolean addPieceToBoard(String placement) {
         boolean result = true;
         result = isPlacementStringWellFormed(placement);
@@ -269,22 +272,28 @@ public class FocusGame {
                 int x = p.getLocation().getX();
                 int y = p.getLocation().getY();
 
-                /*This Loop checks if board location where piece is being placed has the boardstate empty, then replaces
-                with corresponding square on PieceColorMap if found true*/
-                for (int j = 0; j < 16; j++) {
 
-                    if (  ( p.getPieceType().getStateOnPiece(j / 4, j % 4, p.getOrientation()) != EMPTY) && (y + j % 4 < 0 || x + j / 4 < 0 || y + j % 4 >= 5 || x + j / 4 >= 9 || (board[y + j % 4][x + j / 4] != EMPTY  ))) {
+                /*If the boardstate is not EMPTY(overlap) or the piece is off the board,the pieces cannot be
+                  added to the board and the return result should be false.*/
+                for (int j = 0; j < 16; j++) {
+                    if ((p.getPieceType().getStateOnPiece(j / 4, j % 4, p.getOrientation()) != EMPTY)
+                            && (y + j % 4 < 0 || x + j / 4 < 0 || y + j % 4 >= 5 || x + j / 4 >= 9 ||
+                            (board[y + j % 4][x + j / 4] != EMPTY  )))
                         result = false;
-                    }
                 }
+
+
                 if (result) {
                     for (int j = 0; j < 16; j++) {
-                        if(y + j % 4 >= 0 && x + j / 4 >= 0 && y + j % 4 < 5 && x + j / 4 < 9  && board[y + j % 4][x + j / 4] !=NULL && p.getPieceType().getStateOnPiece(j / 4, j % 4, p.getOrientation()) != EMPTY)
+                        if(y + j % 4 >= 0 && x + j / 4 >= 0 && y + j % 4 < 5 && x + j / 4 < 9  &&
+                                board[y + j % 4][x + j / 4] !=NULL &&
+                                p.getPieceType().getStateOnPiece(j / 4, j % 4, p.getOrientation()) != EMPTY)
                         board[y + j % 4][x + j / 4] = p.getPieceType().getStateOnPiece(j / 4, j % 4, p.getOrientation());
                     }
                 }
             }
         }
+
         if(!result)
             loadState();
         return result;
