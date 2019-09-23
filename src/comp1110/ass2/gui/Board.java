@@ -24,30 +24,28 @@ import java.io.InputStream;
 
 public class Board extends Application {
     //Class constants
-    private static final double SQUARE_SIZE = 100; // square size from image
-    private static final double SQUARE_SCALE_FACTOR = 0.70; // factor to scale to full size board
+    static final double SQUARE_SIZE = 100; // square size from image
+    static final double SQUARE_SCALE_FACTOR = 0.70; // factor to scale to full size board
 
-    private static final int WINDOW_WIDTH = 933;
-    private static final int WINDOW_HEIGHT = 650;
+    static final int WINDOW_WIDTH = 933;
+    static final int WINDOW_HEIGHT = 650;
 
-    private static final int BOARD_PADDING_TOP = 87; // grey part of board on top
-    private static final int BOARD_PADDING_LEFT = 41; // grey part of board on left
-    private static final int BOARD_PADDING_RIGHT = 43;
+    static final int BOARD_PADDING_TOP = 87; // grey part of board on top
+    static final int BOARD_PADDING_LEFT = 41; // grey part of board on left
+    static final int BOARD_PADDING_RIGHT = 43;
 
-    private static final double BOARD_MARGIN_TOP = 0; // margin of board to top of screen
-    private static final int BOARD_MARGIN_BOTTOM = 20; // margin of board underneath
-    private static final double BOARD_SCALE_FACTOR = 0.69; // scale factor NOTE: will scale everything else.
+    static final double BOARD_MARGIN_TOP = 0; // margin of board to top of screen
+    static final int BOARD_MARGIN_BOTTOM = 20; // margin of board underneath
+    static final double BOARD_SCALE_FACTOR = 0.69; // scale factor NOTE: will scale everything else.
 
     // Class variables that are set upon initialisation functions
-    private double CHALLENGE_POS_X;
-    private double CHALLENGE_POS_Y;
-    private double BOARD_X;
-    private double BOARD_Y;
-    private double BOARD_HEIGHT;
-    private double BOARD_WIDTH;
-    private double SCALED_SQUARE_SIZE;
-
-    private KeyCode CURRENT_KEY;
+    double CHALLENGE_POS_X;
+    double CHALLENGE_POS_Y;
+    double BOARD_X;
+    double BOARD_Y;
+    double BOARD_HEIGHT;
+    double BOARD_WIDTH;
+    double SCALED_SQUARE_SIZE;
 
     private static final String URI_BASE = "assets/";
 
@@ -271,6 +269,7 @@ public class Board extends Application {
 
         private void snapToBoard() {
             String placement;
+            System.out.println("Dropped coordinates: " + getLayoutX() + ", " + getLayoutY());
             if (!xyOnBoard(getLayoutX(),getLayoutY())) {
                 snapToHome();
             } else {
@@ -286,7 +285,6 @@ public class Board extends Application {
                     System.out.println("Placement " + placement + " is NOT valid.");
                     snapToHome();
                 }
-                System.out.println("===============================");
             }
         }
 
@@ -473,7 +471,7 @@ public class Board extends Application {
      * Loads board image and displays it
      * @throws IOException
      */
-    private void makeBoard() throws IOException {
+    public void makeBoard() throws IOException {
         Image boardImage = new Image(new FileInputStream(URI_BASE + "board.png"));
         ImageView boardIv = new ImageView(boardImage);
         boardIv.setPreserveRatio(true);
@@ -596,7 +594,7 @@ public class Board extends Application {
     /**
      * Initialises class variables for positioning pieces.
      */
-    private void initVariables() {
+    public void initVariables() {
         SCALED_SQUARE_SIZE = BOARD_SCALE_FACTOR*SQUARE_SCALE_FACTOR*SQUARE_SIZE;
         CHALLENGE_POS_X = (WINDOW_WIDTH-BOARD_WIDTH)/4-1.5*SCALED_SQUARE_SIZE;
         CHALLENGE_POS_Y = BOARD_HEIGHT/2-1.5*SCALED_SQUARE_SIZE;
@@ -622,11 +620,6 @@ public class Board extends Application {
         debug();
         makeControlPieces();
         makeChallenge("RRRBWBBRB");
-
-        scene.setOnKeyPressed(e -> {
-            CURRENT_KEY = e.getCode();
-        });
-
         primaryStage.setScene(scene);
         primaryStage.show();
     }
