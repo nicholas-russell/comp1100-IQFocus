@@ -248,7 +248,6 @@ public class Board extends Application {
             });
             // Dragging
             setOnMouseDragged(e -> {
-                System.out.println("You're dragging on " + pieceType.toString());
                 toFront();
                 double deltaX = e.getSceneX() - mX;
                 double deltaY = e.getSceneY() - mY;
@@ -267,6 +266,7 @@ public class Board extends Application {
 
         private void snapToBoard() {
             String placement;
+            System.out.println(getLayoutX() + ", " + getLayoutY());
             if (!xyOnBoard(getLayoutX(),getLayoutY())) {
                 snapToHome();
             } else {
@@ -425,7 +425,7 @@ public class Board extends Application {
      * @return Instance of Location with valid x,y co-ords, or FALSE/NULL if not valid
      */
     public static Location getLocationFromPointer(double iX, double iY) {
-        return null;
+        return new Location(0,0);
     }
 
     /**
@@ -435,8 +435,10 @@ public class Board extends Application {
      * @param y y location in window
      * @return
      */
-    public static boolean xyOnBoard(double x, double y) {
-        return x >
+    public boolean xyOnBoard(double x, double y) {
+        double errorMargin = 20;
+        return x >= BOARD_X+BOARD_PADDING_LEFT*BOARD_SCALE_FACTOR-errorMargin && x <= (BOARD_X+BOARD_WIDTH)
+                && y >= BOARD_Y+BOARD_PADDING_TOP*BOARD_SCALE_FACTOR-errorMargin && y <= (BOARD_Y+BOARD_WIDTH);
     }
 
     /**
@@ -475,8 +477,8 @@ public class Board extends Application {
         boardIv.setFitHeight(boardImage.getHeight()*BOARD_SCALE_FACTOR);
         boardIv.setX(Math.round((WINDOW_WIDTH - boardImage.getWidth()*BOARD_SCALE_FACTOR)/2));
         boardIv.setY(BOARD_MARGIN_TOP);
-        this.BOARD_X = (int)boardIv.getX();
-        this.BOARD_Y = (int)boardIv.getY();
+        this.BOARD_X = boardIv.getX();
+        this.BOARD_Y = boardIv.getY();
         this.BOARD_HEIGHT = boardImage.getHeight()*BOARD_SCALE_FACTOR;
         this.BOARD_WIDTH = boardImage.getWidth()*BOARD_SCALE_FACTOR;
         board.getChildren().addAll(boardIv);
@@ -617,7 +619,6 @@ public class Board extends Application {
         debug();
         makeControlPieces();
         makeChallenge("RRRBWBBRB");
-        makePlacement("a000b013c113d302e323f400g420h522i613j701");
 
         scene.setOnKeyPressed(e -> {
             CURRENT_KEY = e.getCode();
