@@ -14,9 +14,9 @@ public class Piece_Test {
     @Rule
     public Timeout globalTimeout = Timeout.millis(1000);
 
-    private void test(String challengeIn, boolean expected) {
-        boolean out = Piece.(challengeIn);
-        assertTrue("Input was '" + in + "', expected " + expected + " but got " + out + (invalid == "" ? "" : " (subsequence " + invalid + " is not valid)"), out == expected);
+    private void test(String placement, boolean expected) {
+        boolean out = Piece.PieceCheck(placement);
+        assertTrue("Input placement string '" + placement + "', expected " + expected + " but instead got " + out, out == expected);
     }
 
     @Test
