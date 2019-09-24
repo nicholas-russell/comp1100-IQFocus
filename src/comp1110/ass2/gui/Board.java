@@ -544,11 +544,14 @@ public class Board extends Application {
     private void debug() {
         System.out.println("DEBUG");
         System.out.println("===========================================");
-        System.out.println("BOARD_X " + BOARD_X + ", BOARD_Y " + BOARD_Y);
-        System.out.println("BOARD_WIDTH " + BOARD_WIDTH + ", BOARD_HEIGHT " + BOARD_HEIGHT);
-        System.out.println("Est BOARD_WIDTH =" + (BOARD_PADDING_LEFT_SCALED*2+BOARD_SCALE_FACTOR*SQUARE_SIZE*SQUARE_SCALE_FACTOR*9));
-        System.out.println("Full size BOARD_WIDTH=" + (BOARD_PADDING_LEFT*2+SQUARE_SIZE*SQUARE_SCALE_FACTOR*9));
-        System.out.println("Scaled square size=" + SCALED_SQUARE_SIZE);
+        System.out.println("Calculated Values");
+        System.out.println("BOARD_X=" + BOARD_X);
+        System.out.println("BOARD_Y=" + BOARD_Y);
+        System.out.println("BOARD_HEIGHT=" + BOARD_HEIGHT);
+        System.out.println("BOARD_WIDTH=" + BOARD_WIDTH);
+        System.out.println("SCALED_SQUARE_SIZE=" + SCALED_SQUARE_SIZE);
+        System.out.println("BOARD_PADDING_LEFT_SCALED=" + BOARD_PADDING_LEFT_SCALED);
+        System.out.println("BOARD_PADDING_TOP_SCALED=" + BOARD_PADDING_TOP_SCALED);
 
     }
 
