@@ -317,15 +317,6 @@ public class Board extends Application {
     }
 
     /**
-     * TODO: Move to game logic
-     * @param location The location on the board that you want the state for
-     * @return The state of the square
-     */
-    public State getStateFromLocation (Location location) {
-        return null;
-    }
-
-    /**
      *  Returns JavaFX Text object for error, styled to be red and bold.
      * @param text String that should be displayed for error.
      * @return JavaFX Text object styled as error.
@@ -352,42 +343,6 @@ public class Board extends Application {
     }
 
     /**
-     * Gives an array of Piece objects from a placement string
-     * @param placement Placement string
-     * @return Array of Piece's from placement string
-     */
-    public static Piece[] getPiecesFromPlacement(String placement) {
-        if (!FocusGame.isPlacementStringWellFormed(placement)) {
-            return null;
-        }
-        int numberOfPieces = placement.length()/4;
-        int i = 0;
-        int pIndex = 0;
-        Piece[] pieces = new Piece[numberOfPieces];
-        while (i < numberOfPieces*4) {
-            pieces[pIndex] = new Piece(placement.substring(i,i+4));
-            i += 4;
-            pIndex++;
-        }
-        return pieces;
-    }
-
-    /**
-     * Gets JavaFX ImageView object for a piece and scales it.
-     * @param p The PieceType
-     * @return Scaled ImageView of the piece object.
-     */
-    private ImageView getPieceImageFromFile(PieceType p) {
-        InputStream pieceFile = getClass().getResourceAsStream(URI_BASE + p.toString().toLowerCase() + ".png");
-        Image pieceImage = new Image(pieceFile);
-        double imageHeight = pieceImage.getHeight();
-        ImageView pieceImageView = new ImageView(pieceImage);
-        pieceImageView.setFitHeight(BOARD_SCALE_FACTOR*SQUARE_SCALE_FACTOR*imageHeight);
-        pieceImageView.setPreserveRatio(true);
-        return pieceImageView;
-    }
-
-    /**
      * Gets ImageViews of individual colour squares to show the Challenge
      * @param c Char representing colour of square (R W B G)
      * @return ImageView of individual square
@@ -403,33 +358,6 @@ public class Board extends Application {
     }
 
     /**
-     * Generates ImageViews for all Piece's in an array
-     * @param pieceList The array of Piece's to be generated
-     * @return An array of ImageView's to display
-     */
-    private ImageView[] getImageFromPiece(Piece[] pieceList) {
-        ImageView[] images = new ImageView[pieceList.length];
-        int i = 0;
-        System.out.println("DEBUG");
-        System.out.println("===========================================");
-        for (Piece p : pieceList) {
-            System.out.println("Placing " + p.toString());
-            images[i] = getPieceImageFromFile(p.getPieceType());
-            double[] offsets = Viewer.getOrientationOffsets(p.getPieceType(), p.getOrientation());
-            double xPos = BOARD_X + BOARD_PADDING_LEFT*BOARD_SCALE_FACTOR + p.getLocation().getX()* SQUARE_SIZE*SQUARE_SCALE_FACTOR*BOARD_SCALE_FACTOR;
-            double yPos = BOARD_Y + BOARD_PADDING_TOP*BOARD_SCALE_FACTOR + p.getLocation().getY()* SQUARE_SIZE*SQUARE_SCALE_FACTOR*BOARD_SCALE_FACTOR;
-            System.out.println("xPos " + xPos + ", yPos " + yPos);
-            int angle = p.getOrientation().toInt()*90;
-            images[i].setRotate(angle);
-            images[i].setX(xPos+(SQUARE_SCALE_FACTOR*BOARD_SCALE_FACTOR*SQUARE_SIZE*offsets[0]));
-            images[i].setY(yPos+(SQUARE_SCALE_FACTOR*BOARD_SCALE_FACTOR*SQUARE_SIZE*offsets[1]));
-            i++;
-        }
-        return images;
-    }
-
-    /**
-     * TODO
      * Gets board location given location of top left of image view
      * @param mX screen x value of top left of a piece's ImageView
      * @param mY screen y value of top left of a piece's ImageView
@@ -443,7 +371,6 @@ public class Board extends Application {
     }
 
     /**
-     * TODO
      * Returns true if x/y location is on the board
      * @param x x location in window
      * @param y y location in window
@@ -520,6 +447,11 @@ public class Board extends Application {
         controlPieces.getChildren().addAll(controlImages);
     }
 
+    /**
+     * Gets 'home' co-ordinates for Piece
+     * @param p the PieceType
+     * @return two element array with x and y co-ordinate
+     */
     private double[] getHomeLocation(PieceType p) {
         double yOff = BOARD_Y + BOARD_HEIGHT + BOARD_MARGIN_BOTTOM;
         double xPadding = 10.0;

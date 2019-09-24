@@ -38,11 +38,6 @@ public class BoardTest {
         assertTrue("Input was x:" + x + ", y:" + y +" and " + expected + " was expected but got " + out +" instead.", out == expected);
     }
 
-    private void getPiecesTest(String placement, Piece[] expected) {
-        Piece[] out = board.getPiecesFromPlacement(placement);
-        assertArrayEquals(expected, out);
-    }
-
     private void getLocationTest(double x, double y, Location expected) {
         Location out = board.getLocationFromSceneXY(x,y);
         assertEquals(expected.toString(), out.toString());
