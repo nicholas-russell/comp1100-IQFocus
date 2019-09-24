@@ -15,25 +15,33 @@ public class Piece_Test {
     public Timeout globalTimeout = Timeout.millis(1000);
 
     private void placementToLocationTest(String placement, boolean expected) {
-        boolean out = Piece.PieceCheck(placement);
+        boolean out = Piece.placementToLocationCheck(placement);
         assertTrue("Input placement string '" + placement + "', expected " + expected + " but instead got " + out, out == expected);
     }
 
 
 
     @Test
-    public void placementToLocationA() {
-        String testPlacementsTrue[] = new String[]{ "a000b013c113d302e323f400g420h522i613j701",
+    public void placementToLocationGood() {
+        String goodTestPlacements[] = new String[]{ "a000b013c113d302e323f400g420h522i613j701",
                 "a513b130c502d002e020f401g721h101i713j332"
         };
 
-
-        for(int i = 0; i < testPlacementsTrue.length; i++){
-            placementToLocationTest(testPlacementsTrue[i], true);
+        for(int i = 0; i < goodTestPlacements.length; i++){
+            placementToLocationTest(goodTestPlacements[i], true);
         }
+    }
 
+    @Test
+    public void placementToLocationBad() {
 
+        String badTestPlacements[] = new String[]{ "a000b013c113d302e323f400g420h522i613j701",
+                "a513b130c502d002e020f401g721h101i713j332"
+        };
 
+        for(int i = 0; i < badTestPlacements.length; i++){
+            placementToLocationTest(badTestPlacements[i], false);
+        }
     }
 }
 
