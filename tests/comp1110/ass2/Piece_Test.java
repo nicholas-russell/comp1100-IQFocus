@@ -17,7 +17,7 @@ public class Piece_Test {
 
 
     /* Fringe Cases, valid or invalid inputs; one is valid one coord-axis and one is invalid
-    *
+     *
      */
     private void placementToLocationTest(String placement, Location expected) {
         Location out = Piece.placementToLocation(placement);
@@ -49,8 +49,8 @@ public class Piece_Test {
     public void placementToLocationBad() {
 
         String badTestPlacements[] = new String[]{
-                "a990b013c113d302e323f400g420h522i613j701",
-                "a993b130c502d002e020f401g721h101i713j332"
+                "a990",
+                "b993"
         };
         for(int i = 0; i < badTestPlacements.length; i++){
             placementToLocationTest(badTestPlacements[i], new Location(0, 0) );
