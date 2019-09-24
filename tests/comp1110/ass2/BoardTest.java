@@ -45,7 +45,7 @@ public class BoardTest {
 
     private void getLocationTest(double x, double y, Location expected) {
         Location out = board.getLocationFromSceneXY(x,y);
-        assertEquals(out.toString(), expected.toString());
+        assertEquals(expected.toString(), out.toString());
     }
 
     @Test
@@ -59,38 +59,17 @@ public class BoardTest {
     }
 
     @Test
-    public void getPiecesFromPlacement() {
-        Piece[] test1 = new Piece[]{
-            new Piece("a000")
-        };
-        Piece[] test2 = new Piece[]{
-            new Piece("a000"),
-            new Piece("b013"),
-            new Piece("c113"),
-            new Piece("d302")
-        };
-        Piece[] test3 = new Piece[]{
-                new Piece("e323"),
-                new Piece("f400"),
-                new Piece("g420"),
-                new Piece("h522"),
-                new Piece("i613"),
-                new Piece("j701")
-        };
-        getPiecesTest("a000", test1);
-        getPiecesTest("a000b013c113d302", test2);
-        getPiecesTest("e323f400g420h522i613j701", test3);
-    }
-
-    @Test
     public void getLocationFromXY() {
         Location test2 = new Location(3,2);
 
-        getLocationTest(263.33, 70.14,new Location(0,0));
-        getLocationTest(263.33, 70.14,new Location(0,0));
-        getLocationTest(263.33, 70.14,new Location(0,0));
-        getLocationTest(263.33, 70.14,new Location(0,0));
-        getLocationTest(263.33, 70.14,new Location(0,0));
+        getLocationTest(269, 91,new Location(0,0));
+        getLocationTest(259, 139,new Location(0,1));
+        getLocationTest(314, 241,new Location(1,3));
+        getLocationTest(510, 181,new Location(6,2));
+        getLocationTest(409, 170,new Location(3,1));
+        getLocationTest(451, 236,new Location(4,3));
+        getLocationTest(478, 113,new Location(5,0));
+        getLocationTest(307, 173,new Location(1,1));
 
     }
 
