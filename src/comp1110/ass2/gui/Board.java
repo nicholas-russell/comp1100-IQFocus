@@ -27,28 +27,30 @@ import java.io.InputStream;
 
 public class Board extends Application {
     //Class constants
-    static final double SQUARE_SIZE = 100; // square size from image
-    static final double SQUARE_SCALE_FACTOR = 0.70; // factor to scale to full size board
+    private static final double SQUARE_SIZE = 100; // square size from image
+    private static final double SQUARE_SCALE_FACTOR = 0.70; // factor to scale to full size board
 
-    static final int WINDOW_WIDTH = 933;
-    static final int WINDOW_HEIGHT = 650;
+    private static final int WINDOW_WIDTH = 933;
+    private static final int WINDOW_HEIGHT = 650;
 
-    static final int BOARD_PADDING_TOP = 87; // grey part of board on top
-    static final int BOARD_PADDING_LEFT = 41; // grey part of board on left
+    private static final int BOARD_PADDING_TOP = 87; // grey part of board on top
+    private static final int BOARD_PADDING_LEFT = 41; // grey part of board on left
     static final int BOARD_PADDING_RIGHT = 43;
 
-    static final double BOARD_MARGIN_TOP = 50; // margin of board to top of screen
-    static final int BOARD_MARGIN_BOTTOM = 20; // margin of board underneath
-    static final double BOARD_SCALE_FACTOR = 0.65; // scale factor NOTE: will scale everything else.
+    private static final double BOARD_MARGIN_TOP = 50; // margin of board to top of screen
+    private static final int BOARD_MARGIN_BOTTOM = 20; // margin of board underneath
+    private static final double BOARD_SCALE_FACTOR = 0.65; // scale factor NOTE: will scale everything else.
 
     // Class variables that are set upon initialisation functions
-    double CHALLENGE_POS_X;
-    double CHALLENGE_POS_Y;
-    double BOARD_X;
-    double BOARD_Y;
-    double BOARD_HEIGHT;
-    double BOARD_WIDTH;
-    double SCALED_SQUARE_SIZE;
+    private double CHALLENGE_POS_X;
+    private double CHALLENGE_POS_Y;
+    private double BOARD_X;
+    private double BOARD_Y;
+    private double BOARD_HEIGHT;
+    private double BOARD_WIDTH;
+    private double SCALED_SQUARE_SIZE;
+    private double BOARD_PADDING_LEFT_SCALED;
+    private double BOARD_PADDING_TOP_SCALED;
 
     private static final String URI_BASE = "assets/";
 
@@ -282,8 +284,8 @@ public class Board extends Application {
                 placement = pieceType.toString().toLowerCase() + location.getX() + location.getY() + orientation.toInt();
                 if (FocusGame.isPlacementStringValid(placement)) {
                     System.out.println("Placement " + placement + " is valid.");
-                    setLayoutX(BOARD_X + BOARD_PADDING_LEFT*BOARD_SCALE_FACTOR + location.getX()*SCALED_SQUARE_SIZE);
-                    setLayoutY(BOARD_Y + BOARD_PADDING_TOP*BOARD_SCALE_FACTOR + location.getY()*SCALED_SQUARE_SIZE);
+                    setLayoutX(BOARD_X + BOARD_PADDING_LEFT_SCALED + location.getX()*SCALED_SQUARE_SIZE);
+                    setLayoutY(BOARD_Y + BOARD_PADDING_TOP_SCALED+ location.getY()*SCALED_SQUARE_SIZE);
                     this.placed = true;
                     makePlacement(placement);
                 } else {
@@ -364,26 +366,83 @@ public class Board extends Application {
      * @return Instance of Location with valid x,y co-ords, or FALSE/NULL if not valid
      */
     public Location getLocationFromSceneXY(double mX, double mY) {
-        double approxX = (mX-BOARD_X-BOARD_PADDING_LEFT*BOARD_SCALE_FACTOR)/SCALED_SQUARE_SIZE;
-        double approxY = (mY-BOARD_Y-BOARD_PADDING_TOP*BOARD_SCALE_FACTOR)/SCALED_SQUARE_SIZE;
+        double approxX = (mX-BOARD_X-BOARD_PADDING_LEFT_SCALED)/SCALED_SQUARE_SIZE;
+        double approxY = (mY-BOARD_Y-BOARD_PADDING_TOP_SCALED)/SCALED_SQUARE_SIZE;
         System.out.println("Approx location: " + Math.round(approxX) + ", " + Math.round(approxY));
         return new Location((int)Math.round(approxX),(int)Math.round(approxY));
+    }
+
+    /**
+     * Gets 'home' co-ordinates for Piece
+     * @param p the PieceType
+     * @return two element array with x and y co-ordinate
+     */
+    private double[] getHomeLocation(PieceType p) {
+        double yOff = BOARD_Y + BOARD_HEIGHT + BOARD_MARGIN_BOTTOM;
+        double xPadding = 10.0;
+        double yPadding = 20.0;
+        double[] c = new double[2];
+        switch (p) {
+            case A:
+                c[0] = xPadding;
+                c[1] = yOff;
+                break;
+            case B:
+                c[0] = xPadding + SCALED_SQUARE_SIZE*3;
+                c[1] = yOff;
+                break;
+            case C:
+                c[0] = xPadding + SCALED_SQUARE_SIZE*7;
+                c[1] = yOff;
+                break;
+            case D:
+                c[0] = xPadding + SCALED_SQUARE_SIZE*11;
+                c[1] = yOff;
+                break;
+            case E:
+                c[0] = xPadding + SCALED_SQUARE_SIZE*15;
+                c[1] = yOff;
+                break;
+            case F:
+                c[0] = xPadding;
+                c[1] = yOff+SCALED_SQUARE_SIZE*2+yPadding;
+                break;
+            case G:
+                c[0] = xPadding + SCALED_SQUARE_SIZE*4;
+                c[1] = yOff+SCALED_SQUARE_SIZE*2+yPadding;
+                break;
+            case H:
+                c[0] = xPadding + SCALED_SQUARE_SIZE*8;
+                c[1] = yOff+SCALED_SQUARE_SIZE*2+yPadding;
+                break;
+            case I:
+                c[0] = xPadding + SCALED_SQUARE_SIZE*12;
+                c[1] = yOff+SCALED_SQUARE_SIZE*2+yPadding;
+                break;
+            case J:
+                c[0] = xPadding + SCALED_SQUARE_SIZE*15;
+                c[1] = yOff+SCALED_SQUARE_SIZE*2+yPadding;
+                break;
+            default:
+                break;
+        }
+        return c;
     }
 
     /**
      * Returns true if x/y location is on the board
      * @param x x location in window
      * @param y y location in window
-     * @return
+     * @return true if it is on the board, false if not
      */
     public boolean xyOnBoard(double x, double y) {
         double errorMargin = 20;
-        return x >= BOARD_X+BOARD_PADDING_LEFT*BOARD_SCALE_FACTOR-errorMargin && x <= (BOARD_X+BOARD_WIDTH)
-                && y >= BOARD_Y+BOARD_PADDING_TOP*BOARD_SCALE_FACTOR-errorMargin && y <= (BOARD_Y+BOARD_HEIGHT);
+        return x >= BOARD_X+BOARD_PADDING_LEFT_SCALED-errorMargin && x <= (BOARD_X+BOARD_WIDTH)
+                && y >= BOARD_Y+BOARD_PADDING_TOP_SCALED-errorMargin && y <= (BOARD_Y+BOARD_HEIGHT);
     }
 
     /**
-     * TODO: work in
+     * TODO: need to implement relevant methods in FocusGame class.
      * Make a piece placement on the board logic
      * @param placement
      */
@@ -448,63 +507,6 @@ public class Board extends Application {
     }
 
     /**
-     * Gets 'home' co-ordinates for Piece
-     * @param p the PieceType
-     * @return two element array with x and y co-ordinate
-     */
-    private double[] getHomeLocation(PieceType p) {
-        double yOff = BOARD_Y + BOARD_HEIGHT + BOARD_MARGIN_BOTTOM;
-        double xPadding = 10.0;
-        double yPadding = 20.0;
-        double[] c = new double[2];
-        switch (p) {
-            case A:
-                c[0] = xPadding;
-                c[1] = yOff;
-                break;
-            case B:
-                c[0] = xPadding + SCALED_SQUARE_SIZE*3;
-                c[1] = yOff;
-                break;
-            case C:
-                c[0] = xPadding + SCALED_SQUARE_SIZE*7;
-                c[1] = yOff;
-                break;
-            case D:
-                c[0] = xPadding + SCALED_SQUARE_SIZE*11;
-                c[1] = yOff;
-                break;
-            case E:
-                c[0] = xPadding + SCALED_SQUARE_SIZE*15;
-                c[1] = yOff;
-                break;
-            case F:
-                c[0] = xPadding;
-                c[1] = yOff+SCALED_SQUARE_SIZE*2+yPadding;
-                break;
-            case G:
-                c[0] = xPadding + SCALED_SQUARE_SIZE*4;
-                c[1] = yOff+SCALED_SQUARE_SIZE*2+yPadding;
-                break;
-            case H:
-                c[0] = xPadding + SCALED_SQUARE_SIZE*8;
-                c[1] = yOff+SCALED_SQUARE_SIZE*2+yPadding;
-                break;
-            case I:
-                c[0] = xPadding + SCALED_SQUARE_SIZE*12;
-                c[1] = yOff+SCALED_SQUARE_SIZE*2+yPadding;
-                break;
-            case J:
-                c[0] = xPadding + SCALED_SQUARE_SIZE*15;
-                c[1] = yOff+SCALED_SQUARE_SIZE*2+yPadding;
-                break;
-            default:
-                break;
-        }
-        return c;
-    }
-
-    /**
      * Displays 9 square challenge on screen
      * @param challengeString 9 character challenge string
      */
@@ -539,7 +541,7 @@ public class Board extends Application {
         System.out.println("===========================================");
         System.out.println("BOARD_X " + BOARD_X + ", BOARD_Y " + BOARD_Y);
         System.out.println("BOARD_WIDTH " + BOARD_WIDTH + ", BOARD_HEIGHT " + BOARD_HEIGHT);
-        System.out.println("Est BOARD_WIDTH =" + (BOARD_PADDING_LEFT*BOARD_SCALE_FACTOR*2+BOARD_SCALE_FACTOR*SQUARE_SIZE*SQUARE_SCALE_FACTOR*9));
+        System.out.println("Est BOARD_WIDTH =" + (BOARD_PADDING_LEFT_SCALED*2+BOARD_SCALE_FACTOR*SQUARE_SIZE*SQUARE_SCALE_FACTOR*9));
         System.out.println("Full size BOARD_WIDTH=" + (BOARD_PADDING_LEFT*2+SQUARE_SIZE*SQUARE_SCALE_FACTOR*9));
         System.out.println("Scaled square size=" + SCALED_SQUARE_SIZE);
 
@@ -552,6 +554,8 @@ public class Board extends Application {
         SCALED_SQUARE_SIZE = BOARD_SCALE_FACTOR*SQUARE_SCALE_FACTOR*SQUARE_SIZE;
         CHALLENGE_POS_X = (WINDOW_WIDTH-BOARD_WIDTH)/4-1.5*SCALED_SQUARE_SIZE;
         CHALLENGE_POS_Y = BOARD_HEIGHT/2-1.5*SCALED_SQUARE_SIZE;
+        BOARD_PADDING_LEFT_SCALED = BOARD_PADDING_LEFT*BOARD_SCALE_FACTOR;
+        BOARD_PADDING_TOP_SCALED = BOARD_PADDING_TOP*BOARD_SCALE_FACTOR;
     }
 
     @Override
