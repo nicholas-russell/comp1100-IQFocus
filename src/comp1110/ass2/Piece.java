@@ -55,6 +55,7 @@ public class Piece {
         }
     }
 
+
     /**
      * Get location for placement
      * @param placement A placement string
