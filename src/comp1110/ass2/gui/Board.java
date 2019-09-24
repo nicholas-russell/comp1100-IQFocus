@@ -5,6 +5,7 @@ import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -17,6 +18,7 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 import java.io.FileInputStream;
@@ -468,12 +470,23 @@ public class Board extends Application {
      * Makes game controls
      */
     private void makeControls() {
+        ArrayList<Node> controlNodes = new ArrayList<Node>();
+
+        // Board Title
         Text title = new Text("Focus Game");
         title.setFont(Font.font("Tahoma", FontWeight.NORMAL, FontPosture.ITALIC, 40));
         title.setY(BOARD_Y-10);
         title.setX(WINDOW_WIDTH/2-title.getLayoutBounds().getWidth()/2);
         title.setFill(Color.BLACK);
-        controls.getChildren().add(title);
+        controlNodes.add(title);
+
+        // New game button
+
+        // Reset board
+
+        //Difficulty slider
+
+        controls.getChildren().addAll(controlNodes);
     }
 
     /**
