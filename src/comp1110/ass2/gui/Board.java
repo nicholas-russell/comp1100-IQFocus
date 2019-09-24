@@ -464,7 +464,7 @@ public class Board extends Application {
         ArrayList<Node> controlNodes = new ArrayList<Node>();
 
         // Board Title
-        Text title = new Text("Focus Game");
+        Text title = new Text("IQ Focus Puzzle");
         title.setFont(Font.font("Tahoma", FontWeight.NORMAL, FontPosture.ITALIC, 40));
         title.setY(BOARD_Y-10);
         title.setX(WINDOW_WIDTH/2-title.getLayoutBounds().getWidth()/2);
