@@ -170,7 +170,6 @@ public class FocusGame {
      */
     public void undoOperation(String placement) {}
 
-
     /**
      * Puts the piece on the board and updates the board state; only after checking boardState of each board square for
      * empty.
