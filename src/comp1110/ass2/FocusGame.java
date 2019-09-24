@@ -296,6 +296,12 @@ public class FocusGame {
 
         if(!result)
             loadState();
+        for (State[] row : board) {
+            for (State s : row) {
+                System.out.print(s.toString()+",");
+            }
+            System.out.println("");
+        }
         return result;
     }
 }
