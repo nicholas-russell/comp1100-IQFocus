@@ -46,6 +46,7 @@ public class Viewer extends Application {
     private static final int BOARD_MARGIN_RIGHT = 43;
     private static final int BOARD_MARGIN_BOTTOM = 25;
     private static final double SQUARE_SCALE_FACTOR = 0.70;
+    private static final double BOARD_SCALE_FACTOR = 0.5;
 
     private static final String URI_BASE = "assets/";
 
