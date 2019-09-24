@@ -19,14 +19,19 @@ public class Piece_Test {
         assertTrue("Input placement string '" + placement + "', expected " + expected + " but instead got " + out, out == expected);
     }
 
+
+
     @Test
     public void placementToLocationA() {
         String testPlacementsTrue[] = new String[]{ "a000b013c113d302e323f400g420h522i613j701",
+                "a513b130c502d002e020f401g721h101i713j332"
         };
-        for(int i = 0; i < testPlacementsTrue.length; i++){
-            placementToLocationTest(testPlacementsTrue[0], true);
 
+
+        for(int i = 0; i < testPlacementsTrue.length; i++){
+            placementToLocationTest(testPlacementsTrue[i], true);
         }
+
 
 
     }
