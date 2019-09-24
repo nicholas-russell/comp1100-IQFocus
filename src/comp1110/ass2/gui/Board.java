@@ -26,8 +26,12 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public class Board extends Application {
-    //Class constants
-    private static final double SQUARE_SIZE = 100; // square size from image
+    /**
+     * ~~~~Class Constants~~~~
+     * The only constant that should be changed is the BOARD_SCALE_FACTOR
+     * This will adjust the size of everything else.
+     */
+    private static final int SQUARE_SIZE = 100; // square size from image
     private static final double SQUARE_SCALE_FACTOR = 0.70; // factor to scale to full size board
 
     private static final int WINDOW_WIDTH = 933;
@@ -35,13 +39,15 @@ public class Board extends Application {
 
     private static final int BOARD_PADDING_TOP = 87; // grey part of board on top
     private static final int BOARD_PADDING_LEFT = 41; // grey part of board on left
-    static final int BOARD_PADDING_RIGHT = 43;
+    private static final int BOARD_PADDING_RIGHT = 43; // grey part of board on right -- not equal to left
 
-    private static final double BOARD_MARGIN_TOP = 50; // margin of board to top of screen
+    private static final int BOARD_MARGIN_TOP = 50; // margin of board to top of screen
     private static final int BOARD_MARGIN_BOTTOM = 20; // margin of board underneath
-    private static final double BOARD_SCALE_FACTOR = 0.65; // scale factor NOTE: will scale everything else.
 
-    // Class variables that are set upon initialisation functions
+    /* Scale factor for Board, will also scale everything else at the same time. */
+    private static final double BOARD_SCALE_FACTOR = 0.65;
+
+    /* Class variables that are set upon initialisation functions */
     private double CHALLENGE_POS_X;
     private double CHALLENGE_POS_Y;
     private double BOARD_X;
@@ -63,7 +69,7 @@ public class Board extends Application {
     private Pane challengeSquares = new Pane();
     private ImageView[] controlImages = new ImageView[10];
 
-    FocusGame game = new FocusGame();
+    private FocusGame game = new FocusGame();
 
     /* challangeSquare is a 9 character String, with each character corresponding to the
     state of one of the squares that makes up the central 3x3 challange square
@@ -204,7 +210,6 @@ public class Board extends Application {
     }
 
     //==========================================================================//
-
 
     class PieceTile extends ImageView {
 
