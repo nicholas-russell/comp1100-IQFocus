@@ -118,11 +118,11 @@ public enum PieceType {
     */
     public State getStateOnPiece(int x, int y, Orientation orientation) {
         int newx = x;
-        int newy = y;
-        switch (orientation){
-            case One:
-                newx = y;
-                newy = height - x;
+                int newy = y;
+                switch (orientation){
+                    case One:
+                        newx = y;
+                        newy = height - x;
                 break;
             case Two:
                 newx = length - x;
