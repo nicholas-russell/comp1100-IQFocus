@@ -34,9 +34,9 @@ public class Board extends Application {
     static final int BOARD_PADDING_LEFT = 41; // grey part of board on left
     static final int BOARD_PADDING_RIGHT = 43;
 
-    static final double BOARD_MARGIN_TOP = 0; // margin of board to top of screen
+    static final double BOARD_MARGIN_TOP = 50; // margin of board to top of screen
     static final int BOARD_MARGIN_BOTTOM = 20; // margin of board underneath
-    static final double BOARD_SCALE_FACTOR = 0.69; // scale factor NOTE: will scale everything else.
+    static final double BOARD_SCALE_FACTOR = 0.65; // scale factor NOTE: will scale everything else.
 
     // Class variables that are set upon initialisation functions
     double CHALLENGE_POS_X;
@@ -449,7 +449,7 @@ public class Board extends Application {
     public boolean xyOnBoard(double x, double y) {
         double errorMargin = 20;
         return x >= BOARD_X+BOARD_PADDING_LEFT*BOARD_SCALE_FACTOR-errorMargin && x <= (BOARD_X+BOARD_WIDTH)
-                && y >= BOARD_Y+BOARD_PADDING_TOP*BOARD_SCALE_FACTOR-errorMargin && y <= (BOARD_Y+BOARD_WIDTH);
+                && y >= BOARD_Y+BOARD_PADDING_TOP*BOARD_SCALE_FACTOR-errorMargin && y <= (BOARD_Y+BOARD_HEIGHT);
     }
 
     /**
