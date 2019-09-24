@@ -38,7 +38,6 @@ public class Piece_Test {
         String badTestPlacements[] = new String[]{ "a000b013c113d302e323f400g420h522i613j701",
                 "a513b130c502d002e020f401g721h101i713j332"
         };
-
         for(int i = 0; i < badTestPlacements.length; i++){
             placementToLocationTest(badTestPlacements[i], false);
         }
