@@ -20,6 +20,16 @@ public class Piece {
     }
 
     /**
+     *
+     *
+     * @param placement - placement string for Piece
+     * @return true if placementToLocation Returns correct location
+     */
+
+
+    public static boolean PieceCheck(String placement) { return false; }
+
+    /**
      * Takes in placement string and returns the PieceType enum
      * @param placement Placement string for piece
      * @return PieceType enum
@@ -54,6 +64,7 @@ public class Piece {
             default: return null;
         }
     }
+
 
     /**
      * Get location for placement
