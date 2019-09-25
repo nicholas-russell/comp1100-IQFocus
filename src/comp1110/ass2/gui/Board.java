@@ -47,6 +47,8 @@ public class Board extends Application {
     /* Scale factor for Board, will also scale everything else at the same time. */
     private static final double BOARD_SCALE_FACTOR = 0.65;
 
+    private static final String VERSION = "0.1";
+
     /* Class variables that are set upon initialisation functions */
     private double CHALLENGE_POS_X;
     private double CHALLENGE_POS_Y;
@@ -476,6 +478,14 @@ public class Board extends Application {
         // Reset board
 
         //Difficulty slider
+
+        // Version number
+        Text version = new Text("Version " + VERSION);
+        version.setFont(Font.font("Tahoma", 10));
+        version.setX(5);
+        version.setY(WINDOW_HEIGHT-10);
+        version.setFill(Color.GRAY);
+        controlNodes.add(version);
 
         controls.getChildren().addAll(controlNodes);
     }
