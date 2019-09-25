@@ -34,7 +34,7 @@ public class Piece {
      * @param placement Placement string for piece
      * @return PieceType enum
      */
-    public PieceType placementToPieceType(String placement) {
+    public static PieceType placementToPieceType(String placement) {
         switch (placement.substring(0,1)) {
             case "a": return PieceType.A;
             case "b": return PieceType.B;

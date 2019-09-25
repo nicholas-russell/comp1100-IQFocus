@@ -21,12 +21,12 @@ public class Piece_Test {
      */
     private void placementToLocationTest(String placement, Location expected) {
         Location out = Piece.placementToLocation(placement);
-        assertEquals(expected, out);
+        assertEquals(expected.toString(), out.toString());
     }
 
 
-    private void placementToPieceTypeTest(String placement, boolean expected){
-        boolean out = Piece.placementToPieceTypeCheck(placement);
+    private void placementToPieceTypeTest(String placement, PieceType expected){
+        PieceType out = Piece.placementToPieceType(placement);
         assertTrue("Input placement string '" + placement + "', expected " + expected + " but instead got " + out, out == expected);
     }
 
@@ -39,10 +39,8 @@ public class Piece_Test {
                 "a513b",
                 "a000b"
         };
-
-        for(int i = 0; i < goodTestPlacements.length; i++){
-            placementToLocationTest(goodTestPlacements[i],  new Location(5, 1));
-        }
+        placementToLocationTest(goodTestPlacements[0],  new Location(5, 1));
+        placementToLocationTest(goodTestPlacements[1],  new Location(0, 0));
     }
 
     @Test
@@ -52,9 +50,8 @@ public class Piece_Test {
                 "a990",
                 "b993"
         };
-        for(int i = 0; i < badTestPlacements.length; i++){
-            placementToLocationTest(badTestPlacements[i], new Location(0, 0) );
-        }
+        placementToLocationTest(badTestPlacements[0], new Location(9, 9) );
+        placementToLocationTest(badTestPlacements[0], new Location(9, 9) );
     }
 
     @Test
@@ -64,8 +61,8 @@ public class Piece_Test {
                 "a000"
 
         };
-        placementToPieceTypeTest(goodTestPlacements[0], true);
-        placementToPieceTypeTest(goodTestPlacements[1], true);
+        placementToPieceTypeTest(goodTestPlacements[0], PieceType.A);
+        placementToPieceTypeTest(goodTestPlacements[1], PieceType.A);
     }
 
 
@@ -75,7 +72,7 @@ public class Piece_Test {
                 "b993",
                 "c586"
         };
-        placementToPieceTypeTest(badTestPlacements[0], false);
+        placementToPieceTypeTest(badTestPlacements[0], PieceType.B);
     }
 
 
