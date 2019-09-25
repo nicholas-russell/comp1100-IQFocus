@@ -5,11 +5,10 @@ import org.junit.Test;
 import org.junit.rules.Timeout;
 
 
-import static comp1110.ass2.TestUtility.*;
 import static junit.framework.TestCase.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class Piece_Test {
+public class PieceTest {
 
     // original duration < 0.15 sec -> 1 sec
     @Rule
