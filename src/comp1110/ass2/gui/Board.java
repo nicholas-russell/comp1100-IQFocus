@@ -296,7 +296,7 @@ public class Board extends Application {
             double[] offsets = Viewer.getOrientationOffsets(pieceType,orientation);
             double aX = SCALED_SQUARE_SIZE*offsets[0]*-1+getLayoutX();
             double aY = SCALED_SQUARE_SIZE*offsets[1]*-1+getLayoutY();
-            debugAddCircle(aX,aY);
+            //debugAddCircle(aX,aY);
             System.out.println("Dropped coordinates: " + aX + ", " + aY);
             if (!xyOnBoard(aX,aY)) {
                 System.out.println("Not on board");
