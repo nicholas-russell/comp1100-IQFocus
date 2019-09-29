@@ -2,6 +2,8 @@ package comp1110.ass2.gui;
 
 import comp1110.ass2.*;
 import javafx.application.Application;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
@@ -492,19 +494,30 @@ public class Board extends Application {
         title.setFill(Color.BLACK);
         controlNodes.add(title);
 
+        // Buttons
         HBox controlBox = new HBox();
-
-        controlBox.setLayoutX(CONTROLS_POS_X);
+        controlBox.setSpacing(40);
+        controlBox.setMinWidth(WINDOW_WIDTH);
         controlBox.setLayoutY(CONTROLS_POS_Y);
         controlBox.setAlignment(Pos.CENTER);
 
-        // New game button
-
         Button newGame = new Button("New Game");
-        controlBox.getChildren().add(newGame);
-        controlNodes.add(controlBox);
+        newGame.setPrefHeight(CONTROLS_HEIGHT);
+        newGame.setOnAction(e -> {
+            System.out.println("New Game!");
+        });
 
-        // Reset board
+
+        Button resetBoard = new Button("Reset Board");
+        resetBoard.setPrefHeight(CONTROLS_HEIGHT);
+        resetBoard.setOnAction(e -> {
+            System.out.println("Reset Board!");
+        });
+
+
+
+        controlBox.getChildren().addAll(newGame,resetBoard);
+        controlNodes.add(controlBox);
 
         //Difficulty slider
 
@@ -602,7 +615,7 @@ public class Board extends Application {
         CHALLENGE_POS_X = (WINDOW_WIDTH-BOARD_WIDTH)/4-1.5*SCALED_SQUARE_SIZE;
         CHALLENGE_POS_Y = BOARD_HEIGHT/2-1.5*SCALED_SQUARE_SIZE+BOARD_MARGIN_TOP;
         CONTROLS_POS_X = 0;
-        CONTROLS_POS_Y = BOARD_Y - CONTROLS_HEIGHT - 5;
+        CONTROLS_POS_Y = BOARD_Y - CONTROLS_HEIGHT - 10;
         BOARD_PADDING_LEFT_SCALED = BOARD_PADDING_LEFT*BOARD_SCALE_FACTOR;
         BOARD_PADDING_TOP_SCALED = BOARD_PADDING_TOP*BOARD_SCALE_FACTOR;
     }
@@ -622,16 +635,17 @@ public class Board extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         primaryStage.setTitle("FocusGame");
-        Scene scene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
         primaryStage.setResizable(false);
 
+        Scene scene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
+
         root.getChildren().addAll(
-                controls,
                 challengeSquares,
                 board,
                 boardPieces,
                 controlPieces,
-                errors
+                errors,
+                controls
         );
 
         setKeyEvents(scene);
