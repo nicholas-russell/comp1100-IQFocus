@@ -2,17 +2,12 @@ package comp1110.ass2.gui;
 
 import comp1110.ass2.*;
 import javafx.application.Application;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Slider;
-import javafx.scene.effect.DropShadow;
-import javafx.scene.effect.Effect;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
@@ -79,9 +74,9 @@ public class Board extends Application {
     private Pane boardPieces = new Pane();
     private Pane board = new Pane();
     private Pane errors = new Pane();
-    private Pane controlPieces = new Pane();
+    private Pane pieceTiles = new Pane();
     private Pane challengeSquares = new Pane();
-    private PieceTile[] controlImages = new PieceTile[10];
+    private PieceTile[] pieceTilesList = new PieceTile[10];
     private Group debugShapes = new Group();
 
     private FocusGame game = new FocusGame();
@@ -205,12 +200,18 @@ public class Board extends Application {
 
     class PieceTile extends ImageView {
 
+        // home position of pieces
         double xHome;
         double yHome;
+
+        // is the piece currently on the board
         boolean placed;
+
+        // Mouse positions
         double mX;
         double mY;
 
+        // PieceTile attributes
         PieceType pieceType;
         Orientation orientation;
         Location location;
@@ -224,85 +225,107 @@ public class Board extends Application {
             Image pieceImage = new Image(pieceFile);
             double imageHeight = pieceImage.getHeight();
             setImage(pieceImage);
-            setFitHeight(BOARD_SCALE_FACTOR*SQUARE_SCALE_FACTOR*imageHeight);
             setPreserveRatio(true);
+            setFitHeight(BOARD_SCALE_FACTOR*SQUARE_SCALE_FACTOR*imageHeight);
 
+            // get relevant homeLocation and set to false.
             double[] homeLocation = getHomeLocation(p);
             this.xHome = homeLocation[0];
             this.yHome = homeLocation[1];
-
-            this.placed = false;
-
             setLayoutX(xHome);
             setLayoutY(yHome);
+            this.placed = false;
 
             setOnMousePressed(e -> {
-                if (e.getClickCount() == 2) {
+                if (e.getClickCount() == 2) { // checks if it is a double click (to return it home)
                     snapToHome();
                 } else {
+                    // debug information
                     System.out.println("===============================");
                     System.out.println("NEW PIECE MOVEMENT");
                     System.out.println("You've pressed on " + pieceType.toString());
+
+                    // set mouse pointer location
                     mX = e.getSceneX();
                     mY = e.getSceneY();
+
+                    // sets currentPiece to this (allows for rotation to work)
                     currentPiece = this;
                 }
             });
 
-            /**
-             * Mouse dragging event
-             */
             setOnMouseDragged(e -> {
                 toFront();
+                // change in x and y position of mouse
                 double deltaX = e.getSceneX() - mX;
                 double deltaY = e.getSceneY() - mY;
+                // changes layout
                 setLayoutX(getLayoutX() + deltaX);
                 setLayoutY(getLayoutY() + deltaY);
+                // gets new mouse location
                 mX = e.getSceneX();
                 mY = e.getSceneY();
                 e.consume();
             });
             // Dragging ended
             setOnMouseReleased(e -> {
-                System.out.println("You've let go of " + pieceType.toString());
+                // tries to place it to the board
                 snapToBoard();
+                // changes the currentPiece back to null
                 currentPiece = null;
             });
         }
 
+        /**
+         * Attempts to place the piece given the x and y locations of it.
+         *
+         */
+
         private void snapToBoard() {
             String placement;
+
+            // offsets account for the orientation
             double[] offsets = Viewer.getOrientationOffsets(pieceType,orientation);
             double aX = SCALED_SQUARE_SIZE*offsets[0]*-1+getLayoutX();
             double aY = SCALED_SQUARE_SIZE*offsets[1]*-1+getLayoutY();
-            //debugAddCircle(aX,aY);
+
+            //debugAddCircle(aX,aY); -- uncomment if you'd like to see where the x/y location is
             System.out.println("Dropped coordinates: " + aX + ", " + aY);
+
             if (!xyOnBoard(aX,aY)) {
                 System.out.println("Not on board");
                 snapToHome();
             } else {
-                location = getLocationFromSceneXY(aX,aY);
+                location = getLocationFromSceneXY(aX,aY); // approximate location
+                // builds placement string
                 placement = pieceType.toString().toLowerCase() + location.getX() + location.getY() + orientation.toInt();
-                if (FocusGame.isPlacementStringValid(placement)) {
+                if (FocusGame.isPlacementStringValid(placement)) { // if valid, piece can be placed
                     System.out.println("Placement " + placement + " is valid.");
                     placePiece(new Piece(placement));
                     placed = true;
                     makePlacement(placement);
-                } else {
+                } else { // otherwise return home
                     System.out.println("Placement " + placement + " is NOT valid.");
                     snapToHome();
                 }
             }
         }
 
+        /**
+         * Places the piece back to its home state, and resets orientation
+         */
         private void snapToHome() {
             setLayoutX(xHome);
             setLayoutY(yHome);
             orientation = Orientation.Zero;
-            placed = false;
             setRotate(0);
+            placed = false;
         }
 
+        /**
+         * Places piece onto the board
+         * @param piece The Piece object built from a valid placement string
+         */
         private void placePiece(Piece piece) {
             this.placed = true;
             System.out.println(this.orientation);
@@ -311,6 +334,9 @@ public class Board extends Application {
             setLayoutY(BOARD_Y + BOARD_PADDING_TOP_SCALED+ SCALED_SQUARE_SIZE*(piece.getLocation().getY()+offsets[1]));
         }
 
+        /**
+         * Rotate piece and switch the orientation
+         */
         private void rotate() {
             if (orientation == Orientation.Zero) {
                 orientation = Orientation.One;
@@ -322,36 +348,8 @@ public class Board extends Application {
                 orientation = Orientation.Zero;
             }
             setRotate(orientation.toInt()*90);
-            System.out.println("New layout values:" + getLayoutX() + ", " + getLayoutY());
-
         }
 
-    }
-
-    /**
-     *  Returns JavaFX Text object for error, styled to be red and bold.
-     * @param text String that should be displayed for error.
-     * @return JavaFX Text object styled as error.
-     */
-    private Text getErrorText(String text) {
-        Text error = new Text("ERROR: " + text);
-        error.setFont(Font.font("Tahoma", FontWeight.BOLD, 20));
-        error.setFill(Color.RED);
-        return error;
-    }
-
-    /**
-     * Draws error box onto viewer
-     * @param err Error string
-     */
-    private void drawErrorBox(String err) {
-        HBox errorBox = new HBox();
-        errorBox.getChildren().add(getErrorText(err));
-        errorBox.setAlignment(Pos.CENTER);
-        errorBox.setBackground(new Background(new BackgroundFill(Color.BLACK, CornerRadii.EMPTY, Insets.EMPTY)));
-        errorBox.setLayoutX(0);
-        errorBox.setLayoutY(0);
-        errors.getChildren().add(errorBox);
     }
 
     /**
@@ -382,6 +380,12 @@ public class Board extends Application {
         return new Location((int)Math.round(approxX),(int)Math.round(approxY));
     }
 
+    /**
+     * DEBUG ONLY
+     * Will place a circle of radius 10 at given x and y locations
+     * @param x -- X location of circle
+     * @param y -- Y location of circle
+     */
     private void debugAddCircle(double x, double y) {
         Circle circle = new Circle();
         circle.setCenterX(x);
@@ -449,7 +453,7 @@ public class Board extends Application {
     }
 
     /**
-     * Returns true if x/y location is on the board
+     * Returns true if x/y location is on the board on screen
      * @param x x location in window
      * @param y y location in window
      * @return true if it is on the board, false if not
@@ -461,9 +465,8 @@ public class Board extends Application {
     }
 
     /**
-     * TODO: need to implement relevant methods in FocusGame class.
      * Make a piece placement on the board logic
-     * @param placement
+     * @param placement valid placement string
      */
     private void makePlacement(String placement) {
         System.out.println("Making placement " + placement);
@@ -471,7 +474,6 @@ public class Board extends Application {
     }
 
     /**
-     * TODO
      * Makes game controls
      */
     private void makeControls() {
@@ -504,7 +506,6 @@ public class Board extends Application {
         controlNodes.add(difficulty);
         controlNodes.add(difficultyText);
 
-
         // Buttons
         HBox controlBox = new HBox();
         controlBox.setSpacing(40);
@@ -517,11 +518,10 @@ public class Board extends Application {
             System.out.println("New Game!");
         });
 
-
         Button resetBoard = new Button("Reset Board");
         resetBoard.setOnAction(e -> {
             System.out.println("Reset Board!");
-            for (PieceTile p : controlImages) {
+            for (PieceTile p : pieceTilesList) {
                 p.snapToHome();
             }
             debugShapes.getChildren().clear();
@@ -531,7 +531,6 @@ public class Board extends Application {
         newChallenge.setOnAction(e -> {
             System.out.println("New Challenge of difficulty " + difficulty.getValue());
         });
-
 
         controlBox.getChildren().addAll(newGame,resetBoard,newChallenge);
 
@@ -557,7 +556,8 @@ public class Board extends Application {
 
     /**
      * Loads board image and displays it
-     * @throws IOException
+     * Also sets instance fields for Board position and dimensions
+     * @throws IOException -- for Image
      */
     public void makeBoard() throws IOException {
         Image boardImage = new Image(new FileInputStream(URI_BASE + "board.png"));
@@ -574,17 +574,15 @@ public class Board extends Application {
     }
 
     /**
-     * Displays control pieces on screen
+     * Loads PieceTiles onto screen
      */
-    private void makeControlPieces() {
+    private void makePieceTiles() {
         int i = 0;
         for (PieceType p : PieceType.values()) {
-            controlImages[i] = new PieceTile(p);
+            pieceTilesList[i] = new PieceTile(p);
             i++;
         }
-
-
-        controlPieces.getChildren().addAll(controlImages);
+        pieceTiles.getChildren().addAll(pieceTilesList);
     }
 
     /**
@@ -615,7 +613,7 @@ public class Board extends Application {
     }
 
     /**
-     * Prints debug statements
+     * Prints debug statements on start up
      */
     private void debug() {
         System.out.println("DEBUG");
@@ -638,12 +636,16 @@ public class Board extends Application {
         SCALED_SQUARE_SIZE = BOARD_SCALE_FACTOR*SQUARE_SCALE_FACTOR*SQUARE_SIZE;
         CHALLENGE_POS_X = (WINDOW_WIDTH-BOARD_WIDTH)/4-1.5*SCALED_SQUARE_SIZE;
         CHALLENGE_POS_Y = BOARD_HEIGHT/2-1.5*SCALED_SQUARE_SIZE+BOARD_MARGIN_TOP;
-        CONTROLS_POS_X = 0;
         CONTROLS_POS_Y = BOARD_Y - CONTROLS_HEIGHT - 10;
         BOARD_PADDING_LEFT_SCALED = BOARD_PADDING_LEFT*BOARD_SCALE_FACTOR;
         BOARD_PADDING_TOP_SCALED = BOARD_PADDING_TOP*BOARD_SCALE_FACTOR;
     }
 
+    /**
+     * Sets key events for scene
+     * Z - used to rotate pieces
+     * @param scene Scene to set events on
+     */
     private void setKeyEvents(Scene scene) {
         scene.setOnKeyPressed(e -> {
             KeyCode key = e.getCode();
@@ -667,7 +669,7 @@ public class Board extends Application {
                 challengeSquares,
                 board,
                 boardPieces,
-                controlPieces,
+                pieceTiles,
                 errors,
                 controls,
                 debugShapes
@@ -678,7 +680,7 @@ public class Board extends Application {
         initVariables();
         makeControls();
         debug();
-        makeControlPieces();
+        makePieceTiles();
         makeChallenge("RRRBWBBRB");
         primaryStage.setScene(scene);
         primaryStage.show();
