@@ -495,6 +495,26 @@ public class Board extends Application {
         title.setFill(Color.BLACK);
         controlNodes.add(title);
 
+        //Difficulty slider
+        Text difficultyText = new Text("Difficulty");
+        difficultyText.setLayoutY(CHALLENGE_POS_Y+SCALED_SQUARE_SIZE*3+20);
+        difficultyText.setFont(new Font("Tahoma", 15));
+        difficultyText.setLayoutX(CHALLENGE_POS_X+(SCALED_SQUARE_SIZE*3-difficultyText.getLayoutBounds().getWidth())/2);
+        Slider difficulty = new Slider();
+        difficulty.setMin(1);
+        difficulty.setMax(3);
+        difficulty.setValue(1);
+        difficulty.setLayoutX(CHALLENGE_POS_X);
+        difficulty.setLayoutY(CHALLENGE_POS_Y+SCALED_SQUARE_SIZE*3+30);
+        difficulty.setShowTickMarks(true);
+        difficulty.setShowTickLabels(true);
+        difficulty.setMajorTickUnit(1);
+        difficulty.setMinorTickCount(0);
+        difficulty.setSnapToTicks(true);
+        controlNodes.add(difficulty);
+        controlNodes.add(difficultyText);
+
+
         // Buttons
         HBox controlBox = new HBox();
         controlBox.setSpacing(40);
@@ -515,7 +535,7 @@ public class Board extends Application {
 
         Button newChallenge = new Button("New Challenge");
         newChallenge.setOnAction(e -> {
-            System.out.println("New Challenge!");
+            System.out.println("New Challenge of difficulty " + difficulty.getValue());
         });
 
 
@@ -528,22 +548,6 @@ public class Board extends Application {
         }
 
         controlNodes.add(controlBox);
-
-        //Difficulty slider
-        Slider difficulty = new Slider();
-        difficulty.setMin(1);
-        difficulty.setMax(3);
-        difficulty.setValue(1);
-        difficulty.setLayoutX(CHALLENGE_POS_X);
-        difficulty.setLayoutY(CHALLENGE_POS_Y+SCALED_SQUARE_SIZE*3+10);
-        difficulty.setShowTickMarks(true);
-        difficulty.setShowTickLabels(true);
-        difficulty.setMajorTickUnit(1);
-        difficulty.setMinorTickCount(0);
-        difficulty.setSnapToTicks(true);
-
-
-        controlNodes.add(difficulty);
 
 
         // Version number
