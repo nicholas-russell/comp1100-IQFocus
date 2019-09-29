@@ -478,7 +478,7 @@ public class Board extends Application {
     private void makePlacement(String placement) {
         System.out.println("Making placement " + placement);
         game.addPieceToBoard(placement);
-        checkCompletion();
+        //checkCompletion(); // -- always returning true until method implemented in FocusGame
     }
 
     /**
