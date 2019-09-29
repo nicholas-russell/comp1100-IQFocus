@@ -291,10 +291,9 @@ public class Board extends Application {
                 placement = pieceType.toString().toLowerCase() + location.getX() + location.getY() + orientation.toInt();
                 if (FocusGame.isPlacementStringValid(placement)) {
                     System.out.println("Placement " + placement + " is valid.");
-                    setLayoutX(BOARD_X + BOARD_PADDING_LEFT_SCALED + location.getX()*SCALED_SQUARE_SIZE);
-                    setLayoutY(BOARD_Y + BOARD_PADDING_TOP_SCALED+ location.getY()*SCALED_SQUARE_SIZE);
-                    this.placed = true;
+                    placePiece(new Piece(placement));
                     makePlacement(placement);
+
                 } else {
                     System.out.println("Placement " + placement + " is NOT valid.");
                     snapToHome();
@@ -308,6 +307,15 @@ public class Board extends Application {
             orientation = Orientation.Zero;
             setRotate(0);
         }
+
+        private void placePiece(Piece piece) {
+            this.placed = true;
+            double[] offsets = Viewer.getOrientationOffsets(piece.getPieceType(),piece.getOrientation());
+            System.out.println(offsets[0] + " " + offsets[1]);
+            setLayoutX(BOARD_X + BOARD_PADDING_LEFT_SCALED + SCALED_SQUARE_SIZE*(piece.getLocation().getX()+offsets[0]));
+            setLayoutY(BOARD_Y + BOARD_PADDING_TOP_SCALED+ SCALED_SQUARE_SIZE*(piece.getLocation().getY()+offsets[1]));
+        }
+
 
         private void rotate() {
             setRotate(orientation.toInt()*90);
