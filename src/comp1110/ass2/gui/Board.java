@@ -54,16 +54,15 @@ public class Board extends Application {
     /* Scale factor for Board, will also scale everything else at the same time. */
     private static final double BOARD_SCALE_FACTOR = 0.65;
 
-    private static final double CONTROLS_HEIGHT = 30;
+    private static final double CONTROLS_HEIGHT = 30; // height of controls
 
     private static final String VERSION = "0.1";
 
-    private PieceTile currentPiece;
+    private PieceTile currentPiece; // current piece selected
 
     /* Class variables that are set upon initialisation functions */
     private double CHALLENGE_POS_X;
     private double CHALLENGE_POS_Y;
-    private double CONTROLS_POS_X;
     private double CONTROLS_POS_Y;
     private double BOARD_X;
     private double BOARD_Y;
@@ -87,7 +86,7 @@ public class Board extends Application {
 
     private FocusGame game = new FocusGame();
 
-    /* challangeSquare is a 9 character String, with each character corresponding to the
+    /* challengeSquare is a 9 character String, with each character corresponding to the
     state of one of the squares that makes up the central 3x3 challange square
     *
     *                         [0][1][2]
@@ -98,25 +97,18 @@ public class Board extends Application {
 
     // FIXME Task 8: Implement challenges (you may use challenges and assets provided for you in comp1110.ass2.gui.assets: sq-b.png, sq-g.png, sq-r.png & sq-w.png)
     public String challengeEncoding (String challenge, String boardState) {
-
         //Example of what encoding would look like, also need to covert Char to Variable Colour, B -> Blue, R -> Red
         char[] encodingArray = challenge.toCharArray();
-        /**  ChallengeSquare0 = encodingArray[0];
-         *
-
-         */
-
+        // ChallengeSquare0 = encodingArray[0];
         //When Board Updates (e.g piece is placed) the squares of the challenge square are checked against the
         //stored states encoded above. If all states match should end the game and print victory Screen/message.
-
         return challenge;
         }
-
     public String getChallenge() {
        return challenge;
     }
 
-    /* Implementing Challeges from TestUtility.
+    /* Implementing Challegnes from TestUtility.
 
     *How encoding the objective central 9 squares work. The Objective 3x3 square is split into the 3 rows. Starting from
     * 0, each square is encoded with a number for example 0, then the square to the right is encoded with the next
@@ -129,15 +121,10 @@ public class Board extends Application {
     * Then we can implement challenges by assigning colours to the corresponding squares of the objective square.
     *
     *       This encoding design is provided in the Assets folder under the file challenge_encoding.png
-    *
-
-
      */
 
     // FIXME Task 10: Implement hints
     public class hints {
-
-
     }
 
     /* When the User holds down the "/" key, they are suppose to "see" one or more boardPieces they can play to help them
@@ -148,8 +135,6 @@ public class Board extends Application {
     * G or D.
     *
     * Second Method would be to somehow highlight the piece, outlining or distinguishing it from the other boardPieces.
-    *
-    *
     */
 
     // FIXME Task 11: Generate interesting challenges (each challenge may have just one solution)
@@ -158,8 +143,6 @@ public class Board extends Application {
     private String[] pack = new String[9];
 
     public String challengeGenerator (int difficulty) {
-
-
         //Generate Completely Random String
         if (difficulty == 0){
             for(int j = 0; j < 9; j++){
@@ -168,11 +151,7 @@ public class Board extends Application {
             }
             challenge = pack[0] + pack[1] + pack[2] + pack[3] + pack[4] + pack[5] + pack[6] + pack[7] + pack[8];
             return challenge;
-
-
         }
-
-
         if (difficulty == 1) {
             //Generate challenge
 
@@ -182,8 +161,6 @@ public class Board extends Application {
             return challenge;
         }
         if (difficulty == 2){
-
-
             return challenge;
         }
 
@@ -208,9 +185,7 @@ public class Board extends Application {
 
     //Generates a random color, random numbers 0-3 corresponding to one of the 4 colors states
     private String generateRandomColor() {
-
         int g = randomThing.nextInt(4);
-
         switch (g) {
             case 0:
                 return "B";
@@ -273,7 +248,10 @@ public class Board extends Application {
                     currentPiece = this;
                 }
             });
-            // Dragging
+
+            /**
+             * Mouse dragging event
+             */
             setOnMouseDragged(e -> {
                 toFront();
                 double deltaX = e.getSceneX() - mX;
