@@ -6,7 +6,9 @@ import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -249,6 +251,9 @@ public class Board extends Application {
                     mX = e.getSceneX();
                     mY = e.getSceneY();
 
+                    // make translucent for dragging
+                    setOpacity(0.6);
+
                     // sets currentPiece to this (allows for rotation to work)
                     currentPiece = this;
                 }
@@ -273,6 +278,8 @@ public class Board extends Application {
                 snapToBoard();
                 // changes the currentPiece back to null
                 currentPiece = null;
+                // make solid again
+                setOpacity(1.0);
             });
         }
 
@@ -471,6 +478,7 @@ public class Board extends Application {
     private void makePlacement(String placement) {
         System.out.println("Making placement " + placement);
         game.addPieceToBoard(placement);
+        checkCompletion();
     }
 
     /**
@@ -514,20 +522,12 @@ public class Board extends Application {
         controlBox.setAlignment(Pos.CENTER);
 
         Button newGame = new Button("New Game");
-        newGame.setOnAction(e -> {
-            System.out.println("New Game!");
-        });
+        newGame.setOnAction(e -> newGame());
 
         Button resetBoard = new Button("Reset Board");
-        resetBoard.setOnAction(e -> {
-            System.out.println("Reset Board!");
-            for (PieceTile p : pieceTilesList) {
-                p.snapToHome();
-            }
-            debugShapes.getChildren().clear();
-        });
+        resetBoard.setOnAction(e -> resetBoard());
 
-        Button newChallenge = new Button("New Challenge");
+        Button newChallenge = new Button("Random Challenge");
         newChallenge.setOnAction(e -> {
             System.out.println("New Challenge of difficulty " + difficulty.getValue());
         });
@@ -590,6 +590,7 @@ public class Board extends Application {
      * @param challengeString 9 character challenge string
      */
     private void makeChallenge(String challengeString) {
+        challengeSquares.getChildren().clear();
         char[] challengeChar = challengeString.toCharArray();
         int row = 0;
         int col = 0;
@@ -658,6 +659,42 @@ public class Board extends Application {
         });
     }
 
+    /**
+     * TODO
+     * Check if the challenge has been completed
+     */
+    private void checkCompletion() {
+        //if game.checkCompletion() -> show congratulating message
+        board.setOpacity(0.5);
+        pieceTiles.setOpacity(0.5);
+        Alert completed = new Alert(Alert.AlertType.NONE,"Congratulations! You completed this challenge! Would you like to start a new game?", ButtonType.NEXT,ButtonType.NO);
+        completed.setTitle("Challenge complete");
+        completed.showAndWait();
+    }
+
+    /**
+     * TODO
+     * Start a new game
+     */
+    private void newGame() {
+        //game.newGame
+        //makeChallenge(game.getChallenge);
+        resetBoard();
+        makeChallenge("RRRBWBBRB");
+    }
+
+    /**
+     * TODO
+     * Reset board state
+     */
+    private void resetBoard() {
+        //game.resetBoard
+        for (PieceTile p : pieceTilesList) {
+            p.snapToHome();
+        }
+        debugShapes.getChildren().clear();
+    }
+
     @Override
     public void start(Stage primaryStage) throws Exception {
         primaryStage.setTitle("IQ Focus Puzzle");
@@ -678,10 +715,12 @@ public class Board extends Application {
         setKeyEvents(scene);
         makeBoard();
         initVariables();
-        makeControls();
-        debug();
         makePieceTiles();
-        makeChallenge("RRRBWBBRB");
+        makeControls();
+        debug(); // -- comment out in production
+
+        newGame();
+
         primaryStage.setScene(scene);
         primaryStage.show();
     }
