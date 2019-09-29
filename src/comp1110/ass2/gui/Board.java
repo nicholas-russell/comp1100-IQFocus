@@ -226,6 +226,7 @@ public class Board extends Application {
     }
 
     //==========================================================================//
+    // Nicks code begins here
 
     class PieceTile extends ImageView {
 
