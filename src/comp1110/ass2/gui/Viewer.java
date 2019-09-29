@@ -164,7 +164,7 @@ public class Viewer extends Application {
                     case F:
                     case J:
                         offsets[0] = -1;
-                        offsets[0] = 1;
+                        offsets[1] = 1;
                         break;
                     case H:
                     case I:

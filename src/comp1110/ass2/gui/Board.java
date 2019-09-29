@@ -11,11 +11,14 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Slider;
+import javafx.scene.effect.DropShadow;
+import javafx.scene.effect.Effect;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
@@ -79,7 +82,8 @@ public class Board extends Application {
     private Pane errors = new Pane();
     private Pane controlPieces = new Pane();
     private Pane challengeSquares = new Pane();
-    private ImageView[] controlImages = new ImageView[10];
+    private PieceTile[] controlImages = new PieceTile[10];
+    private Group debugShapes = new Group();
 
     private FocusGame game = new FocusGame();
 
@@ -289,17 +293,21 @@ public class Board extends Application {
 
         private void snapToBoard() {
             String placement;
-            System.out.println("Dropped coordinates: " + getLayoutX() + ", " + getLayoutY());
-            if (!xyOnBoard(getLayoutX(),getLayoutY())) {
+            double[] offsets = Viewer.getOrientationOffsets(pieceType,orientation);
+            double aX = SCALED_SQUARE_SIZE*offsets[0]*-1+getLayoutX();
+            double aY = SCALED_SQUARE_SIZE*offsets[1]*-1+getLayoutY();
+            debugAddCircle(aX,aY);
+            System.out.println("Dropped coordinates: " + aX + ", " + aY);
+            if (!xyOnBoard(aX,aY)) {
+                System.out.println("Not on board");
                 snapToHome();
             } else {
-                location = getLocationFromSceneXY(getLayoutX(),getLayoutY());
+                location = getLocationFromSceneXY(aX,aY);
                 placement = pieceType.toString().toLowerCase() + location.getX() + location.getY() + orientation.toInt();
                 if (FocusGame.isPlacementStringValid(placement)) {
                     System.out.println("Placement " + placement + " is valid.");
                     placePiece(new Piece(placement));
                     makePlacement(placement);
-
                 } else {
                     System.out.println("Placement " + placement + " is NOT valid.");
                     snapToHome();
@@ -322,9 +330,7 @@ public class Board extends Application {
             setLayoutY(BOARD_Y + BOARD_PADDING_TOP_SCALED+ SCALED_SQUARE_SIZE*(piece.getLocation().getY()+offsets[1]));
         }
 
-
         private void rotate() {
-            System.out.println("Rotating from " + orientation.toInt());
             if (orientation == Orientation.Zero) {
                 orientation = Orientation.One;
             } else if (orientation == Orientation.One) {
@@ -335,7 +341,7 @@ public class Board extends Application {
                 orientation = Orientation.Zero;
             }
             setRotate(orientation.toInt()*90);
-            System.out.println("Now: " + orientation.toInt());
+            System.out.println("New layout values:" + getLayoutX() + ", " + getLayoutY());
 
         }
 
@@ -393,6 +399,15 @@ public class Board extends Application {
         double approxY = (mY-BOARD_Y-BOARD_PADDING_TOP_SCALED)/SCALED_SQUARE_SIZE;
         System.out.println("Approx location: " + Math.round(approxX) + ", " + Math.round(approxY));
         return new Location((int)Math.round(approxX),(int)Math.round(approxY));
+    }
+
+    private void debugAddCircle(double x, double y) {
+        Circle circle = new Circle();
+        circle.setCenterX(x);
+        circle.setCenterY(y);
+        circle.setRadius(10);
+        circle.setFill(Color.BLACK);
+        debugShapes.getChildren().add(circle);
     }
 
     /**
@@ -525,6 +540,10 @@ public class Board extends Application {
         Button resetBoard = new Button("Reset Board");
         resetBoard.setOnAction(e -> {
             System.out.println("Reset Board!");
+            for (PieceTile p : controlImages) {
+                p.snapToHome();
+            }
+            debugShapes.getChildren().clear();
         });
 
         Button newChallenge = new Button("New Challenge");
@@ -582,6 +601,7 @@ public class Board extends Application {
             controlImages[i] = new PieceTile(p);
             i++;
         }
+
 
         controlPieces.getChildren().addAll(controlImages);
     }
@@ -668,7 +688,8 @@ public class Board extends Application {
                 boardPieces,
                 controlPieces,
                 errors,
-                controls
+                controls,
+                debugShapes
         );
 
         setKeyEvents(scene);
