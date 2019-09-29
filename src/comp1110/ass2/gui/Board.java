@@ -7,6 +7,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
@@ -35,17 +36,19 @@ public class Board extends Application {
     private static final double SQUARE_SCALE_FACTOR = 0.70; // factor to scale to full size board
 
     private static final int WINDOW_WIDTH = 933;
-    private static final int WINDOW_HEIGHT = 650;
+    private static final int WINDOW_HEIGHT = 700;
 
     private static final int BOARD_PADDING_TOP = 87; // grey part of board on top
     private static final int BOARD_PADDING_LEFT = 41; // grey part of board on left
     private static final int BOARD_PADDING_RIGHT = 43; // grey part of board on right -- not equal to left
 
-    private static final int BOARD_MARGIN_TOP = 50; // margin of board to top of screen
+    private static final int BOARD_MARGIN_TOP = 100; // margin of board to top of screen
     private static final int BOARD_MARGIN_BOTTOM = 20; // margin of board underneath
 
     /* Scale factor for Board, will also scale everything else at the same time. */
     private static final double BOARD_SCALE_FACTOR = 0.65;
+
+    private static final double CONTROLS_HEIGHT = 30;
 
     private static final String VERSION = "0.1";
 
@@ -54,6 +57,8 @@ public class Board extends Application {
     /* Class variables that are set upon initialisation functions */
     private double CHALLENGE_POS_X;
     private double CHALLENGE_POS_Y;
+    private double CONTROLS_POS_X;
+    private double CONTROLS_POS_Y;
     private double BOARD_X;
     private double BOARD_Y;
     private double BOARD_HEIGHT;
@@ -482,12 +487,22 @@ public class Board extends Application {
         // Board Title
         Text title = new Text("IQ Focus Puzzle");
         title.setFont(Font.font("Tahoma", FontWeight.NORMAL, FontPosture.ITALIC, 40));
-        title.setY(BOARD_Y-10);
+        title.setY(45);
         title.setX(WINDOW_WIDTH/2-title.getLayoutBounds().getWidth()/2);
         title.setFill(Color.BLACK);
         controlNodes.add(title);
 
+        HBox controlBox = new HBox();
+
+        controlBox.setLayoutX(CONTROLS_POS_X);
+        controlBox.setLayoutY(CONTROLS_POS_Y);
+        controlBox.setAlignment(Pos.CENTER);
+
         // New game button
+
+        Button newGame = new Button("New Game");
+        controlBox.getChildren().add(newGame);
+        controlNodes.add(controlBox);
 
         // Reset board
 
@@ -557,7 +572,7 @@ public class Board extends Application {
         Text challengeTitle = new Text("Challenge");
         challengeTitle.setFont(Font.font("Tahoma", FontWeight.BOLD, 20));
         challengeTitle.setFill(Color.BLACK);
-        challengeTitle.setX(CHALLENGE_POS_X);
+        challengeTitle.setX(CHALLENGE_POS_X+(SCALED_SQUARE_SIZE*3-challengeTitle.getLayoutBounds().getWidth())/2);
         challengeTitle.setY(CHALLENGE_POS_Y-10);
         challengeSquares.getChildren().add(challengeTitle);
     }
@@ -585,7 +600,9 @@ public class Board extends Application {
     public void initVariables() {
         SCALED_SQUARE_SIZE = BOARD_SCALE_FACTOR*SQUARE_SCALE_FACTOR*SQUARE_SIZE;
         CHALLENGE_POS_X = (WINDOW_WIDTH-BOARD_WIDTH)/4-1.5*SCALED_SQUARE_SIZE;
-        CHALLENGE_POS_Y = BOARD_HEIGHT/2-1.5*SCALED_SQUARE_SIZE;
+        CHALLENGE_POS_Y = BOARD_HEIGHT/2-1.5*SCALED_SQUARE_SIZE+BOARD_MARGIN_TOP;
+        CONTROLS_POS_X = 0;
+        CONTROLS_POS_Y = BOARD_Y - CONTROLS_HEIGHT - 5;
         BOARD_PADDING_LEFT_SCALED = BOARD_PADDING_LEFT*BOARD_SCALE_FACTOR;
         BOARD_PADDING_TOP_SCALED = BOARD_PADDING_TOP*BOARD_SCALE_FACTOR;
     }
@@ -606,6 +623,7 @@ public class Board extends Application {
     public void start(Stage primaryStage) throws Exception {
         primaryStage.setTitle("FocusGame");
         Scene scene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
+        primaryStage.setResizable(false);
 
         root.getChildren().addAll(
                 controls,
