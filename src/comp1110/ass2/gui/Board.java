@@ -49,6 +49,8 @@ public class Board extends Application {
 
     private static final String VERSION = "0.1";
 
+    private PieceTile currentPiece;
+
     /* Class variables that are set upon initialisation functions */
     private double CHALLENGE_POS_X;
     private double CHALLENGE_POS_Y;
@@ -261,6 +263,7 @@ public class Board extends Application {
                     System.out.println("You've pressed on " + pieceType.toString());
                     mX = e.getSceneX();
                     mY = e.getSceneY();
+                    currentPiece = this;
                 }
             });
             // Dragging
@@ -278,6 +281,7 @@ public class Board extends Application {
             setOnMouseReleased(e -> {
                 System.out.println("You've let go of " + pieceType.toString());
                 snapToBoard();
+                currentPiece = null;
             });
         }
 
@@ -310,15 +314,15 @@ public class Board extends Application {
 
         private void placePiece(Piece piece) {
             this.placed = true;
+            System.out.println(this.orientation);
             double[] offsets = Viewer.getOrientationOffsets(piece.getPieceType(),piece.getOrientation());
-            System.out.println(offsets[0] + " " + offsets[1]);
             setLayoutX(BOARD_X + BOARD_PADDING_LEFT_SCALED + SCALED_SQUARE_SIZE*(piece.getLocation().getX()+offsets[0]));
             setLayoutY(BOARD_Y + BOARD_PADDING_TOP_SCALED+ SCALED_SQUARE_SIZE*(piece.getLocation().getY()+offsets[1]));
         }
 
 
         private void rotate() {
-            setRotate(orientation.toInt()*90);
+            System.out.println("Rotating from " + orientation.toInt());
             if (orientation == Orientation.Zero) {
                 orientation = Orientation.One;
             } else if (orientation == Orientation.One) {
@@ -328,6 +332,8 @@ public class Board extends Application {
             } else {
                 orientation = Orientation.Zero;
             }
+            setRotate(orientation.toInt()*90);
+            System.out.println("Now: " + orientation.toInt());
 
         }
 
@@ -584,6 +590,18 @@ public class Board extends Application {
         BOARD_PADDING_TOP_SCALED = BOARD_PADDING_TOP*BOARD_SCALE_FACTOR;
     }
 
+    private void setKeyEvents(Scene scene) {
+        scene.setOnKeyPressed(e -> {
+            KeyCode key = e.getCode();
+            if (key == KeyCode.Z) {
+                if (currentPiece != null) {
+                    currentPiece.rotate();
+                }
+                e.consume();
+            }
+        });
+    }
+
     @Override
     public void start(Stage primaryStage) throws Exception {
         primaryStage.setTitle("FocusGame");
@@ -598,6 +616,7 @@ public class Board extends Application {
                 errors
         );
 
+        setKeyEvents(scene);
         makeBoard();
         initVariables();
         makeControls();
