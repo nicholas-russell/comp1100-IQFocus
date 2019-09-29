@@ -256,12 +256,6 @@ public class Board extends Application {
             setLayoutX(xHome);
             setLayoutY(yHome);
 
-            // Dragging beginning
-            setOnScroll(e -> {
-                System.out.println("You're rotating piece " + pieceType.toString());
-                rotate();
-                e.consume();
-            });
             setOnMousePressed(e -> {
                 if (e.getClickCount() == 2) {
                     snapToHome();
