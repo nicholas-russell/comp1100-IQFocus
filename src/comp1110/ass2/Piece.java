@@ -27,7 +27,11 @@ public class Piece {
      */
 
 
-    public static boolean PieceCheck(String placement) { return false; }
+    public static boolean placementToPieceTypeCheck(String placement) {
+        if(placementToPieceType(placement) == PieceType.A){
+            return true;
+        }
+        return false; }
 
     /**
      * Takes in placement string and returns the PieceType enum

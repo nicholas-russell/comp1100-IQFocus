@@ -195,6 +195,7 @@ public class FocusGame {
      */
     public static String getSolution(String challenge) {
         // FIXME Task 9: determine the solution to the game, given a particular challenge
+
         return null;
     }
 

@@ -158,6 +158,7 @@ public class Board extends Application {
 
         }
 
+        //Sorter
 
         if (difficulty == 1) {
             //Generate challenge
