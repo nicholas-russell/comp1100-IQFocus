@@ -307,6 +307,7 @@ public class Board extends Application {
                 if (FocusGame.isPlacementStringValid(placement)) {
                     System.out.println("Placement " + placement + " is valid.");
                     placePiece(new Piece(placement));
+                    placed = true;
                     makePlacement(placement);
                 } else {
                     System.out.println("Placement " + placement + " is NOT valid.");
@@ -319,6 +320,7 @@ public class Board extends Application {
             setLayoutX(xHome);
             setLayoutY(yHome);
             orientation = Orientation.Zero;
+            placed = false;
             setRotate(0);
         }
 
@@ -677,7 +679,7 @@ public class Board extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        primaryStage.setTitle("FocusGame");
+        primaryStage.setTitle("IQ Focus Puzzle");
         primaryStage.setResizable(false);
 
         Scene scene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
