@@ -10,6 +10,7 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
@@ -502,24 +503,48 @@ public class Board extends Application {
         controlBox.setAlignment(Pos.CENTER);
 
         Button newGame = new Button("New Game");
-        newGame.setPrefHeight(CONTROLS_HEIGHT);
         newGame.setOnAction(e -> {
             System.out.println("New Game!");
         });
 
 
         Button resetBoard = new Button("Reset Board");
-        resetBoard.setPrefHeight(CONTROLS_HEIGHT);
         resetBoard.setOnAction(e -> {
             System.out.println("Reset Board!");
         });
 
+        Button newChallenge = new Button("New Challenge");
+        newChallenge.setOnAction(e -> {
+            System.out.println("New Challenge!");
+        });
 
 
-        controlBox.getChildren().addAll(newGame,resetBoard);
+        controlBox.getChildren().addAll(newGame,resetBoard,newChallenge);
+
+        for (Node n : controlBox.getChildren()) {
+            if (n instanceof Button) {
+                ((Button) n).setPrefHeight(CONTROLS_HEIGHT);
+            }
+        }
+
         controlNodes.add(controlBox);
 
         //Difficulty slider
+        Slider difficulty = new Slider();
+        difficulty.setMin(1);
+        difficulty.setMax(3);
+        difficulty.setValue(1);
+        difficulty.setLayoutX(CHALLENGE_POS_X);
+        difficulty.setLayoutY(CHALLENGE_POS_Y+SCALED_SQUARE_SIZE*3+10);
+        difficulty.setShowTickMarks(true);
+        difficulty.setShowTickLabels(true);
+        difficulty.setMajorTickUnit(1);
+        difficulty.setMinorTickCount(0);
+        difficulty.setSnapToTicks(true);
+
+
+        controlNodes.add(difficulty);
+
 
         // Version number
         Text version = new Text("Version " + VERSION);
