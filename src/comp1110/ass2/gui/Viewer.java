@@ -115,6 +115,7 @@ public class Viewer extends Application {
         double[] offsets = new double[]{0, 0};
         switch (orientation) {
             case One:
+            case Three:
                 switch (pieceType) {
                     case A:
                     case D:
@@ -149,27 +150,6 @@ public class Viewer extends Application {
                     case J:
                         offsets[0] = 0;
                         offsets[1] = 0;
-                        break;
-                }
-                break;
-            case Three:
-                switch (pieceType) {
-                    case A:
-                    case D:
-                    case E:
-                    case G:
-                        offsets[0] = -0.5;
-                        offsets[1] = 0.5;
-                        break;
-                    case F:
-                    case J:
-                    case B:
-                    case C:
-                        offsets[0] = -1;
-                        offsets[1] = 1;
-                        break;
-                    case H:
-                    case I:
                         break;
                 }
                 break;

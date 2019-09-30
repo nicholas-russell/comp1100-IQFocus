@@ -371,9 +371,8 @@ public class Board extends Application {
     private ImageView getSquareImageFromFile(Character c) {
         InputStream squareFile = getClass().getResourceAsStream(URI_BASE + "sq-" + c.toString().toLowerCase() + ".png");
         Image squareImage = new Image(squareFile);
-        double imageHeight = squareImage.getHeight();
         ImageView squareImageView = new ImageView(squareImage);
-        squareImageView.setFitHeight(BOARD_SCALE_FACTOR*SQUARE_SCALE_FACTOR*imageHeight);
+        squareImageView.setFitHeight(SCALED_SQUARE_SIZE);
         squareImageView.setPreserveRatio(true);
         return squareImageView;
     }
@@ -718,6 +717,7 @@ public class Board extends Application {
         setKeyEvents(scene);
         makeBoard();
         initVariables();
+
         makePieceTiles();
         makeControls();
         debug(); // -- comment out in production
