@@ -18,8 +18,14 @@ public class FocusGame {
      * be the state Null(in fact not belongs to the board) and other state will
      * be Empty at the start(can be replaced by other colors).
      */
-    //public State[][] board = new State [5][9];
+
+
+    /**
+     * This is written by Yuhui Wang
+     * public State[][] board = new State [5][9];
+     */
     State[][] saved = new State[5][9];
+    String current = new String();
     public State[][] board = {
             {EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY},
             {EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY},
@@ -29,6 +35,7 @@ public class FocusGame {
     };
 
     /**
+     * This is written by Yuhui Wang
      * Determine whether a piece placement is well-formed according to the
      * following criteria:
      * - it consists of exactly four characters
@@ -59,6 +66,7 @@ public class FocusGame {
     }
 
     /**
+     * This is written by Yuhui Wang
      * Determine whether a placement string is well-formed:
      * - it consists of exactly N four-character piece placements (where N = 1 .. 10);
      * - each piece placement is well-formed
@@ -87,6 +95,7 @@ public class FocusGame {
     }
 
     /**
+     * This is written by Yuhui Wang
      * Determine whether a placement string is valid.
      * <p>
      * To be valid, the placement string must be:
@@ -106,6 +115,7 @@ public class FocusGame {
 
 
     /**
+     * This is written by Yuhui Wang
      * Given a string describing a placement of pieces and a string describing
      * a challenge, return a set of all possible next viable piece placements
      * which cover a specific board cell.
@@ -198,6 +208,7 @@ public class FocusGame {
     }
 
     /**
+     * This is written by Yuhui Wang
      * Set the board to the initial state , i.e. Change all the color state to
      * the Empty state.
      */
@@ -213,6 +224,7 @@ public class FocusGame {
     }
 
     /**
+     * This is written by Yuhui Wang
      * Save the current board state of the game.(An necessary function for a game and also important
      * method for finding solution)
      */
@@ -223,6 +235,7 @@ public class FocusGame {
     }
 
     /**
+     * This is written by Yuhui Wang
      * Load the current board state of the game.(An necessary function for a game and also important
      * method for finding solution)
      */
@@ -233,19 +246,22 @@ public class FocusGame {
     }
 
     /**
+     * This is written by Yuhui Wang
      * Give a placement and return the boardstate before the placement is put
      * on the board.
      *
      * @param placement The string placement represents the current board state
-     * @param piece     The piece placement need to be undone.
+     * @param piecePlacement    The piece placement need to be undone.
      */
-    public void undoOperation(String placement, String piece) {
+    public void undoOperation(String placement, String piecePlacement) {
         boolean result = true;
-        result = placement.contains(piece);
+        result = placement.contains(piecePlacement);
         if (result) {
-            Piece p = new Piece(piece);
+            Piece p = new Piece(piecePlacement);
             int x = p.getLocation().getX();
             int y = p.getLocation().getY();
+            current = placement.replaceAll(piecePlacement,"");
+
 
             for (int i = 0; i < 16; i++) {
                 if (y + i % 4 >= 0 && x + i / 4 >= 0 && y + i % 4 < 5 && x + i / 4 < 9 &&
@@ -257,14 +273,13 @@ public class FocusGame {
 
 
     /**
+     * This is written by Yuhui Wang
      * Put the pieces on the board and update the board state.Only when all the pieces in the placement string
      * can be added to board,if one piece cannot be added to the board then there will be no change.
      *
      * @param placement The placement string to add piece to board
      * @return True if all the pieces in the placement string can be added to the board.
      */
-
-
     public boolean addPiecesToBoard(String placement) {
         boolean result = true;
         result = isPlacementStringWellFormed(placement);
@@ -275,40 +290,22 @@ public class FocusGame {
                 int x = p.getLocation().getX();
                 int y = p.getLocation().getY();
 
-
-                /*If the boardstate is not EMPTY(overlap) or the piece is off the board,the pieces cannot be
-                  added to the board and the return result should be false.*/
-                for (int j = 0; j < 16; j++) {
-                    if ((p.getPieceType().getStateOnPiece(j / 4, j % 4, p.getOrientation()) != EMPTY)
-                            && (y + j % 4 < 0 || x + j / 4 < 0 || y + j % 4 >= 5 || x + j / 4 >= 9 ||
-                            (board[y + j % 4][x + j / 4] != EMPTY)))
-                        result = false;
-                }
-
-
-                if (result) {
-                    for (int j = 0; j < 16; j++) {
-                        if (y + j % 4 >= 0 && x + j / 4 >= 0 && y + j % 4 < 5 && x + j / 4 < 9 &&
-                                board[y + j % 4][x + j / 4] != NULL &&
-                                p.getPieceType().getStateOnPiece(j / 4, j % 4, p.getOrientation()) != EMPTY)
-                            board[y + j % 4][x + j / 4] = p.getPieceType().getStateOnPiece(j / 4, j % 4, p.getOrientation());
-                    }
-                }
-
+                if (checkPieceToBoard(placement.substring(i, i + 4)))
+                    addPieceToBoard(placement.substring(i, i + 4));
+                else
+                    result = false;
             }
         }
-
-        if (!result)
+        else
             loadState();
-        for (State[] row : board) {
-            for (State s : row) {
-                System.out.print(s.toString() + ",");
-            }
-            System.out.println("");
-        }
-        return result;
+            return result;
     }
 
+    /**
+     * This is written by Yuhui Wang
+     * @param piecePlacement The pieceplacement need to be checked before adding to board
+     * @return True if the piece can be added to board(without overlap or out-of-bounds
+     */
     public boolean checkPieceToBoard(String piecePlacement) {
         Piece p = new Piece(piecePlacement);
         int x = p.getLocation().getX();
@@ -324,8 +321,13 @@ public class FocusGame {
         return true;
     }
 
-
-    public void addPieceToBoard(String piecePlacement){
+    /**
+     * This is written by Yuhui Wang
+     * @param piecePlacement The pieceplacement need to be added to board
+     */
+    public void addPieceToBoard(String piecePlacement) {
+        current += piecePlacement;
+        System.out.println(current);
         Piece p = new Piece(piecePlacement);
         int x = p.getLocation().getX();
         int y = p.getLocation().getY();
@@ -336,20 +338,15 @@ public class FocusGame {
                     p.getPieceType().getStateOnPiece(j / 4, j % 4, p.getOrientation()) != EMPTY)
                 board[y + j % 4][x + j / 4] = p.getPieceType().getStateOnPiece(j / 4, j % 4, p.getOrientation());
         }
-        for (State[] row : board) {
-            for (State s : row) {
-                System.out.print(s.toString() + ",");
-            }
-            System.out.println("");
-        }
     }
 
     /**
+     * This is written by Yuhui Wang
      * Gets the placement string for the current Board state
      * @return placement string of current board state
      */
     public String getBoardPlacementString() {
-        return "";
+        return current;
     }
 
 }
