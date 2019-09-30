@@ -53,7 +53,7 @@ public class Board extends Application {
 
     private static final double CONTROLS_HEIGHT = 30; // height of controls
 
-    private static final String VERSION = "0.1";
+    private static final String VERSION = "0.2";
 
     private PieceTile currentPiece; // current piece selected
 
@@ -240,6 +240,9 @@ public class Board extends Application {
 
             setOnMousePressed(e -> {
                 if (e.getClickCount() == 2) { // checks if it is a double click (to return it home)
+                    if (placed) {
+                        //game.removePiece(p)
+                    }
                     snapToHome();
                 } else {
                     // debug information
