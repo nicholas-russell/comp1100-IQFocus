@@ -240,6 +240,9 @@ public class Board extends Application {
 
             setOnMousePressed(e -> {
                 if (e.getClickCount() == 2) { // checks if it is a double click (to return it home)
+                    if (placed) {
+                        //game.removePiece(p)
+                    }
                     snapToHome();
                 } else {
                     // debug information
