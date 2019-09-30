@@ -24,7 +24,7 @@ public class FocusGameTest {
 
     private void checkResult(String in, boolean expected) {
         game.resetBoard();
-        boolean out = game.addPieceToBoard(in);
+        boolean out = game.addPiecesToBoard(in);
         assertTrue("Input was '" + in + "', expected " +
                 expected + " but got " + out, out == expected);
     }
