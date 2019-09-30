@@ -336,5 +336,20 @@ public class FocusGame {
                     p.getPieceType().getStateOnPiece(j / 4, j % 4, p.getOrientation()) != EMPTY)
                 board[y + j % 4][x + j / 4] = p.getPieceType().getStateOnPiece(j / 4, j % 4, p.getOrientation());
         }
+        for (State[] row : board) {
+            for (State s : row) {
+                System.out.print(s.toString() + ",");
+            }
+            System.out.println("");
+        }
     }
+
+    /**
+     * Gets the placement string for the current Board state
+     * @return placement string of current board state
+     */
+    public String getBoardPlacementString() {
+        return "";
+    }
+
 }

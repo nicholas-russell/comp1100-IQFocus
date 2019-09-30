@@ -217,6 +217,7 @@ public class Board extends Application {
         PieceType pieceType;
         Orientation orientation;
         Location location;
+        String placement;
 
         PieceTile(PieceType p) {
 
@@ -240,9 +241,6 @@ public class Board extends Application {
 
             setOnMousePressed(e -> {
                 if (e.getClickCount() == 2) { // checks if it is a double click (to return it home)
-                    if (placed) {
-                        //game.removePiece(p)
-                    }
                     snapToHome();
                 } else {
                     // debug information
@@ -309,7 +307,7 @@ public class Board extends Application {
                 location = getLocationFromSceneXY(aX,aY); // approximate location
                 // builds placement string
                 placement = pieceType.toString().toLowerCase() + location.getX() + location.getY() + orientation.toInt();
-                if (FocusGame.isPlacementStringValid(placement)) { // if valid, piece can be placed
+                if (game.checkPieceToBoard(placement)) { // if valid, piece can be placed
                     System.out.println("Placement " + placement + " is valid.");
                     placePiece(new Piece(placement));
                     placed = true;
@@ -329,6 +327,9 @@ public class Board extends Application {
             setLayoutY(yHome);
             orientation = Orientation.Zero;
             setRotate(0);
+            if (placed) {
+                game.undoOperation(game.getBoardPlacementString(),placement);
+            }
             placed = false;
         }
 
@@ -687,11 +688,10 @@ public class Board extends Application {
     }
 
     /**
-     * TODO
      * Reset board state
      */
     private void resetBoard() {
-        //game.resetBoard
+        game.resetBoard();
         for (PieceTile p : pieceTilesList) {
             p.snapToHome();
         }
