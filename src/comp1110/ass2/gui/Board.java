@@ -292,6 +292,10 @@ public class Board extends Application {
                 mX = e.getSceneX();
                 mY = e.getSceneY();
                 e.consume();
+                if (placed) {
+                    game.undoOperation(game.getBoardPlacementString(),placement);
+                    placement = null;
+                }
             });
             // Dragging ended
             setOnMouseReleased(e -> {
@@ -309,8 +313,6 @@ public class Board extends Application {
          */
 
         private void snapToBoard() {
-            //String placement;
-
             // offsets account for the orientation
             double[] offsets = Viewer.getOrientationOffsets(pieceType,orientation);
             double aX = SCALED_SQUARE_SIZE*offsets[0]*-1+getLayoutX();
@@ -349,6 +351,7 @@ public class Board extends Application {
             if (placed) {
                 System.out.println("flag");
                 game.undoOperation(game.getBoardPlacementString(),placement);
+                placement = null;
             }
             System.out.println(game.getBoardPlacementString());;
             placed = false;
