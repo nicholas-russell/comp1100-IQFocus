@@ -55,7 +55,6 @@ public class Board extends Application {
 
     private static final int BOARD_PADDING_TOP = 87; // grey part of board on top
     private static final int BOARD_PADDING_LEFT = 41; // grey part of board on left
-    private static final int BOARD_PADDING_RIGHT = 43; // grey part of board on right -- not equal to left
 
     private static final int BOARD_MARGIN_TOP = 100; // margin of board to top of screen
     private static final int BOARD_MARGIN_BOTTOM = 20; // margin of board underneath
@@ -83,8 +82,6 @@ public class Board extends Application {
     private double BOARD_HEIGHT;
     private double BOARD_WIDTH;
     private double SCALED_SQUARE_SIZE;
-    private double BOARD_PADDING_LEFT_SCALED;
-    private double BOARD_PADDING_TOP_SCALED;
 
     private static final String URI_BASE = "assets/";
 
@@ -370,8 +367,8 @@ public class Board extends Application {
             this.placed = true;
             System.out.println(this.orientation);
             double[] offsets = Viewer.getOrientationOffsets(piece.getPieceType(),piece.getOrientation());
-            setLayoutX(BOARD_X + BOARD_PADDING_LEFT_SCALED + SCALED_SQUARE_SIZE*(piece.getLocation().getX()+offsets[0]));
-            setLayoutY(BOARD_Y + BOARD_PADDING_TOP_SCALED+ SCALED_SQUARE_SIZE*(piece.getLocation().getY()+offsets[1]));
+            setLayoutX(BOARD_ABS_X + SCALED_SQUARE_SIZE*(piece.getLocation().getX()+offsets[0]));
+            setLayoutY(BOARD_ABS_Y + SCALED_SQUARE_SIZE*(piece.getLocation().getY()+offsets[1]));
         }
 
         /**
@@ -413,8 +410,8 @@ public class Board extends Application {
      * @return Instance of Location with valid x,y co-ords, or FALSE/NULL if not valid
      */
     public Location getLocationFromSceneXY(double mX, double mY) {
-        double approxX = (mX-BOARD_X-BOARD_PADDING_LEFT_SCALED)/SCALED_SQUARE_SIZE;
-        double approxY = (mY-BOARD_Y-BOARD_PADDING_TOP_SCALED)/SCALED_SQUARE_SIZE;
+        double approxX = (mX-BOARD_ABS_X)/SCALED_SQUARE_SIZE;
+        double approxY = (mY-BOARD_ABS_Y)/SCALED_SQUARE_SIZE;
         System.out.println("Approx location: " + Math.round(approxX) + ", " + Math.round(approxY));
         return new Location((int)Math.round(approxX),(int)Math.round(approxY));
     }
@@ -499,8 +496,8 @@ public class Board extends Application {
      */
     public boolean xyOnBoard(double x, double y) {
         double errorMargin = 20;
-        return x >= BOARD_X+BOARD_PADDING_LEFT_SCALED-errorMargin && x <= (BOARD_X+BOARD_WIDTH)
-                && y >= BOARD_Y+BOARD_PADDING_TOP_SCALED-errorMargin && y <= (BOARD_Y+BOARD_HEIGHT);
+        return x >= BOARD_ABS_X-errorMargin && x <= (BOARD_X+BOARD_WIDTH)
+                && y >= BOARD_ABS_Y-errorMargin && y <= (BOARD_Y+BOARD_HEIGHT);
     }
 
     /**
@@ -651,8 +648,8 @@ public class Board extends Application {
             chSq.setY(CHALLENGE_POS_Y+row*SCALED_SQUARE_SIZE);
             challengeSquares.getChildren().add(chSq);
 
-            chSqBd.setX(BOARD_X+BOARD_PADDING_LEFT_SCALED+SCALED_SQUARE_SIZE*3+col*SCALED_SQUARE_SIZE);
-            chSqBd.setY(BOARD_Y+BOARD_PADDING_TOP_SCALED+SCALED_SQUARE_SIZE*1+row*SCALED_SQUARE_SIZE);
+            chSqBd.setX(BOARD_ABS_X+SCALED_SQUARE_SIZE*3+col*SCALED_SQUARE_SIZE);
+            chSqBd.setY(BOARD_ABS_Y+SCALED_SQUARE_SIZE*1+row*SCALED_SQUARE_SIZE);
             chSqBd.setOpacity(CHALLENGE_PIECE_OPACITY);
             challengeSquaresBoard.getChildren().add(chSqBd);
             col++;
@@ -677,8 +674,6 @@ public class Board extends Application {
         System.out.println("BOARD_HEIGHT=" + BOARD_HEIGHT);
         System.out.println("BOARD_WIDTH=" + BOARD_WIDTH);
         System.out.println("SCALED_SQUARE_SIZE=" + SCALED_SQUARE_SIZE);
-        System.out.println("BOARD_PADDING_LEFT_SCALED=" + BOARD_PADDING_LEFT_SCALED);
-        System.out.println("BOARD_PADDING_TOP_SCALED=" + BOARD_PADDING_TOP_SCALED);
 
     }
 
@@ -690,10 +685,8 @@ public class Board extends Application {
         CHALLENGE_POS_X = (WINDOW_WIDTH-BOARD_WIDTH)/4-1.5*SCALED_SQUARE_SIZE;
         CHALLENGE_POS_Y = BOARD_HEIGHT/2-1.5*SCALED_SQUARE_SIZE+BOARD_MARGIN_TOP;
         CONTROLS_POS_Y = BOARD_Y - CONTROLS_HEIGHT - 10;
-        BOARD_PADDING_LEFT_SCALED = BOARD_PADDING_LEFT*BOARD_SCALE_FACTOR;
-        BOARD_PADDING_TOP_SCALED = BOARD_PADDING_TOP*BOARD_SCALE_FACTOR;
-        BOARD_ABS_X = BOARD_X + BOARD_PADDING_LEFT_SCALED;
-        BOARD_ABS_Y = BOARD_Y + BOARD_PADDING_TOP_SCALED;
+        BOARD_ABS_X = BOARD_X + BOARD_PADDING_LEFT*BOARD_SCALE_FACTOR;
+        BOARD_ABS_Y = BOARD_Y + BOARD_PADDING_TOP*BOARD_SCALE_FACTOR;
     }
 
     /**
