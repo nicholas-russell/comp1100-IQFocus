@@ -266,7 +266,6 @@ public class Board extends Application {
                     // debug information
                     if (placed) {
                         game.undoOperation(game.getBoardPlacementString(),placement);
-                        placement = null;
                     }
                     System.out.println("===============================");
                     System.out.println("NEW PIECE MOVEMENT");
@@ -350,7 +349,6 @@ public class Board extends Application {
             orientation = Orientation.Zero;
             setRotate(0);
             if (placed) {
-                System.out.println("flag");
                 game.undoOperation(game.getBoardPlacementString(),placement);
                 placement = null;
             }
