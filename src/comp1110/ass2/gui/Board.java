@@ -281,7 +281,6 @@ public class Board extends Application {
                 currentPiece = null;
                 // make solid again
                 setOpacity(1.0);
-                checkCompletion();
             });
         }
 
@@ -703,6 +702,7 @@ public class Board extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         primaryStage.setTitle("IQ Focus Puzzle");
+        primaryStage.getIcons().add(new Image(Board.class.getResourceAsStream(URI_BASE + "icon.png")));
         primaryStage.setResizable(false);
 
         Scene scene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
