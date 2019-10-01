@@ -368,7 +368,6 @@ public class FocusGame {
         }
     }
 
-
     /**
      * This is written by Yuhui Wang
      * Put the pieces on the board and update the board state.Only when all the pieces in the placement string
