@@ -20,8 +20,8 @@ component: isPlacementStringValid (FocusGame method)
 #
 comments:
   - Makes great use of helper fucntions/smaller methods to solve more complex
-  problems.
-  - This approach to coding makes it more efficient as exact actions performed
+  :problems.
+  :- This approach to coding makes it more efficient as exact actions performed
   by this methods can be utlized elsewhere. 
   - Missing some minor commments on the functionality of methods but not a big
   issue.
