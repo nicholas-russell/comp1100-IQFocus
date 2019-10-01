@@ -12,7 +12,7 @@ import static comp1110.ass2.State.*;
  * The game is based directly on Smart Games' IQ-Focus game
  * (https://www.smartgames.eu/uk/one-player-games/iq-focus)
  *
- * @author Yuhui Wang
+ * @author Yuhui Wang, Matthew Tein
  * @version 0.2-d2f
  * @since 01/10/2019
  */
@@ -196,7 +196,7 @@ public class FocusGame {
     }
 
     // Written by Matthew Tein - Generates all possible piece placements
-    //      Used in tandem with g+etViablePiecePlacements
+    //      Used in tandem with getViablePiecePlacements
     public static Set<String> findPossibilities() {
         Set<String> AllPossibleMoves = new HashSet<>();
         char u;
@@ -367,7 +367,6 @@ public class FocusGame {
             }
         }
     }
-
 
     /**
      * This is written by Yuhui Wang
