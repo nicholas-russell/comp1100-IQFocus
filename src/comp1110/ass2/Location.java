@@ -1,5 +1,13 @@
 package comp1110.ass2;
 
+/**
+ * Simple class that defines locations on the game board.
+ *
+ * @author Nicholas Russell
+ * @version 0.1
+ * @since 21/08/2019
+ */
+
 public class Location {
     private int X;
     private int Y;

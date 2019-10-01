@@ -1,5 +1,13 @@
 package comp1110.ass2;
 
+/**
+ * Defines orientation of pieces on board.
+ *
+ * @author Nicholas Russell
+ * @version 0.1
+ * @since 26/08/2019
+ */
+
 public enum Orientation {
     Zero("North",0),
     One("West",1),

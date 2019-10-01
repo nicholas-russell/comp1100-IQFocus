@@ -1,5 +1,13 @@
 package comp1110.ass2;
 
+/**
+ * Piece class for pieces on the board
+ *
+ * @author Nicholas Russell, Matthew Tein, Yuhui Wang
+ * @version 0.1
+ * @since 29/09/2019
+ */
+
 public class Piece {
     private PieceType pieceType;
     private Location location;
@@ -20,11 +28,25 @@ public class Piece {
     }
 
     /**
+     *
+     *
+     * @param placement - placement string for Piece
+     * @return true if placementToLocation Returns correct location
+     */
+
+
+    public static boolean placementToPieceTypeCheck(String placement) {
+        if(placementToPieceType(placement) == PieceType.A){
+            return true;
+        }
+        return false; }
+
+    /**
      * Takes in placement string and returns the PieceType enum
      * @param placement Placement string for piece
      * @return PieceType enum
      */
-    public PieceType placementToPieceType(String placement) {
+    public static PieceType placementToPieceType(String placement) {
         switch (placement.substring(0,1)) {
             case "a": return PieceType.A;
             case "b": return PieceType.B;
@@ -54,6 +76,7 @@ public class Piece {
             default: return null;
         }
     }
+
 
     /**
      * Get location for placement

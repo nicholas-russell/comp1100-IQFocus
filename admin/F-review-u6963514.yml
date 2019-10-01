@@ -1,0 +1,27 @@
+# Write your name and UID here.
+#
+reviewer:
+    name: Nicholas Russell
+    uid: u6963514
+
+# Write the name of the author of the code here.
+#
+author:
+  name: Matthew Tein
+  uid: u6951444
+
+# Write the class or method being reviewed here.
+#
+component: challengeGenerator (method in Board class)
+           generateRandomColor (method in Board class)
+
+# Write a list of review comments here.
+#
+comments:
+  - Class variables should be written at top of the class
+  - Switch/case could be better than long if statments
+  - No difficulty level 0
+  - generateRandomColor is simple and written well - could be typed as a char instead of string?
+
+
+
