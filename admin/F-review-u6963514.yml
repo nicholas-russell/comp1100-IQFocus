@@ -12,16 +12,16 @@ author:
 
 # Write the class or method being reviewed here.
 #
-component: exampleMethod (method in XXXX class)
-           exampleMethod (method in XXXX class)
-           exampleMethod(method in XXXX class)
+component: challengeGenerator (method in Board class)
+           generateRandomColor (method in Board class)
 
 # Write a list of review comments here.
 #
 comments:
-  - Comment
-  - Comment
-  - Comment
+  - Class variables should be written at top of the class
+  - Switch/case could be better than long if statments
+  - No difficulty level 0
+  - generateRandomColor is simple and written well - could be typed as a char instead of string?
 
 
 
