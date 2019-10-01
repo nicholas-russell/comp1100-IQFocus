@@ -115,7 +115,7 @@ public class FocusGame {
 
 
     /**
-     * This is written by Yuhui Wang
+     * This is written by Matthew Tein /Yuhui Wang
      * Given a string describing a placement of pieces and a string describing
      * a challenge, return a set of all possible next viable piece placements
      * which cover a specific board cell.
@@ -149,9 +149,91 @@ public class FocusGame {
             if (!placement.contains(String.valueOf((char) i)))
                 AvaliablePiece.add(PieceType.valueOf(String.valueOf((char) (i + 'A' - 'a'))));
         }
+
+
+
+        //Matthew - Continueing on Yuhui's Work
+
+
+        //Filtering if valid. Will need to compresss the following filters once sorted through
+        ArrayList<String> possibleSinglePlacements = new ArrayList<>();
+        for (String x : findPossibilities()){
+            if(isPlacementStringValid(x) == true){
+                possibleSinglePlacements.add(x);
+
+            }
+            else{
+            }
+        }
+        Set<String> viablePlacements = new HashSet<>();
+        //Filter if matches challenge Square
+        for(String x : possibleSinglePlacements){
+            boolean answer = new FocusGame().consistentWithChallenge(x, challenge);
+            if(answer == true){
+                viablePlacements.add(x);
+            }
+            else{
+            }
+        }
+        //Need to Add Last filter that checks corresponding c-square ofthe given int row and int col
+
+        //for debugging
         System.out.println(AvaliablePiece);
-        return null;
+        System.out.println(viablePlacements);
+
+        return viablePlacements;
     }
+
+    // Matt - Generates all possible piece placements
+    //      Used in tandem with getViablePiecePlacements
+    public static Set<String> findPossibilities() {
+        Set<String> AllPossibleMoves = new HashSet<>();
+        char u;
+
+        for (int h = 0; h < 10; h++) {
+            switch (h){
+                case 0: u = 'a';
+                    break;
+                case 1: u = 'b';
+                    break;
+                case 2: u = 'c';
+                    break;
+                case 3: u = 'd';
+                    break;
+                case 4: u = 'e';
+                    break;
+                case 5: u = 'f';
+                    break;
+                case 6: u = 'g';
+                    break;
+                case 7: u = 'h';
+                    break;
+                case 8: u = 'i';
+                    break;
+                case 9: u = 'j';
+                    break;
+                default:
+                    u = 'a';
+                    break;
+
+            }
+            for (int j = 0; j < 8; j++) {
+                for (int k = 0; k < 4; k++) {
+                    for (int l = 0; l < 3; l++) {
+                        String placeholder = ""+ u + "" + j + "" + k + "" + l;
+                        AllPossibleMoves.add(placeholder);
+                    }
+                }
+            }
+        }
+        return AllPossibleMoves;
+    }
+
+
+
+
+
+
 
     public boolean pieceCover(String placement, int col, int row) {
         FocusGame Board = new FocusGame();
@@ -201,9 +283,13 @@ public class FocusGame {
      * @param challenge A challenge string.
      * @return A placement string describing a canonical encoding of the solution to
      * the challenge.
+     * should call on task 6 multiple times- like game tree to decide solutions
      */
     public static String getSolution(String challenge) {
         // FIXME Task 9: determine the solution to the game, given a particular challenge
+
+
+
         return null;
     }
 
