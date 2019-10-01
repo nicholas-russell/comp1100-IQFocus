@@ -19,14 +19,16 @@ component: isPlacementStringValid (FocusGame method)
 # Write a list of review comments here.
 #
 comments:
-  - Makes great use of helper fucntions/smaller methods to solve more complex:problems.
-  - This approach to coding makes it more efficient as exact actions performed
-  by this methods can be utlized elsewhere. 
-  - Missing some minor commments on the functionality of methods but not a big
-  issue.
+  - Makes great use of helper fucntions/smaller methods to solve more complex problems.
+  
+  - This approach to coding makes it more efficient as exact actions performed by this methods can be utlized elsewhere. 
+  
+  - Missing some minor commments on the functionality of methods but not a big issue.
+  
   - Only issue with so many methods is an optical mess
-  - In relation to task 5, isPlacementStringValid - needs optimization as 
-  the tests will turn up negative due to time out. (over 1000ms)
+  
+  - In relation to task 5, isPlacementStringValid - needs optimization as the tests will turn up negative due to time out. (over 1000ms)
+ 
   - Overall Method + Variable naming is clear and consise while style
   is at an appropriate level.
 
