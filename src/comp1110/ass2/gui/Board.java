@@ -29,6 +29,18 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+/**
+ * This program implements the controller and view for
+ * the IQ-Focus puzzle game.
+ *
+ * The game is based directly on Smart Games' IQ-Focus game
+ * (https://www.smartgames.eu/uk/one-player-games/iq-focus)
+ *
+ * @author Nicholas Russell, Matt Tein
+ * @version 0.2-d2f
+ * @since 1/10/2019
+ */
+
 public class Board extends Application {
     /**
      * ~~~~Class Constants~~~~
@@ -53,7 +65,7 @@ public class Board extends Application {
 
     private static final double CONTROLS_HEIGHT = 30; // height of controls
 
-    private static final String VERSION = "0.2";
+    private static final String VERSION = "0.2-d2f";
 
     private PieceTile currentPiece; // current piece selected
 
@@ -82,6 +94,12 @@ public class Board extends Application {
     private Group debugShapes = new Group();
 
     private FocusGame game = new FocusGame();
+
+    /**
+     * These methods implement hints and challenge generation for the FocusGame.
+     *
+     * @author Matthew Tein
+     */
 
     /* challengeSquare is a 9 character String, with each character corresponding to the
     state of one of the squares that makes up the central 3x3 challange square
@@ -197,8 +215,12 @@ public class Board extends Application {
         }
     }
 
-    //==========================================================================//
-    // Nicks code begins here
+    /**
+     * This is the primary class that implements functionality
+     * in the game.
+     *
+     * @author Nicholas Russell
+     */
 
     class PieceTile extends ImageView {
 
@@ -286,7 +308,6 @@ public class Board extends Application {
 
         /**
          * Attempts to place the piece given the x and y locations of it.
-         *
          */
 
         private void snapToBoard() {
