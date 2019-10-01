@@ -78,6 +78,8 @@ public class Board extends Application {
     private double CONTROLS_POS_Y;
     private double BOARD_X;
     private double BOARD_Y;
+    private double BOARD_ABS_X;
+    private double BOARD_ABS_Y;
     private double BOARD_HEIGHT;
     private double BOARD_WIDTH;
     private double SCALED_SQUARE_SIZE;
@@ -690,6 +692,8 @@ public class Board extends Application {
         CONTROLS_POS_Y = BOARD_Y - CONTROLS_HEIGHT - 10;
         BOARD_PADDING_LEFT_SCALED = BOARD_PADDING_LEFT*BOARD_SCALE_FACTOR;
         BOARD_PADDING_TOP_SCALED = BOARD_PADDING_TOP*BOARD_SCALE_FACTOR;
+        BOARD_ABS_X = BOARD_X + BOARD_PADDING_LEFT_SCALED;
+        BOARD_ABS_Y = BOARD_Y + BOARD_PADDING_TOP_SCALED;
     }
 
     /**
