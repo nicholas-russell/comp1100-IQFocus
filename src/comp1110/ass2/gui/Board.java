@@ -64,6 +64,7 @@ public class Board extends Application {
     private static final double BOARD_SCALE_FACTOR = 0.65;
 
     private static final double CONTROLS_HEIGHT = 30; // height of controls
+    private boolean SHOW_CHALLENGE = true; // show challenge on board
 
     private static final double CHALLENGE_PIECE_OPACITY = 0.3;
 
@@ -561,7 +562,21 @@ public class Board extends Application {
             System.out.println("New Challenge of difficulty " + difficulty.getValue());
         });
 
-        controlBox.getChildren().addAll(newGame,resetBoard,newChallenge);
+        Button toggleChallenge = new Button("Hide Challenge");
+        toggleChallenge.setMinWidth(110);
+        toggleChallenge.setOnAction(e -> {
+            if (SHOW_CHALLENGE) {
+                SHOW_CHALLENGE = false;
+                toggleChallenge.setText("Show Challenge");
+                root.getChildren().remove(challengeSquaresBoard);
+            } else {
+                SHOW_CHALLENGE = true;
+                toggleChallenge.setText("Hide Challenge");
+                root.getChildren().add(challengeSquaresBoard);
+            }
+        });
+
+        controlBox.getChildren().addAll(newGame,resetBoard,newChallenge,toggleChallenge);
 
         for (Node n : controlBox.getChildren()) {
             if (n instanceof Button) {
