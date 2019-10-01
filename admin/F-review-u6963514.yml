@@ -1,0 +1,29 @@
+# Write your name and UID here.
+#
+reviewer:
+    name: Nicholas Russell
+    uid: u6963514
+
+# Write the name of the author of the code here.
+#
+author:
+  name: Matthew Tein
+  uid: u6951444
+
+# Write the class or method being reviewed here.
+#
+component: snapToBoard(method in Board class)
+           snapToHome(method in Board class)
+           placePiece(method in Board class)
+
+# Write a list of review comments here.
+#
+comments:
+  - The design of code is good since it splits a big question in several methods.
+  - Although the code is easy to understand, some necessary comments need to be added and some unnecessary
+    comments can be deleted.
+  - Some debug code is useful now but it should be deleted in the final version.
+  - methods and variables are all properly named and the style is also good for others to read.
+
+
+
