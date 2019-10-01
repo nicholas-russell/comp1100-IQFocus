@@ -281,6 +281,7 @@ public class Board extends Application {
                 currentPiece = null;
                 // make solid again
                 setOpacity(1.0);
+                checkCompletion();
             });
         }
 
