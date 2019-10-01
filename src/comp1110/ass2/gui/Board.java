@@ -264,6 +264,10 @@ public class Board extends Application {
                     snapToHome();
                 } else {
                     // debug information
+                    if (placed) {
+                        game.undoOperation(game.getBoardPlacementString(),placement);
+                        placement = null;
+                    }
                     System.out.println("===============================");
                     System.out.println("NEW PIECE MOVEMENT");
                     System.out.println("You've pressed on " + pieceType.toString());
@@ -277,6 +281,7 @@ public class Board extends Application {
 
                     // sets currentPiece to this (allows for rotation to work)
                     currentPiece = this;
+
                 }
             });
 
@@ -292,10 +297,6 @@ public class Board extends Application {
                 mX = e.getSceneX();
                 mY = e.getSceneY();
                 e.consume();
-                if (placed) {
-                    game.undoOperation(game.getBoardPlacementString(),placement);
-                    placement = null;
-                }
             });
             // Dragging ended
             setOnMouseReleased(e -> {
