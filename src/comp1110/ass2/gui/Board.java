@@ -290,7 +290,7 @@ public class Board extends Application {
          */
 
         private void snapToBoard() {
-            String placement;
+            //String placement;
 
             // offsets account for the orientation
             double[] offsets = Viewer.getOrientationOffsets(pieceType,orientation);
@@ -328,8 +328,10 @@ public class Board extends Application {
             orientation = Orientation.Zero;
             setRotate(0);
             if (placed) {
+                System.out.println("flag");
                 game.undoOperation(game.getBoardPlacementString(),placement);
             }
+            System.out.println(game.getBoardPlacementString());;
             placed = false;
         }
 
