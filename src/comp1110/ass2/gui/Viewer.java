@@ -34,6 +34,10 @@ import java.io.InputStream;
  * NOTE: This class is separate from your main game class.  This
  * class does not play a game, it just illustrates various piece
  * placements.
+ *
+ * @author Nicholas Russell
+ * @version 1.0
+ * @since 30/09/2019
  */
 public class Viewer extends Application {
 

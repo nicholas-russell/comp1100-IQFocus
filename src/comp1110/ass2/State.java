@@ -1,5 +1,13 @@
 package comp1110.ass2;
 
+/**
+ * Defines different states on board
+ *
+ * @author Yuhui Wang
+ * @version 1.0
+ * @since 18/08/2019
+ */
+
 public enum State {
     WHITE, RED, BLUE, GREEN,// The four colours a square may have
     EMPTY,// Locations on board haven't been used by placement

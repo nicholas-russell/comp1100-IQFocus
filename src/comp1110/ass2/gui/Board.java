@@ -97,8 +97,6 @@ public class Board extends Application {
 
     /**
      * These methods implement hints and challenge generation for the FocusGame.
-     *
-     * @author Matthew Tein
      */
 
     /* challengeSquare is a 9 character String, with each character corresponding to the

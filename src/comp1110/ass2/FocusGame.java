@@ -11,7 +11,12 @@ import static comp1110.ass2.State.*;
  *
  * The game is based directly on Smart Games' IQ-Focus game
  * (https://www.smartgames.eu/uk/one-player-games/iq-focus)
+ *
+ * @author Yuhui Wang
+ * @version 0.2-d2f
+ * @since 01/10/2019
  */
+
 public class FocusGame {
     /**
      * Create all the states on the board, only bottom left and bottom right will

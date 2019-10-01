@@ -1,5 +1,13 @@
 package comp1110.ass2;
 
+/**
+ * Piece class for pieces on the board
+ *
+ * @author Nicholas Russell, Matthew Tein, Yuhui Wang
+ * @version 0.1
+ * @since 29/09/2019
+ */
+
 public class Piece {
     private PieceType pieceType;
     private Location location;

@@ -2,6 +2,14 @@ package comp1110.ass2;
 
 import static comp1110.ass2.State.*;
 
+/**
+ * Class for PieceTypes for different types of pieces on the board
+ *
+ * @author Yuhui Wang
+ * @version 1.0
+ * @since 30/09/2019
+ */
+
 public enum PieceType {
     A('A'),B('B'),C('C'),D('D'),E('E'),F('F'),G('G'),H('H'),I('I'),J('J');
 
