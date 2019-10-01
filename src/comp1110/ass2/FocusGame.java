@@ -12,7 +12,7 @@ import static comp1110.ass2.State.*;
  * The game is based directly on Smart Games' IQ-Focus game
  * (https://www.smartgames.eu/uk/one-player-games/iq-focus)
  *
- * @author Yuhui Wang
+ * @author Yuhui Wang, Matthew Tein
  * @version 0.2-d2f
  * @since 01/10/2019
  */
@@ -149,6 +149,8 @@ public class FocusGame {
         // FIXME Task 6: determine the set of all viable piece placements given existing placements and a challenge
         Set result = new HashSet();
         System.out.println(placement);
+
+        //Find a list of Non-placed PieceTypes
         ArrayList<PieceType> AvaliablePiece = new ArrayList<PieceType>();
         for (int i = 'a'; i < 'a' + 10; i++) {
             if (!placement.contains(String.valueOf((char) i)))
@@ -180,6 +182,10 @@ public class FocusGame {
             else{
             }
         }
+        for (String x : viablePlacements){
+
+        }
+
         //Need to Add Last filter that checks corresponding c-square ofthe given int row and int col
 
         //for debugging
@@ -189,7 +195,7 @@ public class FocusGame {
         return viablePlacements;
     }
 
-    // Matt - Generates all possible piece placements
+    // Written by Matthew Tein - Generates all possible piece placements
     //      Used in tandem with getViablePiecePlacements
     public static Set<String> findPossibilities() {
         Set<String> AllPossibleMoves = new HashSet<>();
@@ -361,7 +367,6 @@ public class FocusGame {
             }
         }
     }
-
 
     /**
      * This is written by Yuhui Wang
