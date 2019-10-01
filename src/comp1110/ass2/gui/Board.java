@@ -65,6 +65,8 @@ public class Board extends Application {
 
     private static final double CONTROLS_HEIGHT = 30; // height of controls
 
+    private static final double CHALLENGE_PIECE_OPACITY = 0.3;
+
     private static final String VERSION = "0.2-d2f";
 
     private PieceTile currentPiece; // current piece selected
@@ -90,6 +92,7 @@ public class Board extends Application {
     private Pane errors = new Pane();
     private Pane pieceTiles = new Pane();
     private Pane challengeSquares = new Pane();
+    private Pane challengeSquaresBoard = new Pane();
     private PieceTile[] pieceTilesList = new PieceTile[10];
     private Group debugShapes = new Group();
 
@@ -622,6 +625,7 @@ public class Board extends Application {
         int col = 0;
         for (Character c : challengeChar) {
             ImageView chSq = getSquareImageFromFile(c);
+            ImageView chSqBd = getSquareImageFromFile(c);
             if (col > 2) {
                 col = 0;
                 row++;
@@ -629,6 +633,11 @@ public class Board extends Application {
             chSq.setX(CHALLENGE_POS_X+col*SCALED_SQUARE_SIZE);
             chSq.setY(CHALLENGE_POS_Y+row*SCALED_SQUARE_SIZE);
             challengeSquares.getChildren().add(chSq);
+
+            chSqBd.setX(BOARD_X+BOARD_PADDING_LEFT_SCALED+SCALED_SQUARE_SIZE*3+col*SCALED_SQUARE_SIZE);
+            chSqBd.setY(BOARD_Y+BOARD_PADDING_TOP_SCALED+SCALED_SQUARE_SIZE*1+row*SCALED_SQUARE_SIZE);
+            chSqBd.setOpacity(CHALLENGE_PIECE_OPACITY);
+            challengeSquaresBoard.getChildren().add(chSqBd);
             col++;
         }
         Text challengeTitle = new Text("Challenge");
@@ -731,6 +740,7 @@ public class Board extends Application {
         root.getChildren().addAll(
                 challengeSquares,
                 board,
+                challengeSquaresBoard,
                 boardPieces,
                 pieceTiles,
                 errors,
