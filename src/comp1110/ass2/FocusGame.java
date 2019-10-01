@@ -100,6 +100,7 @@ public class FocusGame {
     }
 
     /**
+     * This is written by Yuhui Wang
      * Determine whether a placement string is valid.
      * <p>
      * To be valid, the placement string must be:
