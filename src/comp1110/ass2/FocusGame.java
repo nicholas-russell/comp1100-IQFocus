@@ -1,5 +1,6 @@
 package comp1110.ass2;
 
+import java.lang.reflect.Array;
 import java.util.*;
 
 import static comp1110.ass2.State.*;
@@ -45,6 +46,34 @@ public class FocusGame {
 
     public boolean checkCompletion() {
         return currentChallenge.isSolutionCorrect(orderPlacementString(getBoardPlacementString()));
+    }
+
+    public String getNextHint() {
+        ArrayList<String> currentPieces = splitPlacementString(getBoardPlacementString());
+        ArrayList<String> solutionPieces = splitPlacementString(currentChallenge.getSolution());
+        for (String p : currentPieces) {
+            if (solutionPieces.contains(p)) {
+                solutionPieces.remove(p);
+            }
+        }
+        return solutionPieces.iterator().next();
+    }
+
+    private static ArrayList<String> splitPlacementString(String placementString) {
+        int l = placementString.length();
+        char[] placementStringArray = placementString.toCharArray();
+        ArrayList<String> placements = new ArrayList<>();
+        int i = 0;
+        while (i < l) {
+            char[] p = new char[4];
+            p[0] = placementStringArray[i];
+            p[1] = placementStringArray[i+1];
+            p[2] = placementStringArray[i+2];
+            p[3] = placementStringArray[i+3];
+            placements.add(new String(p));
+            i += 4;
+        }
+        return placements;
     }
 
     /**
@@ -476,18 +505,7 @@ public class FocusGame {
     private static String orderPlacementString(String placementString) {
         int l = placementString.length();
         String orderedPlacementString = "";
-        char[] placementStringArray = placementString.toCharArray();
-        ArrayList<String> placements = new ArrayList<>();
-        int i = 0;
-        while (i < l) {
-            char[] p = new char[4];
-            p[0] = placementStringArray[i];
-            p[1] = placementStringArray[i+1];
-            p[2] = placementStringArray[i+2];
-            p[3] = placementStringArray[i+3];
-            placements.add(new String(p));
-            i += 4;
-        }
+        ArrayList<String> placements = splitPlacementString(placementString);
         Collections.sort(placements);
         for (String p : placements) {
             orderedPlacementString = orderedPlacementString + p;

@@ -431,6 +431,10 @@ public class Board extends Application {
         debugShapes.getChildren().add(circle);
     }
 
+    private void showHint() {
+
+    }
+
     /**
      * Gets 'home' co-ordinates for Piece
      * @param p the PieceType
@@ -567,10 +571,18 @@ public class Board extends Application {
         Button resetBoard = new Button("Reset Board");
         resetBoard.setOnAction(e -> resetBoard());
 
+        /**
         Button newChallenge = new Button("Random Challenge");
         newChallenge.setOnAction(e -> {
             System.out.println("New Challenge of difficulty " + difficulty.getValue());
         });
+        **/
+
+        Button hint = new Button("Hint");
+        hint.setOnAction(e -> {
+            showHint();
+        });
+
 
         Button toggleChallenge = new Button("Hide Challenge");
         toggleChallenge.setMinWidth(110);
@@ -586,7 +598,7 @@ public class Board extends Application {
             }
         });
 
-        controlBox.getChildren().addAll(newGame,resetBoard,newChallenge,toggleChallenge);
+        controlBox.getChildren().addAll(newGame,resetBoard,toggleChallenge);
 
         for (Node n : controlBox.getChildren()) {
             if (n instanceof Button) {
@@ -713,8 +725,10 @@ public class Board extends Application {
                 if (currentPiece != null) {
                     currentPiece.rotate();
                 }
-                e.consume();
+            } else if (key == KeyCode.SLASH) {
+                showHint();
             }
+            e.consume();
         });
     }
 

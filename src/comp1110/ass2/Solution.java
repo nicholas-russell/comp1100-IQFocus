@@ -42,6 +42,9 @@ public class Solution {
     return placements.contains(placement);
   }
 
+  public String getSolution() {
+    return placements.iterator().next();
+  }
 
 
   public static final Solution[] SOLUTIONS = {
