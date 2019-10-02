@@ -25,7 +25,7 @@ public class Solution {
     placements.add(iPlacement);
   }
 
-  public Solution getChallenge(int n) {
+  public static Solution getChallenge(int n) {
     if (n > SOLUTIONS.length) {
       System.out.println("No more challenges!");
       return null;
@@ -33,6 +33,16 @@ public class Solution {
       return SOLUTIONS[n];
     }
   }
+
+  public String getObjective() {
+    return objective;
+  }
+
+  public boolean isSolutionCorrect(String placement) {
+    return placements.contains(placement);
+  }
+
+
 
   public static final Solution[] SOLUTIONS = {
           new Solution("RRRBWBBRB",

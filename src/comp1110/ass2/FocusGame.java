@@ -24,6 +24,30 @@ public class FocusGame {
      * be Empty at the start(can be replaced by other colors).
      */
 
+    public int currentChallengeNumber;
+    public Solution currentChallenge;
+
+    public int getChallengeNumber() {
+        return currentChallengeNumber + 1;
+    }
+
+    public void newGame() {
+        currentChallengeNumber = 0;
+        currentChallenge = Solution.getChallenge(currentChallengeNumber);
+    }
+
+    public void nextChallenge() {
+        currentChallengeNumber++;
+        currentChallenge = Solution.getChallenge(currentChallengeNumber);
+    }
+
+    public String getChallenge() {
+        return currentChallenge.getObjective();
+    }
+
+    public boolean checkCompletion() {
+        return currentChallenge.isSolutionCorrect(getBoardPlacementString());
+    }
 
     /**
      * This is written by Yuhui Wang

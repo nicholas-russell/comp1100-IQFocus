@@ -507,7 +507,18 @@ public class Board extends Application {
     private void makePlacement(String placement) {
         System.out.println("Making placement " + placement);
         game.addPieceToBoard(placement);
-        //checkCompletion(); // -- always returning true until method implemented in FocusGame
+        if (allPiecesPlaced()) {
+            checkCompletion();
+        }
+    }
+
+    private boolean allPiecesPlaced() {
+        boolean flag = true;
+        for (PieceTile p : pieceTilesList) {
+            flag = p.placed;
+        }
+        System.out.println("ALL PIECES PLACED:" + flag);
+        return flag;
     }
 
     /**
@@ -634,6 +645,7 @@ public class Board extends Application {
      */
     private void makeChallenge(String challengeString) {
         challengeSquares.getChildren().clear();
+        challengeSquaresBoard.getChildren().clear();
         char[] challengeChar = challengeString.toCharArray();
         int row = 0;
         int col = 0;
@@ -654,7 +666,7 @@ public class Board extends Application {
             challengeSquaresBoard.getChildren().add(chSqBd);
             col++;
         }
-        Text challengeTitle = new Text("Challenge");
+        Text challengeTitle = new Text("Challenge #" + game.getChallengeNumber());
         challengeTitle.setFont(Font.font("Tahoma", FontWeight.BOLD, 20));
         challengeTitle.setFill(Color.BLACK);
         challengeTitle.setX(CHALLENGE_POS_X+(SCALED_SQUARE_SIZE*3-challengeTitle.getLayoutBounds().getWidth())/2);
@@ -711,12 +723,20 @@ public class Board extends Application {
      * Check if the challenge has been completed
      */
     private void checkCompletion() {
-        //if game.checkCompletion() -> show congratulating message
-        board.setOpacity(0.5);
-        pieceTiles.setOpacity(0.5);
-        Alert completed = new Alert(Alert.AlertType.NONE,"Congratulations! You completed this challenge! Would you like to start a new game?", ButtonType.NEXT,ButtonType.NO);
-        completed.setTitle("Challenge complete");
-        completed.showAndWait();
+        if (game.checkCompletion()) {
+            board.setOpacity(0.5);
+            pieceTiles.setOpacity(0.5);
+            Alert completed = new Alert(Alert.AlertType.NONE,"Congratulations! You completed this challenge! Would you like to start a new game?", ButtonType.NEXT,ButtonType.NO);
+            completed.setTitle("Challenge complete");
+            completed.showAndWait();
+            if (completed.getResult() == ButtonType.NEXT) {
+                game.nextChallenge();
+                makeChallenge(game.getChallenge());
+                resetBoard();
+            }
+            board.setOpacity(1.0);
+            pieceTiles.setOpacity(1.0);
+        }
     }
 
     /**
@@ -724,10 +744,9 @@ public class Board extends Application {
      * Start a new game
      */
     private void newGame() {
-        //game.newGame
-        //makeChallenge(game.getChallenge);
+        game.newGame();
+        makeChallenge(game.getChallenge());
         resetBoard();
-        makeChallenge("RRRBWBBRB");
     }
 
     /**
