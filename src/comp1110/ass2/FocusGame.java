@@ -44,7 +44,7 @@ public class FocusGame {
     }
 
     public boolean checkCompletion() {
-        return currentChallenge.isSolutionCorrect(getBoardPlacementString());
+        return currentChallenge.isSolutionCorrect(orderPlacementString(getBoardPlacementString()));
     }
 
     /**
@@ -493,10 +493,6 @@ public class FocusGame {
             orderedPlacementString = orderedPlacementString + p;
         }
         return orderedPlacementString;
-    }
-
-    public static void main(String[] args) {
-        System.out.println(orderPlacementString("a000b013c113e323g420d302f400j701h522i613"));
     }
 
 }
