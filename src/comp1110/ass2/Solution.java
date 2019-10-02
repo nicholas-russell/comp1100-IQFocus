@@ -25,6 +25,15 @@ public class Solution {
     placements.add(iPlacement);
   }
 
+  public Solution getChallenge(int n) {
+    if (n > SOLUTIONS.length) {
+      System.out.println("No more challenges!");
+      return null;
+    } else {
+      return SOLUTIONS[n];
+    }
+  }
+
   public static final Solution[] SOLUTIONS = {
           new Solution("RRRBWBBRB",
                   "a000b013c113d302e323f400g420h522i613j701"),
