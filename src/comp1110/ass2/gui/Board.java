@@ -384,6 +384,10 @@ public class Board extends Application {
             } else {
                 orientation = Orientation.Zero;
             }
+            setRotation(orientation);
+        }
+
+        private void setRotation(Orientation orientation) {
             setRotate(orientation.toInt()*90);
         }
 
@@ -432,7 +436,17 @@ public class Board extends Application {
     }
 
     private void showHint() {
-
+        String hintPlacement = game.getNextHint();
+        Piece hintPiece = new Piece(hintPlacement);
+        for (PieceTile p : pieceTilesList) {
+            if (p.pieceType == hintPiece.getPieceType()) {
+                p.placement = hintPlacement;
+                p.placePiece(hintPiece);
+                p.placed = true;
+                p.setRotation(hintPiece.getOrientation());
+                makePlacement(hintPlacement);
+            }
+        }
     }
 
     /**
