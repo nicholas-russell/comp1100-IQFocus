@@ -1,9 +1,7 @@
 package comp1110.ass2;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
+
 import static comp1110.ass2.State.*;
 
 /**
@@ -467,6 +465,38 @@ public class FocusGame {
      */
     public String getBoardPlacementString() {
         return current;
+    }
+
+    /**
+     * Orders placement string into alphabetically and valid order
+     * @param placementString an unordered placement string
+     * @return ordered placement string
+     */
+
+    private static String orderPlacementString(String placementString) {
+        int l = placementString.length();
+        String orderedPlacementString = "";
+        char[] placementStringArray = placementString.toCharArray();
+        ArrayList<String> placements = new ArrayList<>();
+        int i = 0;
+        while (i < l) {
+            char[] p = new char[4];
+            p[0] = placementStringArray[i];
+            p[1] = placementStringArray[i+1];
+            p[2] = placementStringArray[i+2];
+            p[3] = placementStringArray[i+3];
+            placements.add(new String(p));
+            i += 4;
+        }
+        Collections.sort(placements);
+        for (String p : placements) {
+            orderedPlacementString = orderedPlacementString + p;
+        }
+        return orderedPlacementString;
+    }
+
+    public static void main(String[] args) {
+        System.out.println(orderPlacementString("a000b013c113e323g420d302f400j701h522i613"));
     }
 
 }
