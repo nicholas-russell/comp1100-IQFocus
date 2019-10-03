@@ -440,6 +440,10 @@ public class Board extends Application {
         Piece hintPiece = new Piece(hintPlacement);
         for (PieceTile p : pieceTilesList) {
             if (p.pieceType == hintPiece.getPieceType()) {
+                if (p.placed) {
+                    System.out.println("Piece " + p.pieceType.toString() + " is already placed at " + p.placement);
+                    game.undoOperation(game.getBoardPlacementString(), p.placement);
+                }
                 p.placement = hintPlacement;
                 p.placePiece(hintPiece);
                 p.placed = true;
