@@ -57,7 +57,6 @@ public class FocusGame {
                 solutionPieces.remove(p);
             }
         }
-        System.out.println(solutionPieces);
         return solutionPieces.iterator().next();
     }
 
@@ -76,6 +75,15 @@ public class FocusGame {
             i += 4;
         }
         return placements;
+    }
+
+    public void loadGame() {
+
+    }
+
+    public void saveGame() {
+        String save = currentChallengeNumber + "," + getBoardPlacementString();
+
     }
 
     /**

@@ -20,8 +20,10 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -526,7 +528,7 @@ public class Board extends Application {
 
         // Buttons
         HBox controlBox = new HBox();
-        controlBox.setSpacing(40);
+        controlBox.setSpacing(20);
         controlBox.setMinWidth(WINDOW_WIDTH);
         controlBox.setLayoutY(CONTROLS_POS_Y);
         controlBox.setAlignment(Pos.CENTER);
@@ -568,6 +570,13 @@ public class Board extends Application {
         Button help = new Button("Help");
         help.setOnAction(e -> showHelp());
 
+        Button loadGame = new Button("Load Game");
+
+        Button saveGame = new Button("Save Game");
+        /*saveGame.getOnAction(e -> {
+
+        });*/
+
 
         Button toggleChallenge = new Button("Hide Challenge");
         toggleChallenge.setMinWidth(110);
@@ -583,7 +592,7 @@ public class Board extends Application {
             }
         });
 
-        controlBox.getChildren().addAll(newGame,resetBoard,toggleChallenge,hint,help);
+        controlBox.getChildren().addAll(newGame,resetBoard,toggleChallenge,hint,saveGame,loadGame,help);
 
         for (Node n : controlBox.getChildren()) {
             if (n instanceof Button) {
@@ -606,10 +615,7 @@ public class Board extends Application {
     }
 
     private void showHelp() {
-        Alert help = new Alert(Alert.AlertType.INFORMATION,"" +
-                "Help",
-                ButtonType.CLOSE);
-        help.show();
+        System.out.println("Show help");
     }
 
     /**
