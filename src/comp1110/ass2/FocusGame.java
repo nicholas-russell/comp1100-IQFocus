@@ -155,6 +155,7 @@ public class FocusGame {
         for (int i = 'a'; i < 'a' + 10; i++) {
             if (!placement.contains(String.valueOf((char) i)))
                 AvaliablePiece.add(PieceType.valueOf(String.valueOf((char) (i + 'A' - 'a'))));
+
         }
 
 
@@ -183,10 +184,23 @@ public class FocusGame {
             }
         }
         for (String x : viablePlacements){
-
+            char piece = x.charAt(0);
+            String piecel = String.valueOf(piece);
+            PieceType.valueOf(piecel);
+            if(AvaliablePiece.contains(x)){
+            }
+            else {
+                viablePlacements.remove(x);
+            }
         }
 
         //Need to Add Last filter that checks corresponding c-square ofthe given int row and int col
+        for(String x : viablePlacements){
+           // State.getStateOnTile();
+            if(true){
+
+            }
+        }
 
         //for debugging
         System.out.println(AvaliablePiece);
