@@ -50,12 +50,15 @@ public class FocusGame {
 
     public String getNextHint() {
         ArrayList<String> currentPieces = splitPlacementString(getBoardPlacementString());
+        System.out.println(currentPieces);
         ArrayList<String> solutionPieces = splitPlacementString(currentChallenge.getSolution());
+        System.out.println(solutionPieces);
         for (String p : currentPieces) {
             if (solutionPieces.contains(p)) {
                 solutionPieces.remove(p);
             }
         }
+        System.out.println(solutionPieces);
         return solutionPieces.iterator().next();
     }
 
