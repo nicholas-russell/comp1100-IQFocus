@@ -243,8 +243,24 @@ public class FocusGame {
             else{
             }
         }
-        for (String x : viablePlacements){
 
+        for (String x : viablePlacements){
+            char piece = x.charAt(0);
+            String piecel = String.valueOf(piece);
+            PieceType.valueOf(piecel);
+            if(AvaliablePiece.contains(x)){
+            }
+            else {
+                viablePlacements.remove(x);
+            }
+        }
+
+        //Need to Add Last filter that checks corresponding c-square ofthe given int row and int col
+        for(String x : viablePlacements) {
+            // State.getStateOnTile();
+            if (true) {
+
+            }
         }
 
         //Need to Add Last filter that checks corresponding c-square ofthe given int row and int col
