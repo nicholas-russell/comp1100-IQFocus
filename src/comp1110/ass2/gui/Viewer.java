@@ -34,6 +34,10 @@ import java.io.InputStream;
  * NOTE: This class is separate from your main game class.  This
  * class does not play a game, it just illustrates various piece
  * placements.
+ *
+ * @author Nicholas Russell
+ * @version 1.0
+ * @since 30/09/2019
  */
 public class Viewer extends Application {
 
@@ -111,10 +115,11 @@ public class Viewer extends Application {
      * @param orientation The Orientation of the piece being drawn
      * @return Array of two doubles, the first for the x offset and the second for the y offset.
      */
-    private double[] getOrientationOffsets(PieceType pieceType, Orientation orientation) {
+    static double[] getOrientationOffsets(PieceType pieceType, Orientation orientation) {
         double[] offsets = new double[]{0, 0};
         switch (orientation) {
             case One:
+            case Three:
                 switch (pieceType) {
                     case A:
                     case D:
@@ -149,30 +154,6 @@ public class Viewer extends Application {
                     case J:
                         offsets[0] = 0;
                         offsets[1] = 0;
-                        break;
-                }
-                break;
-            case Three:
-                switch (pieceType) {
-                    case A:
-                    case D:
-                    case E:
-                    case G:
-                        offsets[0] = -0.5;
-                        offsets[1] = 0.5;
-                        break;
-                    case F:
-                    case J:
-                        offsets[0] = -1;
-                        offsets[0] = 1;
-                        break;
-                    case H:
-                    case I:
-                        break;
-                    case B:
-                    case C:
-                        offsets[0] = -1;
-                        offsets[1] = 1;
                         break;
                 }
                 break;

@@ -2,6 +2,14 @@ package comp1110.ass2;
 
 import static comp1110.ass2.State.*;
 
+/**
+ * Class for PieceTypes for different types of pieces on the board
+ *
+ * @author Yuhui Wang
+ * @version 1.0
+ * @since 30/09/2019
+ */
+
 public enum PieceType {
     A('A'),B('B'),C('C'),D('D'),E('E'),F('F'),G('G'),H('H'),I('I'),J('J');
 
@@ -10,6 +18,7 @@ public enum PieceType {
     int length;
 
     /**
+     * This is written by Yuhui Wang
      * Build a colormap has 10 arrays, each array represents a PieceType.
      * In each array, there are 4*4 = 16 states(All PieceType can be put in a 4*4 rectangle).
      * The state will be one of the four colors in State or Empty.
@@ -109,6 +118,7 @@ public enum PieceType {
             }
 
    /**
+    * This is written by Yuhui Wang
     * Give x-offset, y-offset and the orientation of the piece, return a state on the piece.
     * If the position is not on the piece, return null.
     *
