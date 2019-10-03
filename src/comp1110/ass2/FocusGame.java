@@ -11,7 +11,7 @@ import static comp1110.ass2.State.*;
  * The game is based directly on Smart Games' IQ-Focus game
  * (https://www.smartgames.eu/uk/one-player-games/iq-focus)
  *
- * @author Yuhui Wang, Matthew Tein
+ * @author Yuhui Wang, Matthew Tein, Nicholas Russell
  * @version 0.2-d2f
  * @since 01/10/2019
  */
@@ -31,6 +31,7 @@ public class FocusGame {
     }
 
     public void newGame() {
+        resetBoard();
         currentChallengeNumber = 0;
         currentChallenge = Solution.getChallenge(currentChallengeNumber);
     }
@@ -50,9 +51,7 @@ public class FocusGame {
 
     public String getNextHint() {
         ArrayList<String> currentPieces = splitPlacementString(getBoardPlacementString());
-        System.out.println(currentPieces);
         ArrayList<String> solutionPieces = splitPlacementString(currentChallenge.getSolution());
-        System.out.println(solutionPieces);
         for (String p : currentPieces) {
             if (solutionPieces.contains(p)) {
                 solutionPieces.remove(p);

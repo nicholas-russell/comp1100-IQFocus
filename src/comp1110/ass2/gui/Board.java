@@ -102,63 +102,10 @@ public class Board extends Application {
      * These methods implement hints and challenge generation for the FocusGame.
      */
 
-    /* challengeSquare is a 9 character String, with each character corresponding to the
-    state of one of the squares that makes up the central 3x3 challange square
-    *
-    *                         [0][1][2]
-    *                         [3][4][5]
-    *                         [6][7][8]
-    */
-    private String challenge;
-
-    // FIXME Task 8: Implement challenges (you may use challenges and assets provided for you in comp1110.ass2.gui.assets: sq-b.png, sq-g.png, sq-r.png & sq-w.png)
-    public String challengeEncoding (String challenge, String boardState) {
-        //Example of what encoding would look like, also need to covert Char to Variable Colour, B -> Blue, R -> Red
-        char[] encodingArray = challenge.toCharArray();
-        // ChallengeSquare0 = encodingArray[0];
-        //When Board Updates (e.g piece is placed) the squares of the challenge square are checked against the
-        //stored states encoded above. If all states match should end the game and print victory Screen/message.
-        return challenge;
-        }
-    public String getChallenge() {
-       return challenge;
-    }
-
-    /* Implementing Challegnes from TestUtility.
-
-    *How encoding the objective central 9 squares work. The Objective 3x3 square is split into the 3 rows. Starting from
-    * 0, each square is encoded with a number for example 0, then the square to the right is encoded with the next
-    * corresponding number e.g. 1. So the encoding for the 3x3 objective square will look like this,
-    *
-    *                         [0][1][2]
-    *                         [3][4][5]
-    *                         [6][7][8]
-    *
-    * Then we can implement challenges by assigning colours to the corresponding squares of the objective square.
-    *
-    *       This encoding design is provided in the Assets folder under the file challenge_encoding.png
-     */
-
-    // FIXME Task 10: Implement hints
-    public class hints {
-    }
-
-    /* When the User holds down the "/" key, they are suppose to "see" one or more boardPieces they can play to help them
-    * towards the solution!
-     * Used in tandem with Javafx method found on line 131
-     *
-    * The easiest method would be to simply return in the interface the letter of the corresponding piece/s such as A,
-    * G or D.
-    *
-    * Second Method would be to somehow highlight the piece, outlining or distinguishing it from the other boardPieces.
-    */
-
     // FIXME Task 11: Generate interesting challenges (each challenge may have just one solution)
-    private final Random randomThing = new Random();
-    private int g;
-    private String[] pack = new String[9];
-
     public String challengeGenerator (int difficulty) {
+        String[] pack = new String[9];
+        String challenge = "";
         //Generate Completely Random String
         if (difficulty == 0){
             for(int j = 0; j < 9; j++){
@@ -201,7 +148,8 @@ public class Board extends Application {
 
     //Generates a random color, random numbers 0-3 corresponding to one of the 4 colors states
     private String generateRandomColor() {
-        int g = randomThing.nextInt(4);
+        Random random = new Random();
+        int g = random.nextInt(4);
         switch (g) {
             case 0:
                 return "B";
@@ -217,7 +165,7 @@ public class Board extends Application {
     }
 
     /**
-     * This is the primary class that implements functionality
+     * This is the primary class that implements piece functionality
      * in the game.
      *
      * @author Nicholas Russell
@@ -573,8 +521,8 @@ public class Board extends Application {
         difficulty.setMajorTickUnit(1);
         difficulty.setMinorTickCount(0);
         difficulty.setSnapToTicks(true);
-        controlNodes.add(difficulty);
-        controlNodes.add(difficultyText);
+        //controlNodes.add(difficulty);
+        //controlNodes.add(difficultyText);
 
         // Buttons
         HBox controlBox = new HBox();
@@ -584,10 +532,26 @@ public class Board extends Application {
         controlBox.setAlignment(Pos.CENTER);
 
         Button newGame = new Button("New Game");
-        newGame.setOnAction(e -> newGame());
+        newGame.setOnAction(e -> {
+            Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION,"Are you sure you want to start a new game?",ButtonType.YES,ButtonType.NO);
+            confirmation.setTitle("New Game");
+            confirmation.setHeaderText("New Game?");
+            confirmation.showAndWait();
+            if (confirmation.getResult() == ButtonType.YES) {
+                newGame();
+            }
+        });
 
         Button resetBoard = new Button("Reset Board");
-        resetBoard.setOnAction(e -> resetBoard());
+        resetBoard.setOnAction(e -> {
+            Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION,"Are you sure you want to reset the game?",ButtonType.YES,ButtonType.NO);
+            confirmation.setTitle("Reset Board");
+            confirmation.setHeaderText("Reset Board?");
+            confirmation.showAndWait();
+            if (confirmation.getResult() == ButtonType.YES) {
+                resetBoard();
+            }
+        });
 
         /**
         Button newChallenge = new Button("Random Challenge");
@@ -756,9 +720,11 @@ public class Board extends Application {
      */
     private void checkCompletion() {
         if (game.checkCompletion()) {
-            board.setOpacity(0.5);
-            pieceTiles.setOpacity(0.5);
-            Alert completed = new Alert(Alert.AlertType.NONE,"Congratulations! You completed this challenge! Would you like to start a new game?", ButtonType.NEXT,ButtonType.NO);
+            root.setOpacity(0.7);
+            Alert completed = new Alert(Alert.AlertType.NONE,
+                    "Congratulations! You completed this challenge! " +
+                    "\nClick next to move onto the next puzzle.",
+                    ButtonType.NEXT);
             completed.setTitle("Challenge complete");
             completed.showAndWait();
             if (completed.getResult() == ButtonType.NEXT) {
@@ -766,19 +732,17 @@ public class Board extends Application {
                 makeChallenge(game.getChallenge());
                 resetBoard();
             }
-            board.setOpacity(1.0);
-            pieceTiles.setOpacity(1.0);
+            root.setOpacity(1.0);
         }
     }
 
     /**
-     * TODO
      * Start a new game
      */
     private void newGame() {
         game.newGame();
-        makeChallenge(game.getChallenge());
         resetBoard();
+        makeChallenge(game.getChallenge());
     }
 
     /**
@@ -789,7 +753,6 @@ public class Board extends Application {
         for (PieceTile p : pieceTilesList) {
             p.snapToHome();
         }
-        debugShapes.getChildren().clear();
     }
 
     @Override
@@ -807,8 +770,7 @@ public class Board extends Application {
                 boardPieces,
                 pieceTiles,
                 errors,
-                controls,
-                debugShapes
+                controls
         );
 
         setKeyEvents(scene);
