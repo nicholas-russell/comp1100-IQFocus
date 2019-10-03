@@ -544,7 +544,7 @@ public class Board extends Application {
 
         Button resetBoard = new Button("Reset Board");
         resetBoard.setOnAction(e -> {
-            Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION,"Are you sure you want to reset the game?",ButtonType.YES,ButtonType.NO);
+            Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION,"Are you sure you want to reset the board?",ButtonType.YES,ButtonType.NO);
             confirmation.setTitle("Reset Board");
             confirmation.setHeaderText("Reset Board?");
             confirmation.showAndWait();
@@ -565,6 +565,9 @@ public class Board extends Application {
             showHint();
         });
 
+        Button help = new Button("Help");
+        help.setOnAction(e -> showHelp());
+
 
         Button toggleChallenge = new Button("Hide Challenge");
         toggleChallenge.setMinWidth(110);
@@ -580,7 +583,7 @@ public class Board extends Application {
             }
         });
 
-        controlBox.getChildren().addAll(newGame,resetBoard,toggleChallenge);
+        controlBox.getChildren().addAll(newGame,resetBoard,toggleChallenge,hint,help);
 
         for (Node n : controlBox.getChildren()) {
             if (n instanceof Button) {
@@ -600,6 +603,13 @@ public class Board extends Application {
         controlNodes.add(version);
 
         controls.getChildren().addAll(controlNodes);
+    }
+
+    private void showHelp() {
+        Alert help = new Alert(Alert.AlertType.INFORMATION,"" +
+                "Help",
+                ButtonType.CLOSE);
+        help.show();
     }
 
     /**
