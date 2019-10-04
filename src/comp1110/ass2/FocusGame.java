@@ -89,7 +89,7 @@ public class FocusGame {
         String[] saveArray = saveString.split(",");
         return saveArray.length == 2
                 && isPlacementStringValid(saveArray[1])
-                && Solution.SOLUTIONS.length >= Integer.parseInt(saveArray[0]);
+                && Solution.SOLUTIONS.length > Integer.parseInt(saveArray[0]);
     }
 
     /**
