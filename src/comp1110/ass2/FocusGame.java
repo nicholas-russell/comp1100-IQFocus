@@ -77,13 +77,17 @@ public class FocusGame {
         return placements;
     }
 
-    public void loadGame() {
+    public void loadGame(String saveString) {
 
     }
 
     public void saveGame() {
         String save = currentChallengeNumber + "," + getBoardPlacementString();
         System.out.println(save);
+    }
+
+    public static boolean isSaveStringValid(String saveString) {
+        return false;
     }
 
     /**

@@ -582,7 +582,7 @@ public class Board extends Application {
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Save Game");
             File file = fileChooser.showSaveDialog(stage);
-            System.out.println(file.getAbsolutePath());
+
         });
 
 
@@ -630,8 +630,14 @@ public class Board extends Application {
         FileReader fr = new FileReader(file);
         BufferedReader br = new BufferedReader(fr);
         String saveString = br.readLine();
-        String[] saveValues = saveString.split(",");
-        game.currentChallengeNumber = Integer.parseInt(saveValues[0]);
+        if (FocusGame.isSaveStringValid(saveString)) {
+            game.loadGame(saveString);
+        } else {
+            Alert alert = new Alert(Alert.AlertType.ERROR,"",ButtonType.OK);
+            alert.setHeaderText("Invalid Save File");
+            alert.setTitle("Error - Invalid Save");
+            alert.showAndWait();
+        }
     }
 
     private void showHelp() {
