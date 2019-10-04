@@ -26,7 +26,10 @@ import javafx.stage.Stage;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Random;
 
 /**
@@ -84,6 +87,7 @@ public class Board extends Application {
     private double SCALED_SQUARE_SIZE;
 
     private static final String URI_BASE = "assets/";
+    private static final FileChooser.ExtensionFilter EXTENSION_FILTER = new FileChooser.ExtensionFilter("IQ Focus Save (*.iqs)", "*.iqs");
 
     private final Group root = new Group();
     private final Group controls = new Group();
@@ -475,7 +479,6 @@ public class Board extends Application {
      * @param placement valid placement string
      */
     private void makePlacement(String placement) {
-        System.out.println("Making placement " + placement);
         game.addPieceToBoard(placement);
         if (allPiecesPlaced()) {
             checkCompletion();
@@ -579,25 +582,26 @@ public class Board extends Application {
 
         Button saveGame = new Button("Save Game");
         saveGame.setOnAction(e -> {
-            FileChooser fileChooser = new FileChooser();
-            fileChooser.setTitle("Save Game");
-            File file = fileChooser.showSaveDialog(stage);
-
+            try {
+                saveGame(stage);
+            } catch (IOException error) {
+                System.out.println(error);
+            }
         });
 
 
         Button toggleChallenge = new Button("Hide Challenge");
         toggleChallenge.setMinWidth(110);
         toggleChallenge.setOnAction(e -> {
-            if (SHOW_CHALLENGE) {
-                SHOW_CHALLENGE = false;
-                toggleChallenge.setText("Show Challenge");
-                root.getChildren().remove(challengeSquaresBoard);
-            } else {
-                SHOW_CHALLENGE = true;
-                toggleChallenge.setText("Hide Challenge");
-                root.getChildren().add(challengeSquaresBoard);
-            }
+        if (SHOW_CHALLENGE) {
+            SHOW_CHALLENGE = false;
+            toggleChallenge.setText("Show Challenge");
+            challengeSquaresBoard.setOpacity(0);
+        } else {
+            SHOW_CHALLENGE = true;
+            toggleChallenge.setText("Hide Challenge");
+            challengeSquaresBoard.setOpacity(CHALLENGE_PIECE_OPACITY);
+        }
         });
 
         controlBox.getChildren().addAll(newGame,resetBoard,toggleChallenge,hint,saveGame,loadGame,help);
@@ -625,18 +629,53 @@ public class Board extends Application {
     private void loadGame(Stage stage) throws IOException {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Load Game");
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Save Files (*.sav)", "*.sav"));
+        fileChooser.getExtensionFilters().add(EXTENSION_FILTER);
         File file = fileChooser.showOpenDialog(stage);
-        FileReader fr = new FileReader(file);
-        BufferedReader br = new BufferedReader(fr);
-        String saveString = br.readLine();
-        if (FocusGame.isSaveStringValid(saveString)) {
-            game.loadGame(saveString);
-        } else {
-            Alert alert = new Alert(Alert.AlertType.ERROR,"",ButtonType.OK);
-            alert.setHeaderText("Invalid Save File");
-            alert.setTitle("Error - Invalid Save");
-            alert.showAndWait();
+        if (file != null) {
+            BufferedReader br = new BufferedReader(new FileReader(file));
+            String saveString = br.readLine();
+            if (FocusGame.isSaveStringValid(saveString)) {
+                String[] saveArray = saveString.split(",");
+                resetBoard();
+                game.nextChallenge(Integer.parseInt(saveArray[0]));
+                makeChallenge(game.getChallenge());
+                game.addPiecesToBoard(saveArray[1]);
+                makePlacements(saveArray[1]);
+            } else {
+                Alert alert = new Alert(Alert.AlertType.ERROR, "", ButtonType.OK);
+                alert.setHeaderText("Invalid Save File");
+                alert.setTitle("Error - Invalid Save");
+                alert.showAndWait();
+            }
+        }
+    }
+
+    private void saveGame(Stage stage) throws IOException {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Save Game");
+        fileChooser.getExtensionFilters().add(EXTENSION_FILTER);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("ddMMyyyy_HHmmss");
+        Date date = new Date();
+        fileChooser.setInitialFileName("IQ_FOCUS_SAVE_" + dateFormat.format(date));
+        File file = fileChooser.showSaveDialog(stage);
+        if (file != null) {
+            try (PrintWriter out = new PrintWriter(file.getAbsolutePath())) {
+                out.println(game.getSaveString());
+            }
+        }
+    }
+
+    private void makePlacements(String placementString) {
+        for (String p : FocusGame.splitPlacementString(placementString)) {
+            Piece piece = new Piece(p);
+            for (PieceTile pT : pieceTilesList) {
+                if (pT.pieceType == piece.getPieceType()) {
+                    pT.placement = p;
+                    pT.placePiece(piece);
+                    pT.placed = true;
+                    pT.setRotation(piece.getOrientation());
+                }
+            }
         }
     }
 
@@ -698,10 +737,10 @@ public class Board extends Application {
 
             chSqBd.setX(BOARD_ABS_X+SCALED_SQUARE_SIZE*3+col*SCALED_SQUARE_SIZE);
             chSqBd.setY(BOARD_ABS_Y+SCALED_SQUARE_SIZE*1+row*SCALED_SQUARE_SIZE);
-            chSqBd.setOpacity(CHALLENGE_PIECE_OPACITY);
             challengeSquaresBoard.getChildren().add(chSqBd);
             col++;
         }
+        challengeSquaresBoard.setOpacity(CHALLENGE_PIECE_OPACITY);
         Text challengeTitle = new Text("Challenge #" + game.getChallengeNumber());
         challengeTitle.setFont(Font.font("Tahoma", FontWeight.BOLD, 20));
         challengeTitle.setFill(Color.BLACK);
@@ -755,7 +794,7 @@ public class Board extends Application {
             completed.setTitle("Challenge complete");
             completed.showAndWait();
             if (completed.getResult() == ButtonType.NEXT) {
-                game.nextChallenge();
+                game.nextChallenge(game.currentChallengeNumber+1);
                 makeChallenge(game.getChallenge());
                 resetBoard();
             }

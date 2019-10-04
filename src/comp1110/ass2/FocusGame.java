@@ -36,9 +36,13 @@ public class FocusGame {
         currentChallenge = Solution.getChallenge(currentChallengeNumber);
     }
 
-    public void nextChallenge() {
-        currentChallengeNumber++;
-        currentChallenge = Solution.getChallenge(currentChallengeNumber);
+    public void nextChallenge(int challengeNumber) {
+        if (challengeNumber > Solution.SOLUTIONS.length) {
+
+        } else {
+            currentChallengeNumber = challengeNumber;
+            currentChallenge = Solution.getChallenge(currentChallengeNumber);
+        }
     }
 
     public String getChallenge() {
@@ -60,7 +64,7 @@ public class FocusGame {
         return solutionPieces.iterator().next();
     }
 
-    private static ArrayList<String> splitPlacementString(String placementString) {
+    public static ArrayList<String> splitPlacementString(String placementString) {
         int l = placementString.length();
         char[] placementStringArray = placementString.toCharArray();
         ArrayList<String> placements = new ArrayList<>();
@@ -77,17 +81,15 @@ public class FocusGame {
         return placements;
     }
 
-    public void loadGame(String saveString) {
-
-    }
-
-    public void saveGame() {
-        String save = currentChallengeNumber + "," + getBoardPlacementString();
-        System.out.println(save);
+    public String getSaveString() {
+        return currentChallengeNumber + "," + getBoardPlacementString();
     }
 
     public static boolean isSaveStringValid(String saveString) {
-        return false;
+        String[] saveArray = saveString.split(",");
+        return saveArray.length == 2
+                && isPlacementStringValid(saveArray[1])
+                && Solution.SOLUTIONS.length >= Integer.parseInt(saveArray[0]);
     }
 
     /**
