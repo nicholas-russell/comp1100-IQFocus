@@ -23,13 +23,11 @@ import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
-import java.io.File;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Random;
-
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 
 /**
  * This program implements the controller and view for
@@ -496,7 +494,7 @@ public class Board extends Application {
     /**
      * Makes game controls
      */
-    private void makeControls() {
+    private void makeControls(Stage stage) throws IOException {
         ArrayList<Node> controlNodes = new ArrayList<Node>();
 
         // Board Title
@@ -571,11 +569,21 @@ public class Board extends Application {
         help.setOnAction(e -> showHelp());
 
         Button loadGame = new Button("Load Game");
+        loadGame.setOnAction(e -> {
+            try {
+                loadGame(stage);
+            } catch (IOException error) {
+                System.out.println(error);
+            }
+        });
 
         Button saveGame = new Button("Save Game");
-        /*saveGame.getOnAction(e -> {
-
-        });*/
+        saveGame.setOnAction(e -> {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Save Game");
+            File file = fileChooser.showSaveDialog(stage);
+            System.out.println(file.getAbsolutePath());
+        });
 
 
         Button toggleChallenge = new Button("Hide Challenge");
@@ -612,6 +620,18 @@ public class Board extends Application {
         controlNodes.add(version);
 
         controls.getChildren().addAll(controlNodes);
+    }
+
+    private void loadGame(Stage stage) throws IOException {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Load Game");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Save Files (*.sav)", "*.sav"));
+        File file = fileChooser.showOpenDialog(stage);
+        FileReader fr = new FileReader(file);
+        BufferedReader br = new BufferedReader(fr);
+        String saveString = br.readLine();
+        String[] saveValues = saveString.split(",");
+        game.currentChallengeNumber = Integer.parseInt(saveValues[0]);
     }
 
     private void showHelp() {
@@ -682,21 +702,6 @@ public class Board extends Application {
         challengeTitle.setX(CHALLENGE_POS_X+(SCALED_SQUARE_SIZE*3-challengeTitle.getLayoutBounds().getWidth())/2);
         challengeTitle.setY(CHALLENGE_POS_Y-10);
         challengeSquares.getChildren().add(challengeTitle);
-    }
-
-    /**
-     * Prints debug statements on start up
-     */
-    private void debug() {
-        System.out.println("DEBUG");
-        System.out.println("===========================================");
-        System.out.println("Calculated Values");
-        System.out.println("BOARD_X=" + BOARD_X);
-        System.out.println("BOARD_Y=" + BOARD_Y);
-        System.out.println("BOARD_HEIGHT=" + BOARD_HEIGHT);
-        System.out.println("BOARD_WIDTH=" + BOARD_WIDTH);
-        System.out.println("SCALED_SQUARE_SIZE=" + SCALED_SQUARE_SIZE);
-
     }
 
     /**
@@ -794,8 +799,7 @@ public class Board extends Application {
         initVariables();
 
         makePieceTiles();
-        makeControls();
-        debug(); // -- comment out in production
+        makeControls(primaryStage);
 
         newGame();
 

@@ -83,7 +83,7 @@ public class FocusGame {
 
     public void saveGame() {
         String save = currentChallengeNumber + "," + getBoardPlacementString();
-
+        System.out.println(save);
     }
 
     /**
