@@ -563,15 +563,11 @@ public class Board extends Application {
             }
         });
 
-        Button resetBoard = new Button("Reset Board");
+        Button resetBoard = new Button();
+        resetBoard.setMnemonicParsing(true);
+        resetBoard.setText("_Reset Board");
         resetBoard.setOnAction(e -> {
-            Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION,"Are you sure you want to reset the board?",ButtonType.YES,ButtonType.NO);
-            confirmation.setTitle("Reset Board");
-            confirmation.setHeaderText("Reset Board?");
-            confirmation.showAndWait();
-            if (confirmation.getResult() == ButtonType.YES) {
-                resetBoard();
-            }
+            resetBoardAction();
         });
 
         /**
@@ -581,12 +577,12 @@ public class Board extends Application {
         });
         **/
 
-        Button hint = new Button("Hint");
+        Button hint = new Button();
+        hint.setMnemonicParsing(true);
+        hint.setText("_Hint");
         hint.setOnAction(e -> {
             showHint();
         });
-
-
 
         Button help = new Button("Help");
         help.setOnAction(e -> showHelp());
@@ -609,8 +605,9 @@ public class Board extends Application {
             }
         });
 
-
-        Button toggleChallenge = new Button("Hide Challenge");
+        Button toggleChallenge = new Button();
+        toggleChallenge.setMnemonicParsing(true);
+        toggleChallenge.setText("Hide _Challenge");
         toggleChallenge.setMinWidth(110);
         toggleChallenge.setOnAction(e -> {
             if (SHOW_CHALLENGE) {
@@ -644,9 +641,10 @@ public class Board extends Application {
 
         Text info = new Text();
         info.setWrappingWidth(SCALED_SQUARE_SIZE*3);
-        info.setText("Place all the pieces on the board that forms the 3x3 challenge shown!");
+        info.setText("Place all the pieces on the board that forms the 3x3 challenge shown!" +
+                "\n\nPress Z to rotate pieces");
         info.setX(WINDOW_WIDTH-CHALLENGE_POS_X-SCALED_SQUARE_SIZE*3);
-        info.setFont(new Font("Tahoma", 20));
+        info.setFont(new Font("Tahoma", 15));
         info.setY(CHALLENGE_POS_Y);
         info.setTextAlignment(TextAlignment.CENTER);
         controlNodes.add(info);
@@ -701,6 +699,16 @@ public class Board extends Application {
         }
     }
 
+    private void resetBoardAction() {
+        Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION,"Are you sure you want to reset the board?",ButtonType.YES,ButtonType.NO);
+        confirmation.setTitle("Reset Board");
+        confirmation.setHeaderText("Reset Board?");
+        confirmation.showAndWait();
+        if (confirmation.getResult() == ButtonType.YES) {
+            resetBoard();
+        }
+    }
+
     private void makePlacements(String placementString) {
         for (String p : FocusGame.splitPlacementString(placementString)) {
             Piece piece = new Piece(p);
@@ -722,12 +730,40 @@ public class Board extends Application {
         banner.setPreserveRatio(true);
         banner.setFitHeight(HELP_WINDOW_HEIGHT);
 
+        double xOff = HELP_WINDOW_WIDTH/2+10;
+
         Text helpTitle = new Text("IQ FOCUS - Help");
         helpTitle.setFont(new Font("Tahoma", 20));
-        helpTitle.setX(HELP_WINDOW_WIDTH/2+10);
+        helpTitle.setX(xOff);
         helpTitle.setY(20);
 
-        helpRoot.getChildren().addAll(banner,helpTitle);
+        Text helpBody = new Text();
+        helpBody.setFont(new Font("Tahoma", 12));
+        helpBody.setWrappingWidth(HELP_WINDOW_WIDTH/2-20);
+        helpBody.setX(xOff);
+        helpBody.setY(40);
+        helpBody.setText("To complete the challenge, you must place all the pieces on the board and form the challenge given in the centre squares." +
+                "\n\nControls" +
+                "\nZ - Rotate piece" +
+                "\nALT+H - Hint" +
+                "\nALT+R - Reset Board" +
+                "\nALT+C - Toggle challenge on board");
+
+        Text aboutTitle = new Text();
+        aboutTitle.setText("About");
+        aboutTitle.setFont(new Font("Tahoma", 14));
+        aboutTitle.setX(xOff);
+        aboutTitle.setY(40+helpBody.getLayoutBounds().getHeight()+10);
+
+        Text aboutBody = new Text();
+        aboutBody.setText("The game is based directly on Smart Games' IQ-Focus game available at: \nhttps://www.smartgames.eu/uk/one-player-games/iq-focus" +
+                "\n\nThis application was coded by Nicholas Russell, Yuhui Wang and Matthew Tein for a COMP1110 (ANU) assignment");
+        aboutBody.setX(xOff);
+        aboutBody.setY(40+helpBody.getLayoutBounds().getHeight()+10+20);
+        aboutBody.setFont(new Font("Tahoma", 12));
+        aboutBody.setWrappingWidth(HELP_WINDOW_WIDTH/2-20);
+
+        helpRoot.getChildren().addAll(banner,helpTitle,helpBody, aboutTitle, aboutBody);
 
         stage.setTitle("IQ FOCUS - Help");
         stage.getIcons().add(ICON_IMAGE);
@@ -830,7 +866,9 @@ public class Board extends Application {
                 }
             } else if (key == KeyCode.SLASH) {
                 showHint();
-            }
+            } /*else if (key == KeyCode.R) {
+                resetBoardAction();
+            }*/
             e.consume();
         });
     }
