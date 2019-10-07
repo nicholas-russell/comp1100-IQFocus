@@ -52,6 +52,9 @@ public class Board extends Application {
 
     private static final int WINDOW_WIDTH = 933;
     private static final int WINDOW_HEIGHT = 700;
+    private static final int HELP_WINDOW_WIDTH = 680;
+    private static final int HELP_WINDOW_HEIGHT = 400;
+
 
     private static final int BOARD_PADDING_TOP = 87; // grey part of board on top
     private static final int BOARD_PADDING_LEFT = 41; // grey part of board on left
@@ -89,6 +92,7 @@ public class Board extends Application {
     private double SCALED_SQUARE_SIZE;
 
     private static final String URI_BASE = "assets/";
+    private static final Image ICON_IMAGE = new Image(Board.class.getResourceAsStream(URI_BASE + "icon.png"));
     private static final FileChooser.ExtensionFilter EXTENSION_FILTER = new FileChooser.ExtensionFilter("IQ Focus Save (*.iqs)", "*.iqs");
 
     private final Group root = new Group();
@@ -713,19 +717,24 @@ public class Board extends Application {
     }
 
     private void makeHelp(Stage stage) {
-        Scene scene = new Scene(helpRoot,300,300);
-        Text title = new Text("IQ Focus Puzzle");
-        title.setFont(Font.font("Tahoma", FontWeight.NORMAL, FontPosture.ITALIC, 40));
-        title.setY(45);
-        helpRoot.getChildren().add(title);
+        Scene scene = new Scene(helpRoot,HELP_WINDOW_WIDTH,HELP_WINDOW_HEIGHT);
+        ImageView banner = new ImageView(new Image(Board.class.getResourceAsStream(URI_BASE + "help-banner.jpg")));
+        banner.setPreserveRatio(true);
+        banner.setFitHeight(HELP_WINDOW_HEIGHT);
 
-        stage.setTitle("Help");
+        Text helpTitle = new Text("IQ FOCUS - Help");
+        helpTitle.setFont(new Font("Tahoma", 20));
+        helpTitle.setX(HELP_WINDOW_WIDTH/2+10);
+        helpTitle.setY(20);
 
+        helpRoot.getChildren().addAll(banner,helpTitle);
+
+        stage.setTitle("IQ FOCUS - Help");
+        stage.getIcons().add(ICON_IMAGE);
         stage.setScene(scene);
     }
 
     private void showHelp() {
-        makeHelp(helpStage);
         helpStage.show();
     }
 
@@ -871,7 +880,7 @@ public class Board extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         primaryStage.setTitle("IQ Focus Puzzle");
-        primaryStage.getIcons().add(new Image(Board.class.getResourceAsStream(URI_BASE + "icon.png")));
+        primaryStage.getIcons().add(ICON_IMAGE);
         primaryStage.setResizable(false);
 
         Scene scene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
@@ -893,7 +902,7 @@ public class Board extends Application {
         makeControls(primaryStage);
 
         newGame();
-
+        makeHelp(helpStage);
         primaryStage.setScene(scene);
         primaryStage.show();
     }
