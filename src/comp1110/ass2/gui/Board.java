@@ -585,12 +585,6 @@ public class Board extends Application {
             showHint();
         });
 
-        if (HINTS_LIMITED) {
-            hintCounter.setText("Hints remaining: " + (HINTS_LIMIT-HINTS_COUNTER));
-            hintCounter.setFont(new Font("Tahoma", 15));
-            hintCounter.setX(BOARD_X+(BOARD_WIDTH-hintCounter.getLayoutBounds().getWidth())/2);
-            hintCounter.setY(BOARD_Y+BOARD_HEIGHT+17);
-        }
 
 
         Button help = new Button("Help");
@@ -618,15 +612,15 @@ public class Board extends Application {
         Button toggleChallenge = new Button("Hide Challenge");
         toggleChallenge.setMinWidth(110);
         toggleChallenge.setOnAction(e -> {
-        if (SHOW_CHALLENGE) {
-            SHOW_CHALLENGE = false;
-            toggleChallenge.setText("Show Challenge");
-            challengeSquaresBoard.setOpacity(0);
-        } else {
-            SHOW_CHALLENGE = true;
-            toggleChallenge.setText("Hide Challenge");
-            challengeSquaresBoard.setOpacity(CHALLENGE_PIECE_OPACITY);
-        }
+            if (SHOW_CHALLENGE) {
+                SHOW_CHALLENGE = false;
+                toggleChallenge.setText("Show Challenge");
+                challengeSquaresBoard.setOpacity(0);
+            } else {
+                SHOW_CHALLENGE = true;
+                toggleChallenge.setText("Hide Challenge");
+                challengeSquaresBoard.setOpacity(CHALLENGE_PIECE_OPACITY);
+            }
         });
 
         controlBox.getChildren().addAll(newGame,resetBoard,toggleChallenge,hint,saveGame,loadGame,help);
@@ -638,8 +632,22 @@ public class Board extends Application {
         }
 
         controlNodes.add(controlBox);
+
+        if (HINTS_LIMITED) {
+            hintCounter.setText("Hints remaining: " + (HINTS_LIMIT-HINTS_COUNTER));
+            hintCounter.setFont(new Font("Tahoma", 15));
+            hintCounter.setX(BOARD_X+(BOARD_WIDTH-hintCounter.getLayoutBounds().getWidth())/2);
+            hintCounter.setY(BOARD_Y+BOARD_HEIGHT+17);
+        }
         controlNodes.add(hintCounter);
 
+        Text info = new Text();
+        info.setWrappingWidth(SCALED_SQUARE_SIZE*3);
+        info.setText("Instructions\nMake the challenge square in the centre of the bosrd with all the pieeces used.");
+        info.setX(WINDOW_WIDTH-CHALLENGE_POS_X-SCALED_SQUARE_SIZE*3);
+        info.setFont(new Font("Tahoma", 15));
+        info.setY(CHALLENGE_POS_Y);
+        controlNodes.add(info);
 
         // Version number
         Text version = new Text("Version " + VERSION);
