@@ -93,12 +93,14 @@ public class Board extends Application {
     private final Group controls = new Group();
     private Pane boardPieces = new Pane();
     private Pane board = new Pane();
-    private Pane errors = new Pane();
     private Pane pieceTiles = new Pane();
     private Pane challengeSquares = new Pane();
     private Pane challengeSquaresBoard = new Pane();
     private PieceTile[] pieceTilesList = new PieceTile[10];
     private Group debugShapes = new Group();
+
+    private Stage helpStage = new Stage();
+    private Group helpRoot = new Group();
 
     private FocusGame game = new FocusGame();
 
@@ -680,8 +682,21 @@ public class Board extends Application {
         }
     }
 
+    private void makeHelp(Stage stage) {
+        Scene scene = new Scene(helpRoot,300,300);
+        Text title = new Text("IQ Focus Puzzle");
+        title.setFont(Font.font("Tahoma", FontWeight.NORMAL, FontPosture.ITALIC, 40));
+        title.setY(45);
+        helpRoot.getChildren().add(title);
+
+        stage.setTitle("Help");
+
+        stage.setScene(scene);
+    }
+
     private void showHelp() {
-        System.out.println("Show help");
+        makeHelp(helpStage);
+        helpStage.show();
     }
 
     /**
@@ -836,7 +851,6 @@ public class Board extends Application {
                 challengeSquaresBoard,
                 boardPieces,
                 pieceTiles,
-                errors,
                 controls
         );
 
