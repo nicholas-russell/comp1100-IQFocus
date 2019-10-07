@@ -16,10 +16,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontPosture;
-import javafx.scene.text.FontWeight;
-import javafx.scene.text.Text;
+import javafx.scene.text.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -643,10 +640,11 @@ public class Board extends Application {
 
         Text info = new Text();
         info.setWrappingWidth(SCALED_SQUARE_SIZE*3);
-        info.setText("Instructions\nMake the challenge square in the centre of the bosrd with all the pieeces used.");
+        info.setText("Place all the pieces on the board that forms the 3x3 challenge shown!");
         info.setX(WINDOW_WIDTH-CHALLENGE_POS_X-SCALED_SQUARE_SIZE*3);
-        info.setFont(new Font("Tahoma", 15));
+        info.setFont(new Font("Tahoma", 20));
         info.setY(CHALLENGE_POS_Y);
+        info.setTextAlignment(TextAlignment.CENTER);
         controlNodes.add(info);
 
         // Version number
