@@ -61,7 +61,8 @@ public class FocusGame {
                 solutionPieces.remove(p);
             }
         }
-        return solutionPieces.iterator().next();
+        Random r = new Random();
+        return solutionPieces.get(r.nextInt(solutionPieces.size()));
     }
 
     public static ArrayList<String> splitPlacementString(String placementString) {

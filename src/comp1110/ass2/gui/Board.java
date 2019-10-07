@@ -72,7 +72,7 @@ public class Board extends Application {
 
     private static final String VERSION = "0.3-d2g";
 
-    private static final Boolean HINTS_LIMITED = true;
+    private static final Boolean HINTS_LIMITED = false;
     private static final int HINTS_LIMIT = 3;
     private int HINTS_COUNTER;
     private Text hintCounter = new Text();
@@ -585,10 +585,13 @@ public class Board extends Application {
             showHint();
         });
 
-        hintCounter.setText("Hints remaining: " + (HINTS_LIMIT-HINTS_COUNTER));
-        hintCounter.setFont(new Font("Tahoma", 15));
-        hintCounter.setX(BOARD_X+(BOARD_WIDTH-hintCounter.getLayoutBounds().getWidth())/2);
-        hintCounter.setY(BOARD_Y+BOARD_HEIGHT+17);
+        if (HINTS_LIMITED) {
+            hintCounter.setText("Hints remaining: " + (HINTS_LIMIT-HINTS_COUNTER));
+            hintCounter.setFont(new Font("Tahoma", 15));
+            hintCounter.setX(BOARD_X+(BOARD_WIDTH-hintCounter.getLayoutBounds().getWidth())/2);
+            hintCounter.setY(BOARD_Y+BOARD_HEIGHT+17);
+        }
+
 
         Button help = new Button("Help");
         help.setOnAction(e -> showHelp());
