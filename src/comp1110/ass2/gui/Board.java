@@ -40,7 +40,7 @@ import java.util.Random;
  * (https://www.smartgames.eu/uk/one-player-games/iq-focus)
  *
  * @author Nicholas Russell, Matt Tein
- * @version 0.2-d2f
+ * @version 0.2-d2g
  * @since 1/10/2019
  */
 
@@ -70,7 +70,12 @@ public class Board extends Application {
 
     private static final double CHALLENGE_PIECE_OPACITY = 0.3;
 
-    private static final String VERSION = "0.2-d2f";
+    private static final String VERSION = "0.3-d2g";
+
+    private static final Boolean HINTS_LIMITED = true;
+    private static final int HINTS_LIMIT = 3;
+    private int HINTS_COUNTER;
+    private Text hintCounter = new Text();
 
     private PieceTile currentPiece; // current piece selected
 
@@ -390,19 +395,29 @@ public class Board extends Application {
     }
 
     private void showHint() {
-        String hintPlacement = game.getNextHint();
-        Piece hintPiece = new Piece(hintPlacement);
-        for (PieceTile p : pieceTilesList) {
-            if (p.pieceType == hintPiece.getPieceType()) {
-                if (p.placed) {
-                    System.out.println("Piece " + p.pieceType.toString() + " is already placed at " + p.placement);
-                    game.undoOperation(game.getBoardPlacementString(), p.placement);
+        if (HINTS_LIMITED && HINTS_COUNTER >= HINTS_LIMIT) {
+            Alert hintAlert = new Alert(Alert.AlertType.NONE,"No more hints!",ButtonType.OK);
+            hintAlert.setTitle("No more hints!!");
+            hintAlert.showAndWait();
+        } else {
+            if (HINTS_LIMITED) {
+                HINTS_COUNTER++;
+                hintCounter.setText("Hints remaining: " + (HINTS_LIMIT-HINTS_COUNTER));
+            }
+            String hintPlacement = game.getNextHint();
+            Piece hintPiece = new Piece(hintPlacement);
+            for (PieceTile p : pieceTilesList) {
+                if (p.pieceType == hintPiece.getPieceType()) {
+                    if (p.placed) {
+                        System.out.println("Piece " + p.pieceType.toString() + " is already placed at " + p.placement);
+                        game.undoOperation(game.getBoardPlacementString(), p.placement);
+                    }
+                    p.placement = hintPlacement;
+                    p.placePiece(hintPiece);
+                    p.placed = true;
+                    p.setRotation(hintPiece.getOrientation());
+                    makePlacement(hintPlacement);
                 }
-                p.placement = hintPlacement;
-                p.placePiece(hintPiece);
-                p.placed = true;
-                p.setRotation(hintPiece.getOrientation());
-                makePlacement(hintPlacement);
             }
         }
     }
@@ -570,6 +585,11 @@ public class Board extends Application {
             showHint();
         });
 
+        hintCounter.setText("Hints remaining: " + (HINTS_LIMIT-HINTS_COUNTER));
+        hintCounter.setFont(new Font("Tahoma", 15));
+        hintCounter.setX(BOARD_X+(BOARD_WIDTH-hintCounter.getLayoutBounds().getWidth())/2);
+        hintCounter.setY(BOARD_Y+BOARD_HEIGHT+17);
+
         Button help = new Button("Help");
         help.setOnAction(e -> showHelp());
 
@@ -615,6 +635,7 @@ public class Board extends Application {
         }
 
         controlNodes.add(controlBox);
+        controlNodes.add(hintCounter);
 
 
         // Version number
@@ -811,6 +832,7 @@ public class Board extends Application {
             completed.showAndWait();
             if (completed.getResult() == ButtonType.NEXT) {
                 game.nextChallenge(game.currentChallengeNumber+1);
+                HINTS_COUNTER = HINTS_LIMIT;
                 makeChallenge(game.getChallenge());
                 resetBoard();
             }
