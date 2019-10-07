@@ -673,6 +673,7 @@ public class Board extends Application {
                     pT.placement = p;
                     pT.placePiece(piece);
                     pT.placed = true;
+                    pT.orientation = piece.getOrientation();
                     pT.setRotation(piece.getOrientation());
                 }
             }
