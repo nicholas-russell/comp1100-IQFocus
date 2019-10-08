@@ -1,5 +1,6 @@
 package comp1110.ass2;
 
+import javax.lang.model.type.NullType;
 import java.lang.reflect.Array;
 import java.util.*;
 
@@ -216,7 +217,7 @@ public class FocusGame {
     static Set<String> getViablePiecePlacements(String placement, String challenge, int col, int row) {
         // FIXME Task 6: determine the set of all viable piece placements given existing placements and a challenge
 
-        System.out.println(placement);
+        System.out.println("???" +placement);
 
         //Find a list of Non-placed PieceTypes
         ArrayList<PieceType> AvaliablePiece = new ArrayList<PieceType>();
@@ -227,108 +228,91 @@ public class FocusGame {
 
         //Matthew - Continueing on Yuhui's Work
 
-
-        //Filtering if valid. Will need to compresss the following filters once sorted through
-        //ArrayList<String> possibleSinglePlacements = new ArrayList<>();
         Set<String> viablePlacements1 = new HashSet<>();
         Set<String> viablePlacements2 = new HashSet<>();
         Set<String> testingPlacements = new HashSet<>();
-       testingPlacements.add("a000");
-
-            /*
-            for (String x : findPossibilities()) {
-
-                String rowwX = x.substring(1, 2);
-                String collY = x.substring(2, 3);
-                int rowX = Integer.parseInt(rowwX);
-                int colY = Integer.parseInt(collY);
-
-                /*
-                System.out.println(rowX);
-                System.out.println(colY);
-                System.out.println("=====================");
-
-               if(row == rowX){System.out.println("True");}
-                else {System.out.println("False");}
+         testingPlacements.add("a000");
 
 
 
+            for (String x : findPossibilities()){
+              if(isPlacementStringValid(placement + "" + x) &&
+                      consistentWithChallenge(placement, challenge)) {
+                      viablePlacements1.add(x);
+                     // System.out.println("Added 1");
+            }else {//System.out.println("Not added 1");
+                   }
 
-                if (row == rowX) {
-                    if (col == colY) {
-                        viablePlacements1.add(x);
-                         System.out.println("Added1");
-                    }
-                } else {
-                      System.out.println("Not Added1");
+            }
+
+            for(String x : testingPlacements){
+                //new FocusGame().testAddPieceToBoard(placement+""+x);
+                new FocusGame().addPiecesToBoard(placement+""+x);
+                if(board[row][col] == WHITE || board[row][col] == GREEN || board[row][col] == RED ||
+                        board[row][col] == BLUE){
+                    viablePlacements2.add(x);
+
+                    System.out.println("Added 2");
+                }
+                else {
+                    System.out.println("Didnt add 2");
                 }
 
 
-            }
-            */
-             for (String x : findPossibilities()){
-                 if(isPlacementStringValid("d302") == true){
-                      viablePlacements2.add(x);
-                        System.out.println("Added2");
-            }
-                 else {
-                     System.out.println("Not added 2");
-                 }
-
-        }
-        /*
-        //Filter if matches challenge Square
-        for(String x : viablePlacements){
-            boolean answer = new FocusGame().consistentWithChallenge(x, challenge);
-            if(answer == true){
 
             }
-            else{
-                viablePlacements.remove(x);
-            }
-        }
-
-
-        for (String x : viablePlacements){
-            char piece = x.charAt(0);
-            String piecel = String.valueOf(piece);
-            PieceType.valueOf(piecel);
-            if(!AvaliablePiece.contains(x)){
-            }
-            else {
-                viablePlacements.remove(x);
-            }
-        }
-        */
-
-        /*Last filter that checks corresponding c-square of the given int row and int col as either empty or matching
-        the challenge square
-        for(String x : viablePlacements) {
-            State square = State.getStateOnTile(row, col);
-            char square2 = challenge.charAt((row*3+col));
-            State square3 = State.getColorStateFromChar(square2);
-            if (square == EMPTY) {
-                if (square == square3) {
-                } else {
-                    viablePlacements.remove(x);
-                }
-            }
-            else{
-                viablePlacements.remove(x);
-            }
-        } */
-
-            //Filter for placement coords int row and int col
-
-
             //for debugging
-
-
 
         System.out.println("AP:" + AvaliablePiece);
         System.out.println("VP:" + viablePlacements2);
+        if (viablePlacements2.isEmpty()){
+            return null;
+        } else {
 
-        return viablePlacements2;
+            return viablePlacements2;
+
+        }
+    }
+
+
+    //For Task6 : need to return just states of squares on board
+    public State[][] testAddPieceToBoard(String testplacement) {
+        /*
+        saveState();
+
+        for(int j = 0; j < testplacement.length();j += 4) {
+            String pieceplacement;
+            pieceplacement = testplacement.substring(j, j + 4);
+            addPieceToBoard(pieceplacement);
+        }
+        State[][] testBoard = board.clone();
+        loadState();
+        */
+        boolean result = true;
+        result = isPlacementStringWellFormed(testplacement);
+        saveState();
+        if (result) {
+            for (int i = 0; i < testplacement.length(); i += 4) {
+                Piece p = new Piece(testplacement.substring(i, i + 4));
+                int x = p.getLocation().getX();
+                int y = p.getLocation().getY();
+
+                if (checkPieceToBoard(testplacement.substring(i, i + 4)))
+                    addPieceToBoard(testplacement.substring(i, i + 4));
+                else
+                    result = false;
+            }
+        }
+        else {
+            loadState();
+        }
+
+        State[][] testBoard = board.clone();
+        loadState();
+
+
+        return testBoard;
+
     }
 
 
@@ -394,7 +378,7 @@ public class FocusGame {
     }
 
 
-    public boolean consistentWithChallenge(String placement, String challenge) {
+    public static boolean consistentWithChallenge(String placement, String challenge) {
         FocusGame Board = new FocusGame();
         if (Board.addPiecesToBoard(placement)) {
             for (int i = 0; i < 9; i++) {
@@ -556,13 +540,14 @@ public class FocusGame {
         return true;
     }
 
+
     /**
      * This is written by Yuhui Wang
      * @param piecePlacement The pieceplacement need to be added to board
      */
     public void addPieceToBoard(String piecePlacement) {
         current += piecePlacement;
-        System.out.println(current);
+
         Piece p = new Piece(piecePlacement);
         int x = p.getLocation().getX();
         int y = p.getLocation().getY();
@@ -602,3 +587,64 @@ public class FocusGame {
     }
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//Junk Code but maybe need. Delete by 13/10
+   /*
+        //Filter if matches challenge Square
+        for(String x : viablePlacements){
+            boolean answer = new FocusGame().consistentWithChallenge(x, challenge);
+            if(answer == true){
+
+            }
+            else{
+                viablePlacements.remove(x);
+            }
+        }
+
+                        int row = Integer.parseInt(collY);
+
+
+
+        for (String x : viablePlacements){
+            char piece = x.charAt(0);
+            String piecel = String.valueOf(piece);
+            PieceType.valueOf(piecel);
+            if(!AvaliablePiece.contains(x)){
+            }
+            else {
+                viablePlacements.remove(x);
+            }
+        }
+        */
+
+        /*Last filter that checks corresponding c-square of the given int row and int col as either empty or matching
+        the challenge square
+        for(String x : viablePlacements) {
+            State square = State.getStateOnTile(row, col);
+            char square2 = challenge.charAt((row*3+col));
+            State square3 = State.getColorStateFromChar(square2);
+            if (square == EMPTY) {
+                if (square == square3) {
+                } else {
+                    viablePlacements.remove(x);
+                }
+            }
+            else{
+                viablePlacements.remove(x);
+            }
+        } */
