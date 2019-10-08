@@ -247,9 +247,9 @@ public class FocusGame {
 
             for(String x : testingPlacements){
                 //new FocusGame().testAddPieceToBoard(placement+""+x);
-                new FocusGame().addPiecesToBoard(placement+""+x);
-                if(board[row][col] == WHITE || board[row][col] == GREEN || board[row][col] == RED ||
-                        board[row][col] == BLUE){
+                new FocusGame().testAddPieceToBoard(placement+""+x);
+                if(board[0][0] == WHITE || board[0][0] == GREEN || board[0][0] == RED ||
+                        board[0][0] == BLUE){
                     viablePlacements2.add(x);
 
                     System.out.println("Added 2");
@@ -289,6 +289,7 @@ public class FocusGame {
         loadState();
         */
         boolean result = true;
+        State[][] testBoard = board.clone();
         result = isPlacementStringWellFormed(testplacement);
         saveState();
         if (result) {
@@ -297,23 +298,22 @@ public class FocusGame {
                 int x = p.getLocation().getX();
                 int y = p.getLocation().getY();
 
-                if (checkPieceToBoard(testplacement.substring(i, i + 4)))
+                if (checkPieceToBoard(testplacement.substring(i, i + 4))) {
                     addPieceToBoard(testplacement.substring(i, i + 4));
-                else
-                    result = false;
+                    testBoard = board.clone();
+                } else
+                    loadState();
             }
-        }
-        else {
+        } else
             loadState();
-        }
-
-        State[][] testBoard = board.clone();
-        loadState();
-
-
-        return testBoard;
+            return testBoard;
 
     }
+
+
+
+
+
 
 
 
