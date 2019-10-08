@@ -99,7 +99,7 @@ public class FocusGame {
      */
     State[][] saved = new State[5][9];
     String current = new String();
-    public State[][] board = {
+    public static State[][] board = {
             {EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY},
             {EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY},
             {EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY},
@@ -262,11 +262,20 @@ public class FocusGame {
             }
         }
 
-        //Need to Add Last filter that checks corresponding c-square ofthe given int row and int col
+        //Last filter that checks corresponding c-square of the given int row and int col as either empty or matching
+        //the challenge square
         for(String x : viablePlacements) {
-            // State.getStateOnTile();
-            if (true) {
-
+            State square = State.getStateOnTile(row, col);
+            char square2 = challenge.charAt((row*3+col));
+            State square3 = State.getColorStateFromChar(square2);
+            if (square == EMPTY) {
+                if (square == square3) {
+                } else {
+                    viablePlacements.remove(x);
+                }
+            }
+            else{
+                viablePlacements.remove(x);
             }
         }
 
