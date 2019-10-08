@@ -23,13 +23,13 @@ public enum State {
     }
 
 
-    public static State getStateOnTile(int x, int y) {
+    public State getStateOnTile(int x, int y) {
         State square = FocusGame.board[y][x];
         return square;
 
     }
 
-    public static State getColorStateFromChar(char input){
+    public State getColorStateFromChar(char input){
         State result;
         switch(input){
             case 'W': result = WHITE;

@@ -215,7 +215,7 @@ public class FocusGame {
      */
     static Set<String> getViablePiecePlacements(String placement, String challenge, int col, int row) {
         // FIXME Task 6: determine the set of all viable piece placements given existing placements and a challenge
-        Set result = new HashSet();
+
         System.out.println(placement);
 
         //Find a list of Non-placed PieceTypes
@@ -225,60 +225,58 @@ public class FocusGame {
                 AvaliablePiece.add(PieceType.valueOf(String.valueOf((char) (i + 'A' - 'a'))));
         }
 
-
-
         //Matthew - Continueing on Yuhui's Work
 
 
         //Filtering if valid. Will need to compresss the following filters once sorted through
         //ArrayList<String> possibleSinglePlacements = new ArrayList<>();
-        Set<String> viablePlacements = new HashSet<>();
+        Set<String> viablePlacements1 = new HashSet<>();
+        Set<String> viablePlacements2 = new HashSet<>();
         Set<String> testingPlacements = new HashSet<>();
-        testingPlacements.add("a000");
+       testingPlacements.add("a000");
 
+            /*
+            for (String x : findPossibilities()) {
 
-            for (String x : testingPlacements) {
-
-                String rowwX = x.substring(1,2);
-                String collY = x.substring(2,3);
+                String rowwX = x.substring(1, 2);
+                String collY = x.substring(2, 3);
                 int rowX = Integer.parseInt(rowwX);
                 int colY = Integer.parseInt(collY);
 
-
+                /*
                 System.out.println(rowX);
                 System.out.println(colY);
                 System.out.println("=====================");
 
-               /* if(row == rowX){System.out.println("True");}
-                else {System.out.println("False")}
-                */
+               if(row == rowX){System.out.println("True");}
+                else {System.out.println("False");}
+
+
 
 
                 if (row == rowX) {
-                    if(col == colY){
-                        viablePlacements.add(x);
-                        System.out.println("Added");
+                    if (col == colY) {
+                        viablePlacements1.add(x);
+                         System.out.println("Added1");
                     }
+                } else {
+                      System.out.println("Not Added1");
                 }
-                else {
-                    System.out.println("Not Added");
-                }
 
 
             }
-
-        /*
-
-        for (String x : findPossibilities()){
-            if(isPlacementStringValid(x) == false){
-                viablePlacements.remove(x);
-
+            */
+             for (String x : findPossibilities()){
+                 if(isPlacementStringValid("d302") == true){
+                      viablePlacements2.add(x);
+                        System.out.println("Added2");
             }
-            else{
-                viablePlacements.add(x);
-            }
+                 else {
+                     System.out.println("Not added 2");
+                 }
+
         }
-
+        /*
         //Filter if matches challenge Square
         for(String x : viablePlacements){
             boolean answer = new FocusGame().consistentWithChallenge(x, challenge);
@@ -320,16 +318,20 @@ public class FocusGame {
             }
         } */
 
-        //Filter for placement coords int row and int col
+            //Filter for placement coords int row and int col
+
+
+            //for debugging
 
 
 
-        //for debugging
         System.out.println("AP:" + AvaliablePiece);
-        System.out.println("VP:" + viablePlacements);
+        System.out.println("VP:" + viablePlacements2);
 
-        return viablePlacements;
+        return viablePlacements2;
     }
+
+
 
     // Written by Matthew Tein - Generates all possible piece placements
     //      Used in tandem with getViablePiecePlacements
