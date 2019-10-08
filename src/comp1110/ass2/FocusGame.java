@@ -231,39 +231,80 @@ public class FocusGame {
 
 
         //Filtering if valid. Will need to compresss the following filters once sorted through
-        ArrayList<String> possibleSinglePlacements = new ArrayList<>();
+        //ArrayList<String> possibleSinglePlacements = new ArrayList<>();
+        Set<String> viablePlacements = new HashSet<>();
+        Set<String> testingPlacements = new HashSet<>();
+        testingPlacements.add("a000");
+
+
+            for (String x : testingPlacements) {
+
+                String rowwX = x.substring(1,2);
+                String collY = x.substring(2,3);
+                int rowX = Integer.parseInt(rowwX);
+                int colY = Integer.parseInt(collY);
+
+
+                System.out.println(rowX);
+                System.out.println(colY);
+                System.out.println("=====================");
+
+               /* if(row == rowX){System.out.println("True");}
+                else {System.out.println("False")}
+                */
+
+
+                if (row == rowX) {
+                    if(col == colY){
+                        viablePlacements.add(x);
+                        System.out.println("Added");
+                    }
+                }
+                else {
+                    System.out.println("Not Added");
+                }
+
+
+            }
+
+        /*
+
         for (String x : findPossibilities()){
-            if(isPlacementStringValid(x) == true){
-                possibleSinglePlacements.add(x);
+            if(isPlacementStringValid(x) == false){
+                viablePlacements.remove(x);
 
             }
             else{
-            }
-        }
-        Set<String> viablePlacements = new HashSet<>();
-        //Filter if matches challenge Square
-        for(String x : possibleSinglePlacements){
-            boolean answer = new FocusGame().consistentWithChallenge(x, challenge);
-            if(answer == true){
                 viablePlacements.add(x);
             }
+        }
+
+        //Filter if matches challenge Square
+        for(String x : viablePlacements){
+            boolean answer = new FocusGame().consistentWithChallenge(x, challenge);
+            if(answer == true){
+
+            }
             else{
+                viablePlacements.remove(x);
             }
         }
+
 
         for (String x : viablePlacements){
             char piece = x.charAt(0);
             String piecel = String.valueOf(piece);
             PieceType.valueOf(piecel);
-            if(AvaliablePiece.contains(x)){
+            if(!AvaliablePiece.contains(x)){
             }
             else {
                 viablePlacements.remove(x);
             }
         }
+        */
 
-        //Last filter that checks corresponding c-square of the given int row and int col as either empty or matching
-        //the challenge square
+        /*Last filter that checks corresponding c-square of the given int row and int col as either empty or matching
+        the challenge square
         for(String x : viablePlacements) {
             State square = State.getStateOnTile(row, col);
             char square2 = challenge.charAt((row*3+col));
@@ -277,13 +318,15 @@ public class FocusGame {
             else{
                 viablePlacements.remove(x);
             }
-        }
+        } */
 
-        //Need to Add Last filter that checks corresponding c-square ofthe given int row and int col
+        //Filter for placement coords int row and int col
+
+
 
         //for debugging
-        System.out.println(AvaliablePiece);
-        System.out.println(viablePlacements);
+        System.out.println("AP:" + AvaliablePiece);
+        System.out.println("VP:" + viablePlacements);
 
         return viablePlacements;
     }
@@ -330,6 +373,7 @@ public class FocusGame {
                 }
             }
         }
+
         return AllPossibleMoves;
     }
 

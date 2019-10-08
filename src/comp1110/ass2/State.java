@@ -31,8 +31,6 @@ public enum State {
 
     public static State getColorStateFromChar(char input){
         State result;
-
-
         switch(input){
             case 'W': result = WHITE;
               break;
@@ -44,7 +42,6 @@ public enum State {
             break;
              default: result = WHITE;
             break;
-
         }
         return result;
     }
