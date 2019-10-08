@@ -72,7 +72,7 @@ public class Board extends Application {
 
     private static final String VERSION = "0.3-d2g";
 
-    private static final Boolean HINTS_LIMITED = false;
+    private static final Boolean HINTS_LIMITED = true;
     private static final int HINTS_LIMIT = 3;
     private int HINTS_COUNTER;
     private Text hintCounter = new Text();
@@ -602,11 +602,11 @@ public class Board extends Application {
         toggleChallenge.setOnAction(e -> {
             if (SHOW_CHALLENGE) {
                 SHOW_CHALLENGE = false;
-                toggleChallenge.setText("Show Challenge");
+                toggleChallenge.setText("Show _Challenge");
                 challengeSquaresBoard.setOpacity(0);
             } else {
                 SHOW_CHALLENGE = true;
-                toggleChallenge.setText("Hide Challenge");
+                toggleChallenge.setText("Hide _Challenge");
                 challengeSquaresBoard.setOpacity(CHALLENGE_PIECE_OPACITY);
             }
         });
