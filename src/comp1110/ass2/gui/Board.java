@@ -230,9 +230,6 @@ public class Board extends Application {
                     if (placed) {
                         game.undoOperation(game.getBoardPlacementString(),placement);
                     }
-                    System.out.println("===============================");
-                    System.out.println("NEW PIECE MOVEMENT");
-                    System.out.println("You've pressed on " + pieceType.toString());
 
                     // set mouse pointer location
                     mX = e.getSceneX();
@@ -281,11 +278,7 @@ public class Board extends Application {
             double aX = SCALED_SQUARE_SIZE*offsets[0]*-1+getLayoutX();
             double aY = SCALED_SQUARE_SIZE*offsets[1]*-1+getLayoutY();
 
-            //debugAddCircle(aX,aY); -- uncomment if you'd like to see where the x/y location is
-            System.out.println("Dropped coordinates: " + aX + ", " + aY);
-
             if (!xyOnBoard(aX,aY)) {
-                System.out.println("Not on board");
                 snapToHome();
             } else {
                 location = getLocationFromSceneXY(aX,aY); // approximate location
@@ -315,7 +308,6 @@ public class Board extends Application {
                 game.undoOperation(game.getBoardPlacementString(),placement);
                 placement = null;
             }
-            System.out.println(game.getBoardPlacementString());;
             placed = false;
         }
 
@@ -325,7 +317,6 @@ public class Board extends Application {
          */
         private void placePiece(Piece piece) {
             this.placed = true;
-            System.out.println(this.orientation);
             double[] offsets = Viewer.getOrientationOffsets(piece.getPieceType(),piece.getOrientation());
             setLayoutX(BOARD_ABS_X + SCALED_SQUARE_SIZE*(piece.getLocation().getX()+offsets[0]));
             setLayoutY(BOARD_ABS_Y + SCALED_SQUARE_SIZE*(piece.getLocation().getY()+offsets[1]));
@@ -376,7 +367,6 @@ public class Board extends Application {
     public Location getLocationFromSceneXY(double mX, double mY) {
         double approxX = (mX-BOARD_ABS_X)/SCALED_SQUARE_SIZE;
         double approxY = (mY-BOARD_ABS_Y)/SCALED_SQUARE_SIZE;
-        System.out.println("Approx location: " + Math.round(approxX) + ", " + Math.round(approxY));
         return new Location((int)Math.round(approxX),(int)Math.round(approxY));
     }
 
