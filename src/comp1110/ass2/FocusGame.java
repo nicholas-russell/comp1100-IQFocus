@@ -493,6 +493,7 @@ public class FocusGame {
         boolean result = true;
         result = isPlacementStringWellFormed(placement);
         saveState();
+        debugOutputState(saved);
         if (result) {
             for (int i = 0; i < placement.length(); i += 4) {
                 Piece p = new Piece(placement.substring(i, i + 4));
@@ -574,6 +575,15 @@ public class FocusGame {
             orderedPlacementString = orderedPlacementString + p;
         }
         return orderedPlacementString;
+    }
+
+    private static void debugOutputState(State[][] state) {
+        for (State[] x : state) {
+            for (State y : x) {
+                System.out.print(y + ",");
+            }
+            System.out.println();
+        }
     }
 
 }

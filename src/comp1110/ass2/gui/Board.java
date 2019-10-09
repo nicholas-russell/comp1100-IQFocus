@@ -658,6 +658,7 @@ public class Board extends Application {
         if (file != null) {
             BufferedReader br = new BufferedReader(new FileReader(file));
             String saveString = br.readLine();
+            System.out.println(saveString);
             if (FocusGame.isSaveStringValid(saveString)) {
                 String[] saveArray = saveString.split(",");
                 resetBoard();
