@@ -230,87 +230,79 @@ public class FocusGame {
 
         Set<String> viablePlacements1 = new HashSet<>();
         Set<String> viablePlacements2 = new HashSet<>();
-        Set<String> testingPlacements = new HashSet<>();
-         testingPlacements.add("a000");
+        Set<String> viablePlacements3 = new HashSet<>();
+        Set<String> viablePlacements4 = new HashSet<>();
+       // Set<String> testingPlacements = new HashSet<>();
+         //testingPlacements.add("a000");
 
 
-            for (String x : findPossibilities()){
-              if(isPlacementStringValid(placement + "" + x) &&
-                      consistentWithChallenge(placement, challenge)) {
-                      viablePlacements1.add(x);
-                     // System.out.println("Added 1");
-            }else {//System.out.println("Not added 1");
+
+         for(String x : findPossibilities()){
+             char piece1 = x.charAt(0);
+             PieceType piece2 = getPieceTypeFromChar(piece1);
+             if(AvaliablePiece.contains(piece2)){
+                 viablePlacements1.add(x);
+               //  System.out.println("Added1");
+             }
+         }
+
+
+            for (String x : viablePlacements1){
+              if(isPlacementStringValid(placement+x)
+                     ) {
+                      viablePlacements2.add(x);
+                   //  System.out.println("Added 2");
+            }else {//System.out.println("Not added 2");
                    }
 
             }
 
-            for(String x : testingPlacements){
-                //new FocusGame().testAddPieceToBoard(placement+""+x);
-                new FocusGame().addPiecesToBoard(placement+""+x);
-                if(focusGame.board [row][col] == WHITE || focusGame.board[row][col] == GREEN || focusGame.board[row][col] == RED ||
-                        focusGame.board[row][col] == BLUE){
-                    viablePlacements2.add(x);
-
-                    System.out.println("Added 2");
+            for(String x : viablePlacements2){
+                if(testAddPieceToBoard(placement+x, row, col)){
+                    viablePlacements3.add(x);
+                    //System.out.println("Added 3");
                 }
                 else {
-                    System.out.println("Didnt add 2");
+                    //System.out.println("Didnt add 3");
+
                 }
-
-
+            }
+        for(String x : viablePlacements3){
+            if(consistentWithChallengeMidGame(placement+x, challenge)){
+                viablePlacements4.add(x);
+                //System.out.println("Added 4");
+            }
+            else {
+                //System.out.println("Didnt add 4");
 
             }
+        }
             //for debugging
 
         System.out.println("AP:" + AvaliablePiece);
-        System.out.println("VP:" + viablePlacements2);
-        if (viablePlacements2.isEmpty()){
+        System.out.println("VP:" + viablePlacements4);
+        if (viablePlacements4.isEmpty()){
             return null;
         } else {
-
-            return viablePlacements2;
+            return viablePlacements4;
 
         }
     }
 
 
-    //For Task6 : need to return just states of squares on board
-    public State[][] testAddPieceToBoard(String testplacement) {
-        /*
-        saveState();
-
-        for(int j = 0; j < testplacement.length();j += 4) {
-            String pieceplacement;
-            pieceplacement = testplacement.substring(j, j + 4);
-            addPieceToBoard(pieceplacement);
-        }
-        State[][] testBoard = board.clone();
-        loadState();
-        */
-        boolean result = true;
-        result = isPlacementStringWellFormed(testplacement);
-        saveState();
-        if (result) {
-            for (int i = 0; i < testplacement.length(); i += 4) {
-                Piece p = new Piece(testplacement.substring(i, i + 4));
-                int x = p.getLocation().getX();
-                int y = p.getLocation().getY();
-
-                if (checkPieceToBoard(testplacement.substring(i, i + 4)))
-                    addPieceToBoard(testplacement.substring(i, i + 4));
-                else
-                    result = false;
+    //Written By Matthew Tein
+    // For Task6 : need to return just states of squares on board
+    public static boolean testAddPieceToBoard(String testplacement, int row, int col) {
+        FocusGame Board1 = new FocusGame();
+        boolean result1 = true;
+        if(Board1.addPiecesToBoard(testplacement)){
+            State targetCell = Board1.board[row][col];
+            if(targetCell == WHITE || targetCell == GREEN || targetCell  == RED || targetCell  == BLUE){
+                return true;
             }
+            else {return false;}
         }
-        else {
-            loadState();
-        }
-
-        State[][] testBoard = board.clone();
-        loadState();
-
-
-        return testBoard;
+        else return false;
 
     }
 
@@ -347,9 +339,9 @@ public class FocusGame {
                     break;
 
             }
-            for (int j = 0; j < 8; j++) {
-                for (int k = 0; k < 4; k++) {
-                    for (int l = 0; l < 3; l++) {
+            for (int j = 0; j < 9; j++) {
+                for (int k = 0; k < 5; k++) {
+                    for (int l = 0; l < 4; l++) {
                         String placeholder = ""+ u + "" + j + "" + k + "" + l;
                         AllPossibleMoves.add(placeholder);
                     }
@@ -359,6 +351,65 @@ public class FocusGame {
 
         return AllPossibleMoves;
     }
+    public static boolean consistentWithChallengeMidGame(String placement, String challenge) {
+        FocusGame Board = new FocusGame();
+        if (Board.addPiecesToBoard(placement)) {
+            for (int i = 0; i < 9; i++) {
+                State tmp1 = Board.board[1 + i / 3][3 + i % 3];
+                switch (challenge.charAt(i)) {
+                    case 'R':
+                        if (tmp1 != RED && tmp1 != EMPTY) return false;
+                        break;
+                    case 'W':
+                        if (tmp1 != WHITE && tmp1 != EMPTY) return false;
+                        break;
+                    case 'B':
+                        if (tmp1 != BLUE && tmp1!= EMPTY) return false;
+                        break;
+                    case 'G':
+                        if (tmp1 != GREEN && tmp1 != EMPTY) return false;
+                        break;
+                }
+            }
+            return true;
+        } else return false;
+    }
+
+    /**
+     * Written By Matthew Tein
+     * @param inputchar char from placement String
+     * @return PieceType of corresponding char
+     */
+    public  static PieceType getPieceTypeFromChar(char inputchar){
+        PieceType result;
+        switch (inputchar){
+
+            case 'a': result = PieceType.A;
+            break;
+            case 'b': result = PieceType.B;
+            break;
+            case 'c': result = PieceType.C;
+            break;
+            case 'd': result = PieceType.D;
+            break;
+            case 'e': result = PieceType.E;
+            break;
+            case 'f': result = PieceType.F;
+            break;
+            case 'g': result = PieceType.G;
+            break;
+            case 'h': result = PieceType.H;
+            break;
+            case 'i': result = PieceType.I;
+            break;
+            case 'j': result = PieceType.J;
+            break;
+            default: result = PieceType.A;
+            break;
+        }
+        return result;
+
+}
 
     public boolean pieceCover(String placement, int col, int row) {
         FocusGame Board = new FocusGame();
