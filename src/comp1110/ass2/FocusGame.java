@@ -100,7 +100,7 @@ public class FocusGame {
      */
     State[][] saved = new State[5][9];
     String current = new String();
-    public static State[][] board = {
+    public State[][] board = {
             {EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY},
             {EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY},
             {EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY},
@@ -224,6 +224,7 @@ public class FocusGame {
             if (!placement.contains(String.valueOf((char) i)))
                 AvaliablePiece.add(PieceType.valueOf(String.valueOf((char) (i + 'A' - 'a'))));
         }
+        FocusGame focusGame = new FocusGame();
 
         //Matthew - Continueing on Yuhui's Work
 
@@ -231,7 +232,6 @@ public class FocusGame {
         Set<String> viablePlacements2 = new HashSet<>();
         Set<String> testingPlacements = new HashSet<>();
          testingPlacements.add("a000");
-
 
 
             for (String x : findPossibilities()){
@@ -247,8 +247,8 @@ public class FocusGame {
             for(String x : testingPlacements){
                 //new FocusGame().testAddPieceToBoard(placement+""+x);
                 new FocusGame().addPiecesToBoard(placement+""+x);
-                if(board[row][col] == WHITE || board[row][col] == GREEN || board[row][col] == RED ||
-                        board[row][col] == BLUE){
+                if(focusGame.board [row][col] == WHITE || focusGame.board[row][col] == GREEN || focusGame.board[row][col] == RED ||
+                        focusGame.board[row][col] == BLUE){
                     viablePlacements2.add(x);
 
                     System.out.println("Added 2");
@@ -490,10 +490,8 @@ public class FocusGame {
      * @return True if all the pieces in the placement string can be added to the board.
      */
     public boolean addPiecesToBoard(String placement) {
-        boolean result = true;
-        result = isPlacementStringWellFormed(placement);
+        boolean result = isPlacementStringWellFormed(placement);
         saveState();
-        debugOutputState(saved);
         if (result) {
             for (int i = 0; i < placement.length(); i += 4) {
                 Piece p = new Piece(placement.substring(i, i + 4));
