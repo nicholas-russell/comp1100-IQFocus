@@ -451,7 +451,6 @@ public class FocusGame {
      * method for finding solution)
      */
     public void loadState() {
-
         for (int i = 0; i < board.length; i++)
             board[i] = saved[i].clone();
     }
