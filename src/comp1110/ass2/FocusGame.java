@@ -90,7 +90,7 @@ public class FocusGame {
     public static boolean isSaveStringValid(String saveString) {
         String[] saveArray = saveString.split(",");
         return saveArray.length == 2
-                && FocusGame.isPlacementStringValid(saveArray[1])
+                && isPlacementStringValid(saveArray[1])
                 && Solution.SOLUTIONS.length > Integer.parseInt(saveArray[0]);
     }
 
@@ -183,8 +183,7 @@ public class FocusGame {
      * @return True if the placement sequence is valid
      */
     public static boolean isPlacementStringValid(String placement) {
-        boolean result = new FocusGame().addPiecesToBoard(placement);
-        return result;
+        return new FocusGame().addPiecesToBoard(placement);
     }
 
 
@@ -315,8 +314,6 @@ public class FocusGame {
 
     }
 
-
-
     // Written by Matthew Tein - Generates all possible piece placements
     //      Used in tandem with getViablePiecePlacements
     public static Set<String> findPossibilities() {
@@ -362,12 +359,6 @@ public class FocusGame {
 
         return AllPossibleMoves;
     }
-
-
-
-
-
-
 
     public boolean pieceCover(String placement, int col, int row) {
         FocusGame Board = new FocusGame();
@@ -522,7 +513,7 @@ public class FocusGame {
 
     /**
      * This is written by Yuhui Wang
-     * @param piecePlacement The pieceplacement need to be checked before adding to board
+     * @param piecePlacement The piece placement need to be checked before adding to board
      * @return True if the piece can be added to board(without overlap or out-of-bounds
      */
     public boolean checkPieceToBoard(String piecePlacement) {
