@@ -90,7 +90,7 @@ public class FocusGame {
     public static boolean isSaveStringValid(String saveString) {
         String[] saveArray = saveString.split(",");
         return saveArray.length == 2
-                && FocusGame.isPlacementStringValid(saveArray[1])
+                && isPlacementStringValid(saveArray[1])
                 && Solution.SOLUTIONS.length > Integer.parseInt(saveArray[0]);
     }
 
@@ -100,7 +100,7 @@ public class FocusGame {
      */
     State[][] saved = new State[5][9];
     String current = new String();
-    public static State[][] board = {
+    public State[][] board = {
             {EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY},
             {EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY},
             {EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY},
@@ -183,8 +183,7 @@ public class FocusGame {
      * @return True if the placement sequence is valid
      */
     public static boolean isPlacementStringValid(String placement) {
-        boolean result = new FocusGame().addPiecesToBoard(placement);
-        return result;
+        return new FocusGame().addPiecesToBoard(placement);
     }
 
 
@@ -225,6 +224,7 @@ public class FocusGame {
             if (!placement.contains(String.valueOf((char) i)))
                 AvaliablePiece.add(PieceType.valueOf(String.valueOf((char) (i + 'A' - 'a'))));
         }
+        FocusGame focusGame = new FocusGame();
 
         //Matthew - Continueing on Yuhui's Work
 
@@ -232,7 +232,6 @@ public class FocusGame {
         Set<String> viablePlacements2 = new HashSet<>();
         Set<String> testingPlacements = new HashSet<>();
          testingPlacements.add("a000");
-
 
 
             for (String x : findPossibilities()){
@@ -247,9 +246,9 @@ public class FocusGame {
 
             for(String x : testingPlacements){
                 //new FocusGame().testAddPieceToBoard(placement+""+x);
-                new FocusGame().testAddPieceToBoard(placement+""+x);
-                if(board[0][0] == WHITE || board[0][0] == GREEN || board[0][0] == RED ||
-                        board[0][0] == BLUE){
+                new FocusGame().addPiecesToBoard(placement+""+x);
+                if(focusGame.board [row][col] == WHITE || focusGame.board[row][col] == GREEN || focusGame.board[row][col] == RED ||
+                        focusGame.board[row][col] == BLUE){
                     viablePlacements2.add(x);
 
                     System.out.println("Added 2");
@@ -289,7 +288,6 @@ public class FocusGame {
         loadState();
         */
         boolean result = true;
-        State[][] testBoard = board.clone();
         result = isPlacementStringWellFormed(testplacement);
         saveState();
         if (result) {
@@ -298,24 +296,23 @@ public class FocusGame {
                 int x = p.getLocation().getX();
                 int y = p.getLocation().getY();
 
-                if (checkPieceToBoard(testplacement.substring(i, i + 4))) {
+                if (checkPieceToBoard(testplacement.substring(i, i + 4)))
                     addPieceToBoard(testplacement.substring(i, i + 4));
-                    testBoard = board.clone();
-                } else
-                    loadState();
+                else
+                    result = false;
             }
-        } else
+        }
+        else {
             loadState();
-            return testBoard;
+        }
+
+        State[][] testBoard = board.clone();
+        loadState();
+
+
+        return testBoard;
 
     }
-
-
-
-
-
-
-
 
     // Written by Matthew Tein - Generates all possible piece placements
     //      Used in tandem with getViablePiecePlacements
@@ -362,12 +359,6 @@ public class FocusGame {
 
         return AllPossibleMoves;
     }
-
-
-
-
-
-
 
     public boolean pieceCover(String placement, int col, int row) {
         FocusGame Board = new FocusGame();
@@ -460,7 +451,6 @@ public class FocusGame {
      * method for finding solution)
      */
     public void loadState() {
-
         for (int i = 0; i < board.length; i++)
             board[i] = saved[i].clone();
     }
@@ -500,8 +490,7 @@ public class FocusGame {
      * @return True if all the pieces in the placement string can be added to the board.
      */
     public boolean addPiecesToBoard(String placement) {
-        boolean result = true;
-        result = isPlacementStringWellFormed(placement);
+        boolean result = isPlacementStringWellFormed(placement);
         saveState();
         if (result) {
             for (int i = 0; i < placement.length(); i += 4) {
@@ -522,7 +511,7 @@ public class FocusGame {
 
     /**
      * This is written by Yuhui Wang
-     * @param piecePlacement The pieceplacement need to be checked before adding to board
+     * @param piecePlacement The piece placement need to be checked before adding to board
      * @return True if the piece can be added to board(without overlap or out-of-bounds
      */
     public boolean checkPieceToBoard(String piecePlacement) {
@@ -584,6 +573,15 @@ public class FocusGame {
             orderedPlacementString = orderedPlacementString + p;
         }
         return orderedPlacementString;
+    }
+
+    private static void debugOutputState(State[][] state) {
+        for (State[] x : state) {
+            for (State y : x) {
+                System.out.print(y + ",");
+            }
+            System.out.println();
+        }
     }
 
 }
