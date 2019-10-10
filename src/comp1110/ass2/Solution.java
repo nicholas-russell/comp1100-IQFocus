@@ -39,6 +39,10 @@ public class Solution {
   }
 
   public boolean isSolutionCorrect(String placement) {
+    System.out.println(placement);
+    for (String p : placements) {
+      System.out.println(p);
+    }
     return placements.contains(placement);
   }
 
