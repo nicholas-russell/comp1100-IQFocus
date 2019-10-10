@@ -98,8 +98,8 @@ public class FocusGame {
      * This is written by Yuhui Wang
      * public State[][] board = new State [5][9];
      */
-    State[][] saved = new State[5][9];
-    String current = new String();
+    private State[][] saved = new State[5][9];
+    private String current;
     public State[][] board = {
             {EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY},
             {EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY},
@@ -299,7 +299,7 @@ public class FocusGame {
 
     // Written by Matthew Tein - Generates all possible piece placements
     //      Used in tandem with getViablePiecePlacements
-    public static Set<String> findPossibilities() {
+    private static Set<String> findPossibilities() {
         Set<String> AllPossibleMoves = new HashSet<>();
         for (int h = 0; h < 10; h++) {
             char u = (char)(h+97);
@@ -315,11 +315,12 @@ public class FocusGame {
 
         return AllPossibleMoves;
     }
-    public static boolean consistentWithChallengeMidGame(String placement, String challenge) {
-        FocusGame Board = new FocusGame();
-        if (Board.addPiecesToBoard(placement)) {
+
+    private static boolean consistentWithChallengeMidGame(String placement, String challenge) {
+        FocusGame board = new FocusGame();
+        if (board.addPiecesToBoard(placement)) {
             for (int i = 0; i < 9; i++) {
-                State tmp1 = Board.board[1 + i / 3][3 + i % 3];
+                State tmp1 = board.board[1 + i / 3][3 + i % 3];
                 switch (challenge.charAt(i)) {
                     case 'R':
                         if (tmp1 != RED && tmp1 != EMPTY) return false;
@@ -400,8 +401,6 @@ public class FocusGame {
      */
     public static String getSolution(String challenge) {
         // FIXME Task 9: determine the solution to the game, given a particular challenge
-
-
 
         return null;
     }
