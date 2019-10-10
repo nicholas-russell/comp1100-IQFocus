@@ -39,7 +39,7 @@ public class FocusGame {
 
     public void nextChallenge(int challengeNumber) {
         if (challengeNumber > Solution.SOLUTIONS.length) {
-
+            // what to do here????
         } else {
             currentChallengeNumber = challengeNumber;
             currentChallenge = Solution.getChallenge(currentChallengeNumber);
@@ -214,18 +214,12 @@ public class FocusGame {
      * @return A set of viable piece placements, or null if there are none.
      */
     static Set<String> getViablePiecePlacements(String placement, String challenge, int col, int row) {
-        // FIXME Task 6: determine the set of all viable piece placements given existing placements and a challenge
-
-        System.out.println("???" +placement);
-
         //Find a list of Non-placed PieceTypes
-        ArrayList<PieceType> AvaliablePiece = new ArrayList<PieceType>();
+        ArrayList<PieceType> AvailablePiece = new ArrayList<PieceType>();
         for (int i = 'a'; i < 'a' + 10; i++) {
             if (!placement.contains(String.valueOf((char) i)))
-                AvaliablePiece.add(PieceType.valueOf(String.valueOf((char) (i + 'A' - 'a'))));
+                AvailablePiece.add(PieceType.valueOf(String.valueOf((char) (i + 'A' - 'a'))));
         }
-        FocusGame focusGame = new FocusGame();
-
         //Matthew - Continueing on Yuhui's Work
 
         Set<String> viablePlacements1 = new HashSet<>();
@@ -235,12 +229,10 @@ public class FocusGame {
        // Set<String> testingPlacements = new HashSet<>();
          //testingPlacements.add("a000");
 
-
-
          for(String x : findPossibilities()){
              char piece1 = x.charAt(0);
              PieceType piece2 = getPieceTypeFromChar(piece1);
-             if(AvaliablePiece.contains(piece2)){
+             if(AvailablePiece.contains(piece2)){
                  viablePlacements1.add(x);
                //  System.out.println("Added1");
              }
@@ -279,7 +271,7 @@ public class FocusGame {
         }
             //for debugging
 
-        System.out.println("AP:" + AvaliablePiece);
+        System.out.println("AP:" + AvailablePiece);
         System.out.println("VP:" + viablePlacements4);
         if (viablePlacements4.isEmpty()){
             return null;
@@ -292,10 +284,9 @@ public class FocusGame {
 
     //Written By Matthew Tein
     // For Task6 : need to return just states of squares on board
-    public static boolean testAddPieceToBoard(String testplacement, int row, int col) {
+    public static boolean testAddPieceToBoard(String testPlacement, int row, int col) {
         FocusGame Board1 = new FocusGame();
-        boolean result1 = true;
-        if(Board1.addPiecesToBoard(testplacement)){
+        if(Board1.addPiecesToBoard(testPlacement)){
             State targetCell = Board1.board[row][col];
             if(targetCell == WHITE || targetCell == GREEN || targetCell  == RED || targetCell  == BLUE){
                 return true;
@@ -310,35 +301,8 @@ public class FocusGame {
     //      Used in tandem with getViablePiecePlacements
     public static Set<String> findPossibilities() {
         Set<String> AllPossibleMoves = new HashSet<>();
-        char u;
-
         for (int h = 0; h < 10; h++) {
-            switch (h){
-                case 0: u = 'a';
-                    break;
-                case 1: u = 'b';
-                    break;
-                case 2: u = 'c';
-                    break;
-                case 3: u = 'd';
-                    break;
-                case 4: u = 'e';
-                    break;
-                case 5: u = 'f';
-                    break;
-                case 6: u = 'g';
-                    break;
-                case 7: u = 'h';
-                    break;
-                case 8: u = 'i';
-                    break;
-                case 9: u = 'j';
-                    break;
-                default:
-                    u = 'a';
-                    break;
-
-            }
+            char u = (char)(h+97);
             for (int j = 0; j < 9; j++) {
                 for (int k = 0; k < 5; k++) {
                     for (int l = 0; l < 4; l++) {
@@ -381,35 +345,8 @@ public class FocusGame {
      * @return PieceType of corresponding char
      */
     public  static PieceType getPieceTypeFromChar(char inputchar){
-        PieceType result;
-        switch (inputchar){
-
-            case 'a': result = PieceType.A;
-            break;
-            case 'b': result = PieceType.B;
-            break;
-            case 'c': result = PieceType.C;
-            break;
-            case 'd': result = PieceType.D;
-            break;
-            case 'e': result = PieceType.E;
-            break;
-            case 'f': result = PieceType.F;
-            break;
-            case 'g': result = PieceType.G;
-            break;
-            case 'h': result = PieceType.H;
-            break;
-            case 'i': result = PieceType.I;
-            break;
-            case 'j': result = PieceType.J;
-            break;
-            default: result = PieceType.A;
-            break;
-        }
-        return result;
-
-}
+        return PieceType.getPieceTypeFromChar(inputchar);
+    }
 
     public boolean pieceCover(String placement, int col, int row) {
         FocusGame Board = new FocusGame();

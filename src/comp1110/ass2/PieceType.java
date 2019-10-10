@@ -149,5 +149,20 @@ public enum PieceType {
             return EMPTY;
     }
 
+    public static PieceType getPieceTypeFromChar(Character c) {
+        switch (c.toString().toUpperCase()){
+            case "A": return PieceType.A;
+            case "B": return PieceType.B;
+            case "C": return PieceType.C;
+            case "D": return PieceType.D;
+            case "E": return PieceType.E;
+            case "F": return PieceType.F;
+            case "G": return PieceType.G;
+            case "H": return PieceType.H;
+            case "I": return PieceType.I;
+            case "J": return PieceType.J;
+            default: return PieceType.A;
+        }
+    }
 
 }
