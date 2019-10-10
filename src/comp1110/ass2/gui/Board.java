@@ -72,7 +72,7 @@ public class Board extends Application {
 
     private static final String VERSION = "0.3-d2g";
 
-    private static final Boolean HINTS_LIMITED = true;
+    private static final Boolean HINTS_LIMITED = false;
     private static final int HINTS_LIMIT = 3;
     private int HINTS_COUNTER;
     private Text hintCounter = new Text();
@@ -97,7 +97,6 @@ public class Board extends Application {
 
     private final Group root = new Group();
     private final Group controls = new Group();
-    private Pane boardPieces = new Pane();
     private Pane board = new Pane();
     private Pane pieceTiles = new Pane();
     private Pane challengeSquares = new Pane();
@@ -918,7 +917,6 @@ public class Board extends Application {
                 challengeSquares,
                 board,
                 challengeSquaresBoard,
-                boardPieces,
                 pieceTiles,
                 controls
         );
