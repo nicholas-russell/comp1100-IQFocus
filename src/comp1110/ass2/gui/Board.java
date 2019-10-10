@@ -15,15 +15,11 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 import javafx.scene.text.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -93,7 +89,7 @@ public class Board extends Application {
 
     private static final String URI_BASE = "assets/";
     private static final Image ICON_IMAGE = new Image(Board.class.getResourceAsStream(URI_BASE + "icon.png"));
-    private static final FileChooser.ExtensionFilter EXTENSION_FILTER = new FileChooser.ExtensionFilter("IQ Focus Save (*.iqs)", "*.iqs");
+    private static final FileChooser.ExtensionFilter SAVE_EXTENSION_FILTER = new FileChooser.ExtensionFilter("IQ Focus Save (*.iqs)", "*.iqs");
 
     private final Group root = new Group();
     private final Group controls = new Group();
@@ -102,7 +98,6 @@ public class Board extends Application {
     private Pane challengeSquares = new Pane();
     private Pane challengeSquaresBoard = new Pane();
     private PieceTile[] pieceTilesList = new PieceTile[10];
-    private Group debugShapes = new Group();
 
     private Stage helpStage = new Stage();
     private Group helpRoot = new Group();
@@ -131,10 +126,6 @@ public class Board extends Application {
         //Generate Difficulty 1 (EASY)
         if (difficulty == 1) {
             //Generate challenge
-
-
-            
-
             return challenge;
         }
         //Generate Difficulty 2 (MEDIUM)
@@ -148,7 +139,6 @@ public class Board extends Application {
         return challenge;
 
     }
-
 
     //Generates a random color, random numbers 0-3 corresponding to one of the 4 colors states
     private String generateRandomColor() {
@@ -360,21 +350,6 @@ public class Board extends Application {
         double approxX = (mX-BOARD_ABS_X)/SCALED_SQUARE_SIZE;
         double approxY = (mY-BOARD_ABS_Y)/SCALED_SQUARE_SIZE;
         return new Location((int)Math.round(approxX),(int)Math.round(approxY));
-    }
-
-    /**
-     * DEBUG ONLY
-     * Will place a circle of radius 10 at given x and y locations
-     * @param x -- X location of circle
-     * @param y -- Y location of circle
-     */
-    private void debugAddCircle(double x, double y) {
-        Circle circle = new Circle();
-        circle.setCenterX(x);
-        circle.setCenterY(y);
-        circle.setRadius(10);
-        circle.setFill(Color.BLACK);
-        debugShapes.getChildren().add(circle);
     }
 
     private void showHint() {
@@ -645,7 +620,7 @@ public class Board extends Application {
     private void loadGame(Stage stage) throws IOException {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Load Game");
-        fileChooser.getExtensionFilters().add(EXTENSION_FILTER);
+        fileChooser.getExtensionFilters().add(SAVE_EXTENSION_FILTER);
         File file = fileChooser.showOpenDialog(stage);
         if (file != null) {
             BufferedReader br = new BufferedReader(new FileReader(file));
@@ -657,7 +632,7 @@ public class Board extends Application {
                 game.nextChallenge(Integer.parseInt(saveArray[0]));
                 makeChallenge(game.getChallenge());
                 game.addPiecesToBoard(saveArray[1]);
-                makePlacements(saveArray[1]);
+                makePiecePlacementsFromString(saveArray[1]);
             } else {
                 Alert alert = new Alert(Alert.AlertType.ERROR, "", ButtonType.OK);
                 alert.setHeaderText("Invalid Save File");
@@ -670,7 +645,7 @@ public class Board extends Application {
     private void saveGame(Stage stage) throws IOException {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Save Game");
-        fileChooser.getExtensionFilters().add(EXTENSION_FILTER);
+        fileChooser.getExtensionFilters().add(SAVE_EXTENSION_FILTER);
         SimpleDateFormat dateFormat = new SimpleDateFormat("ddMMyyyy_HHmmss");
         Date date = new Date();
         fileChooser.setInitialFileName("IQ_FOCUS_SAVE_" + dateFormat.format(date));
@@ -692,7 +667,7 @@ public class Board extends Application {
         }
     }
 
-    private void makePlacements(String placementString) {
+    private void makePiecePlacementsFromString(String placementString) {
         for (String p : FocusGame.splitPlacementString(placementString)) {
             Piece piece = new Piece(p);
             for (PieceTile pT : pieceTilesList) {
