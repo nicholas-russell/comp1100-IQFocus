@@ -545,14 +545,11 @@ public class FocusGame {
         saveState();
         if (result) {
             for (int i = 0; i < placement.length(); i += 4) {
-                Piece p = new Piece(placement.substring(i, i + 4));
-                int x = p.getLocation().getX();
-                int y = p.getLocation().getY();
-
-                if (checkPieceToBoard(placement.substring(i, i + 4)))
-                    addPieceToBoard(placement.substring(i, i + 4));
+                String  p = placement.substring(i,i+4);
+                if (checkPieceToBoard(p))
+                    addPieceToBoard(p);
                 else
-                    result = false;
+                    return false;
             }
         }
         else
