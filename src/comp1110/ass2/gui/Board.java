@@ -118,43 +118,36 @@ public class Board extends Application {
     public String challengeGenerator (int difficulty) {
         String[] pack = new String[9];
         String challenge = "";
+
+
         //Generate Completely Random String
-        if (difficulty == 0){
-            for(int j = 0; j < 9; j++){
+        if (difficulty == 0) {
+            for (int j = 0; j < 9; j++) {
                 String g = generateRandomColor();
                 pack[j] = g;
             }
             challenge = pack[0] + pack[1] + pack[2] + pack[3] + pack[4] + pack[5] + pack[6] + pack[7] + pack[8];
             return challenge;
         }
+        //Generate Difficulty 1 (EASY)
         if (difficulty == 1) {
             //Generate challenge
 
-            //Assign challenge
-            challenge = "BBBBBBBBB";
+
+            
 
             return challenge;
         }
-        if (difficulty == 2){
+        //Generate Difficulty 2 (MEDIUM)
+        if (difficulty == 2) {
             return challenge;
         }
-
-        if (difficulty == 3){
+        //Generate Difficulty 3 (HARD)
+        if (difficulty == 3) {
             return challenge;
         }
         return challenge;
 
-        /* The current system is crude, but the idea is that the user may input an Int ranging from 1 - 3, 1 = easy
-        *2 = medium, 3 = hard, NOTE WE CAN PLAY AROUND WITH THIS AS THE DIFFICULTY AND NUMBERS ARE ARBITRARY
-        * . The System then generates a 9 char String which can be read by the challengeEncoding
-        * method under task 8.
-        *
-        *
-        - How To Generate Different levels of difficulty?
-        * Although generating a random 9 char string is not that hard, difficulty depends on the number of solutions
-        * available for a given challenge square.
-        *
-         */
     }
 
 
