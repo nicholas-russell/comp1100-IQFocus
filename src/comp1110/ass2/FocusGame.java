@@ -1,7 +1,5 @@
 package comp1110.ass2;
 
-import javax.lang.model.type.NullType;
-import java.lang.reflect.Array;
 import java.util.*;
 
 import static comp1110.ass2.State.*;
@@ -47,6 +45,24 @@ public class FocusGame {
             x++;
         }
 
+        return true;
+    }
+
+    private boolean challengePartiallyCorrect(String challenge) {
+        int x = 0;
+        int y = 0;
+        for (Character c : challenge.toCharArray()) {
+            if (x > 2) {
+                x = 0;
+                y++;
+            }
+            //System.out.println((1+y) + ", " + (3+x) + " = " + board[1+y][3+x].toString() + " should be " + c);
+            if (board[1+y][3+x] != State.getColorStateFromChar(c) && board[1+y][3+x] != EMPTY) {
+                System.out.println("END TREE");
+                return false;
+            }
+            x++;
+        }
         return true;
     }
 
@@ -373,16 +389,127 @@ public class FocusGame {
     private static FocusGame recursion(String challenge, FocusGame game) {
         ArrayList<String> pL = getAllPiecesWithCurrentState(challenge,game.current);
         for (String s : pL) {
-            FocusGame g1 = new FocusGame();
-            // add pruning
-            g1.addPieceToBoard(s);
-            if (g1.getBoardPlacementString().length() == 40 && g1.checkCompletionGenerated(challenge)) {
-                return g1;
+            FocusGame g = new FocusGame();
+            g.addPiecesToBoard(game.current);
+            g.addPieceToBoard(s);
+            //System.out.println("From prev level: " + game.current);
+            System.out.println(g.current);
+            if (g.getBoardPlacementString().length() == 40) {
+                System.out.println("full string");
+                if (g.checkCompletionGenerated(challenge)) {
+                    System.out.println("----> Correct solution!");
+                    return g;
+                } else {
+                    System.out.println("----> not a solution!");
+                    break;
+                }
             } else {
-                recursion(challenge,g1);
+                ArrayList<String> pieces = getAllPiecesWithCurrentState(challenge, g.current);
+                if (g.challengePartiallyCorrect(challenge) && !pieces.isEmpty() && !g.anyPiecesIsolated()) {
+                    System.out.println("----> partially correct ");
+                    recursion(challenge,g);
+                } else {
+                    System.out.println("----> not partially correct!");
+                    break;
+                }
             }
         }
         return null;
+    }
+
+    private boolean anyPiecesIsolated() {
+        int x = 0;
+        int y = 0;
+        boolean flag = false;
+        while (x != 9) {
+            if (x == 8) {
+                x = 0;
+                y++;
+            }
+            if (y == 5) {
+                break;
+            }
+            if (board[y][x] == EMPTY) {
+                //System.out.println("x:" + x + ", y:" + y + ", pos:" + getPositionsToCheck(x,y));
+                switch (getPositionsToCheck(x,y)) {
+                    case "LRTB":
+                        if(board[y+1][x] != EMPTY && board[y-1][x] != EMPTY && board[y][x+1] != EMPTY && board[y][x-1] != EMPTY) {
+                            flag = true;
+                            break;
+                        }
+                        break;
+                    case "LTB":
+                        if(board[y+1][x] != EMPTY && board[y-1][x] != EMPTY && board[y][x-1] != EMPTY) {
+                            flag = true;
+                            break;
+                        }
+                        break;
+                    case "RTB":
+                        if(board[y+1][x] != EMPTY && board[y-1][x] != EMPTY && board[y][x+1] != EMPTY) {
+                            flag = true;
+                            break;
+                        }
+                        break;
+                    case "LRT":
+                        if(board[y-1][x] != EMPTY && board[y][x+1] != EMPTY && board[y][x-1] != EMPTY) {
+                            flag = true;
+                            break;
+                        }
+                        break;
+                    case "LRB":
+                        if(board[y+1][x] != EMPTY && board[y][x+1] != EMPTY && board[y][x-1] != EMPTY) {
+                            flag = true;
+                            break;
+                        }
+                        break;
+                    case "RB":
+                        if(board[y+1][x] != EMPTY && board[y][x+1] != EMPTY) {
+                            flag = true;
+                            break;
+                        }
+                        break;
+                    case "LB":
+                        if(board[y+1][x] != EMPTY && board[y][x-1] != EMPTY) {
+                            flag = true;
+                            break;
+                        }
+                        break;
+                    case "LT":
+                        if(board[y-1][x] != EMPTY && board[y][x-1] != EMPTY) {
+                            flag = true;
+                            break;
+                        }
+                        break;
+                    case "RT":
+                        if(board[y-1][x] != EMPTY && board[y][x+1] != EMPTY) {
+                            flag = true;
+                            break;
+                        }
+                        break;
+                    default:
+                        System.out.println("error : " + (getPositionsToCheck(x,y)) + " not in switch");
+                }
+            }
+            x++;
+        }
+        return flag;
+    }
+
+    private String getPositionsToCheck(int x, int y) {
+        char[] rtn = {'L','R','T','B'};
+        if (y - 1 < 0) {
+            rtn[2] = 'X';
+        }
+        if (x - 1 < 0) {
+            rtn[0] = 'X';
+        }
+        if (x + 1 > 8) {
+            rtn[1] = 'X';
+        }
+        if (y + 1 > 4) {
+            rtn[3] = 'X';
+        }
+        return new String(rtn).replace("X","");
     }
 
     private static ArrayList<String> getAllPiecesWithCurrentState(String challenge, String boardPlacement) {
@@ -407,6 +534,12 @@ public class FocusGame {
     }
 
     public static void main(String[] args) {
+        /*FocusGame g = new FocusGame();
+        g.addPiecesToBoard("e003a121g622f610d310c430i100");
+        System.out.println(g.anyPiecesIsolated());
+        g.resetBoard();
+        g.addPieceToBoard("e003");
+        System.out.println(g.anyPiecesIsolated());*/
         getSolution("RRRBWBBRB");
     }
 
