@@ -31,6 +31,26 @@ public class FocusGame {
         return currentChallengeNumber + 1;
     }
 
+    public boolean checkCompletionGenerated(String challenge) {
+        if (getBoardPlacementString().length() != 40) {
+            return false;
+        }
+        int x = 0;
+        int y = 0;
+        for (Character c : challenge.toCharArray()) {
+            if (x > 2) {
+                x = 0;
+                y++;
+            }
+            if (board[1+y][3+x] != State.getColorStateFromChar(c)) {
+                return false;
+            }
+            x++;
+        }
+
+        return true;
+    }
+
     public void newGame() {
         resetBoard();
         currentChallengeNumber = 0;
@@ -346,9 +366,43 @@ public class FocusGame {
      * should call on task 6 multiple times- like game tree to decide solutions
      */
     public static String getSolution(String challenge) {
-        // FIXME Task 9: determine the solution to the game, given a particular challenge
+        ArrayList<String> L1 = getAllPiecesWithCurrentState(challenge,"");
+        ArrayList<FocusGame> games = new ArrayList<>();
+        for (String s : L1) {
+            FocusGame g = new FocusGame();
+            g.addPieceToBoard(s);
+            if (g.checkCompletionGenerated(challenge)) {
+                return g.getBoardPlacementString();
+            } else {
 
+            }
+        }
         return null;
+    }
+
+    private static ArrayList<String> getAllPiecesWithCurrentState(String challenge, String boardPlacement) {
+        ArrayList<String> pieces = new ArrayList<>();
+        int x = 0;
+        int y = 0;
+        while (x <= 8) {
+            while (y <= 4) {
+                    Set<String> availablePlacements = getViablePiecePlacements(boardPlacement,challenge,x,y);
+                    if (availablePlacements != null) {
+                        for (String s : availablePlacements) {
+                            if (!pieces.contains(s)) {
+                                pieces.add(s);
+                            }
+                        }
+                    }
+                y++;
+            }
+            x++;
+        }
+        return pieces;
+    }
+
+    public static void main(String[] args) {
+        getSolution("RRRBWBBRB");
     }
 
     /**
