@@ -1,5 +1,8 @@
 package comp1110.ass2;
 
+import comp1110.ass2.gui.Viewer;
+import javafx.application.Application;
+
 import java.util.*;
 
 import static comp1110.ass2.State.*;

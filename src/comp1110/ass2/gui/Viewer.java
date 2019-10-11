@@ -207,7 +207,7 @@ public class Viewer extends Application {
      *
      * @param placement A valid placement string
      */
-    void makePlacement(String placement) {
+    public void makePlacement(String placement) {
         errors.getChildren().clear();
         pieces.getChildren().clear();
         if (!FocusGame.isPlacementStringValid(placement)) {
@@ -266,4 +266,5 @@ public class Viewer extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
     }
+
 }
