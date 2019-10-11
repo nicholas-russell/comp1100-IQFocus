@@ -39,7 +39,6 @@ public class FocusGame {
         int y = 0;
         for (Character c : challenge.toCharArray()) {
             if (x > 2) {
-                x = 0;
                 y++;
             }
             if (board[1+y][3+x] != State.getColorStateFromChar(c)) {
@@ -119,7 +118,7 @@ public class FocusGame {
      * public State[][] board = new State [5][9];
      */
     private State[][] saved = new State[5][9];
-    private String current;
+    private String current = "";
     public State[][] board = {
             {EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY},
             {EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY},
@@ -271,8 +270,8 @@ public class FocusGame {
             }
         }
 
-        System.out.println("AP:" + AvailablePiece);
-        System.out.println("VP:" + viablePlacements4);
+        /*System.out.println("AP:" + AvailablePiece);
+        System.out.println("VP:" + viablePlacements4);*/
         if (viablePlacements4.isEmpty()){
             return null;
         } else {
@@ -366,15 +365,21 @@ public class FocusGame {
      * should call on task 6 multiple times- like game tree to decide solutions
      */
     public static String getSolution(String challenge) {
-        ArrayList<String> L1 = getAllPiecesWithCurrentState(challenge,"");
-        ArrayList<FocusGame> games = new ArrayList<>();
-        for (String s : L1) {
-            FocusGame g = new FocusGame();
-            g.addPieceToBoard(s);
-            if (g.checkCompletionGenerated(challenge)) {
-                return g.getBoardPlacementString();
-            } else {
+        FocusGame g = recursion(challenge,new FocusGame());
+        System.out.println(g.current);
+        return g.current;
+    }
 
+    private static FocusGame recursion(String challenge, FocusGame game) {
+        ArrayList<String> pL = getAllPiecesWithCurrentState(challenge,game.current);
+        for (String s : pL) {
+            FocusGame g1 = new FocusGame();
+            // add pruning
+            g1.addPieceToBoard(s);
+            if (g1.getBoardPlacementString().length() == 40 && g1.checkCompletionGenerated(challenge)) {
+                return g1;
+            } else {
+                recursion(challenge,g1);
             }
         }
         return null;
