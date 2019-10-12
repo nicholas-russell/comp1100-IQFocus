@@ -1,6 +1,7 @@
 package comp1110.ass2.gui;
 
 import comp1110.ass2.*;
+import javafx.animation.FadeTransition;
 import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
@@ -18,6 +19,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.io.*;
 import java.text.SimpleDateFormat;
@@ -95,6 +97,8 @@ public class Board extends Application {
     private Pane pieceTiles = new Pane();
     private Pane challengeSquares = new Pane();
     private Pane challengeSquaresBoard = new Pane();
+    private Pane boardMessages = new Pane();
+    private Text userMessage = new Text();
     private Text hintCounter = new Text();
 
     private Stage helpStage = new Stage();
@@ -656,6 +660,7 @@ public class Board extends Application {
         File tmp = showSaveFileChooser(stage);
         if (saveToFile(tmp, game.getSaveString())) {
             System.out.println("SAVED SUCCESSFULLY");
+            sendMessage("Saved - AUTOSAVE turned on");
             CURRENT_SAVEFILE = tmp;
             AUTOSAVE = true;
         } else {
@@ -679,7 +684,7 @@ public class Board extends Application {
                 return false;
             }
         }
-        System.out.println("Saved");
+        userMessage.setText("Saved!");
         return true;
     }
 
@@ -923,6 +928,17 @@ public class Board extends Application {
         }
     }
 
+    private void makeBoardMessages() {
+        boardMessages.getChildren().add(userMessage);
+        boardMessages.setLayoutY(15);
+        boardMessages.setLayoutX(5);
+        userMessage.setFont(new Font("Tahoma", 15));
+    }
+
+    private void sendMessage(String text) {
+        userMessage.setText(text);
+    }
+
     public static void main(String[] args) {
         launch(args);
     }
@@ -940,13 +956,14 @@ public class Board extends Application {
                 board,
                 challengeSquaresBoard,
                 pieceTiles,
-                controls
+                controls,
+                boardMessages
         );
 
         setKeyEvents(scene);
         makeBoard();
         initVariables();
-
+        makeBoardMessages();
         makePieceTiles();
         makeControls(primaryStage);
 
