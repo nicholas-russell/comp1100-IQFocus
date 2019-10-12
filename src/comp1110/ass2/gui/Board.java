@@ -50,28 +50,28 @@ public class Board extends Application {
     private static final int WINDOW_HEIGHT = 700;
     private static final int HELP_WINDOW_WIDTH = 680;
     private static final int HELP_WINDOW_HEIGHT = 400;
-
-
     private static final int BOARD_PADDING_TOP = 87; // grey part of board on top
     private static final int BOARD_PADDING_LEFT = 41; // grey part of board on left
-
     private static final int BOARD_MARGIN_TOP = 100; // margin of board to top of screen
     private static final int BOARD_MARGIN_BOTTOM = 20; // margin of board underneath
-
     /* Scale factor for Board, will also scale everything else at the same time. */
     private static final double BOARD_SCALE_FACTOR = 0.65;
 
     private static final double CONTROLS_HEIGHT = 30; // height of controls
-    private boolean SHOW_CHALLENGE = true; // show challenge on board
-
     private static final double CHALLENGE_PIECE_OPACITY = 0.3;
-
     private static final String VERSION = "0.3-d2g";
 
-    private static final Boolean HINTS_LIMITED = false;
-    private static final int HINTS_LIMIT = 3;
+    private static final String URI_BASE = "assets/";
+    private static final Image ICON_IMAGE = new Image(Board.class.getResourceAsStream(URI_BASE + "icon.png"));
+    private static final FileChooser.ExtensionFilter SAVE_EXTENSION_FILTER = new FileChooser.ExtensionFilter("IQ Focus Save (*.iqs)", "*.iqs");
+
+    private boolean SHOW_CHALLENGE = true; // show challenge on board
+    private Boolean HINTS_LIMITED = false;
+    private int HINTS_LIMIT = 3;
     private int HINTS_COUNTER;
-    private Text hintCounter = new Text();
+
+    private boolean AUTOSAVE = false;
+    private File CURRENT_SAVEFILE = null;
 
     private PieceTile currentPiece; // current piece selected
 
@@ -87,20 +87,21 @@ public class Board extends Application {
     private double BOARD_WIDTH;
     private double SCALED_SQUARE_SIZE;
 
-    private static final String URI_BASE = "assets/";
-    private static final Image ICON_IMAGE = new Image(Board.class.getResourceAsStream(URI_BASE + "icon.png"));
-    private static final FileChooser.ExtensionFilter SAVE_EXTENSION_FILTER = new FileChooser.ExtensionFilter("IQ Focus Save (*.iqs)", "*.iqs");
+    private PieceTile[] pieceTilesList = new PieceTile[10];
 
-    private final Group root = new Group();
-    private final Group controls = new Group();
+    private Group root = new Group();
+    private Group controls = new Group();
     private Pane board = new Pane();
     private Pane pieceTiles = new Pane();
     private Pane challengeSquares = new Pane();
     private Pane challengeSquaresBoard = new Pane();
-    private PieceTile[] pieceTilesList = new PieceTile[10];
+    private Text hintCounter = new Text();
 
     private Stage helpStage = new Stage();
     private Group helpRoot = new Group();
+
+    private FileChooser saveFileChooser = new FileChooser();
+    private FileChooser loadFileChooser = new FileChooser();
 
     private FocusGame game = new FocusGame();
 
@@ -184,7 +185,7 @@ public class Board extends Application {
         Location location;
         String placement;
 
-        PieceTile(PieceType p) {
+        PieceTile(PieceType p) throws IOException {
 
             this.pieceType = p;
             this.orientation = Orientation.Zero;
@@ -242,7 +243,11 @@ public class Board extends Application {
             // Dragging ended
             setOnMouseReleased(e -> {
                 // tries to place it to the board
-                snapToBoard();
+                try {
+                    snapToBoard();
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
                 // changes the currentPiece back to null
                 currentPiece = null;
                 // make solid again
@@ -254,7 +259,7 @@ public class Board extends Application {
          * Attempts to place the piece given the x and y locations of it.
          */
 
-        private void snapToBoard() {
+        private void snapToBoard() throws IOException {
             // offsets account for the orientation
             double[] offsets = Viewer.getOrientationOffsets(pieceType,orientation);
             double aX = SCALED_SQUARE_SIZE*offsets[0]*-1+getLayoutX();
@@ -352,7 +357,7 @@ public class Board extends Application {
         return new Location((int)Math.round(approxX),(int)Math.round(approxY));
     }
 
-    private void showHint() {
+    private void showHint() throws IOException {
         if (HINTS_LIMITED && HINTS_COUNTER >= HINTS_LIMIT) {
             Alert hintAlert = new Alert(Alert.AlertType.NONE,"No more hints!",ButtonType.OK);
             hintAlert.setTitle("No more hints!!");
@@ -374,6 +379,8 @@ public class Board extends Application {
                     p.placePiece(hintPiece);
                     p.placed = true;
                     p.setRotation(hintPiece.getOrientation());
+                    p.orientation = hintPiece.getOrientation();
+                    p.location = hintPiece.getLocation();
                     makePlacement(hintPlacement);
                 }
             }
@@ -453,15 +460,18 @@ public class Board extends Application {
      * Make a piece placement on the board logic
      * @param placement valid placement string
      */
-    private void makePlacement(String placement) {
+    private void makePlacement(String placement) throws IOException {
         game.addPieceToBoard(placement);
         if (allPiecesPlaced()) {
             checkCompletion();
         }
+        if (AUTOSAVE) {
+            saveToFile(CURRENT_SAVEFILE,game.getSaveString());
+        }
     }
 
     private boolean allPiecesPlaced() {
-        boolean flag = true;
+        boolean flag = false;
         for (PieceTile p : pieceTilesList) {
             flag = p.placed;
         }
@@ -511,13 +521,7 @@ public class Board extends Application {
 
         Button newGame = new Button("New Game");
         newGame.setOnAction(e -> {
-            Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION,"Are you sure you want to start a new game?",ButtonType.YES,ButtonType.NO);
-            confirmation.setTitle("New Game");
-            confirmation.setHeaderText("New Game?");
-            confirmation.showAndWait();
-            if (confirmation.getResult() == ButtonType.YES) {
-                newGame();
-            }
+            newGameAction();
         });
 
         Button resetBoard = new Button();
@@ -538,7 +542,11 @@ public class Board extends Application {
         hint.setMnemonicParsing(true);
         hint.setText("_Hint");
         hint.setOnAction(e -> {
-            showHint();
+            try {
+                showHint();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
         });
 
         Button help = new Button("Help");
@@ -556,7 +564,7 @@ public class Board extends Application {
         Button saveGame = new Button("Save Game");
         saveGame.setOnAction(e -> {
             try {
-                saveGame(stage);
+                saveGameAction(stage);
             } catch (IOException error) {
                 System.out.println(error);
             }
@@ -631,8 +639,10 @@ public class Board extends Application {
                 resetBoard();
                 game.nextChallenge(Integer.parseInt(saveArray[0]));
                 makeChallenge(game.getChallenge());
-                game.addPiecesToBoard(saveArray[1]);
-                makePiecePlacementsFromString(saveArray[1]);
+                if (saveArray.length == 2) {
+                    game.addPiecesToBoard(saveArray[1]);
+                    makePiecePlacementsFromString(saveArray[1]);
+                }
             } else {
                 Alert alert = new Alert(Alert.AlertType.ERROR, "", ButtonType.OK);
                 alert.setHeaderText("Invalid Save File");
@@ -642,19 +652,39 @@ public class Board extends Application {
         }
     }
 
-    private void saveGame(Stage stage) throws IOException {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Save Game");
-        fileChooser.getExtensionFilters().add(SAVE_EXTENSION_FILTER);
-        SimpleDateFormat dateFormat = new SimpleDateFormat("ddMMyyyy_HHmmss");
-        Date date = new Date();
-        fileChooser.setInitialFileName("IQ_FOCUS_SAVE_" + dateFormat.format(date));
-        File file = fileChooser.showSaveDialog(stage);
+    private void saveGameAction(Stage stage) throws IOException {
+        File tmp = showSaveFileChooser(stage);
+        if (saveToFile(tmp, game.getSaveString())) {
+            System.out.println("SAVED SUCCESSFULLY");
+            CURRENT_SAVEFILE = tmp;
+            AUTOSAVE = true;
+        } else {
+            AUTOSAVE = false;
+            CURRENT_SAVEFILE = null;
+            System.out.println("ERROR WITH SAVING");
+        }
+    }
+
+    private File showSaveFileChooser(Stage stage) throws IOException {
+        saveFileChooser.setInitialFileName("IQ_FOCUS_SAVE_" + new SimpleDateFormat("ddMMyyyy_HHmmss").format(new Date()));
+        return saveFileChooser.showSaveDialog(stage);
+    }
+
+    private boolean saveToFile(File file, String saveString) throws IOException {
         if (file != null) {
             try (PrintWriter out = new PrintWriter(file.getAbsolutePath())) {
-                out.println(game.getSaveString());
+                out.println(saveString);
+            } catch (IOException e) {
+                System.out.println(e);
+                return false;
             }
         }
+        System.out.println("Saved");
+        return true;
+    }
+
+    private void loadGameAction() {
+
     }
 
     private void resetBoardAction() {
@@ -664,6 +694,16 @@ public class Board extends Application {
         confirmation.showAndWait();
         if (confirmation.getResult() == ButtonType.YES) {
             resetBoard();
+        }
+    }
+
+    private void newGameAction() {
+        Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION,"Are you sure you want to start a new game?",ButtonType.YES,ButtonType.NO);
+        confirmation.setTitle("New Game");
+        confirmation.setHeaderText("New Game?");
+        confirmation.showAndWait();
+        if (confirmation.getResult() == ButtonType.YES) {
+            newGame();
         }
     }
 
@@ -754,7 +794,7 @@ public class Board extends Application {
     /**
      * Loads PieceTiles onto screen
      */
-    private void makePieceTiles() {
+    private void makePieceTiles() throws IOException {
         int i = 0;
         for (PieceType p : PieceType.values()) {
             pieceTilesList[i] = new PieceTile(p);
@@ -798,6 +838,13 @@ public class Board extends Application {
         challengeSquares.getChildren().add(challengeTitle);
     }
 
+    private void makeFileChoosers() {
+        saveFileChooser.setTitle("Save Game");
+        saveFileChooser.getExtensionFilters().add(SAVE_EXTENSION_FILTER);
+        loadFileChooser.setTitle("Save Game");
+        loadFileChooser.getExtensionFilters().add(SAVE_EXTENSION_FILTER);
+    }
+
     /**
      * Initialises class variables for positioning pieces.
      */
@@ -823,7 +870,11 @@ public class Board extends Application {
                     currentPiece.rotate();
                 }
             } else if (key == KeyCode.SLASH) {
-                showHint();
+                try {
+                    showHint();
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
             } /*else if (key == KeyCode.R) {
                 resetBoardAction();
             }*/
@@ -832,7 +883,6 @@ public class Board extends Application {
     }
 
     /**
-     * TODO
      * Check if the challenge has been completed
      */
     private void checkCompletion() {
@@ -873,6 +923,10 @@ public class Board extends Application {
         }
     }
 
+    public static void main(String[] args) {
+        launch(args);
+    }
+
     @Override
     public void start(Stage primaryStage) throws Exception {
         primaryStage.setTitle("IQ Focus Puzzle");
@@ -898,6 +952,7 @@ public class Board extends Application {
 
         newGame();
         makeHelp(helpStage);
+        makeFileChoosers();
         primaryStage.setScene(scene);
         primaryStage.show();
     }
