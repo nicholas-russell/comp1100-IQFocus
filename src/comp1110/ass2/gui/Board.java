@@ -559,7 +559,7 @@ public class Board extends Application {
         Button loadGame = new Button("Load Game");
         loadGame.setOnAction(e -> {
             try {
-                loadGame(stage);
+                loadGameAction(stage);
             } catch (IOException error) {
                 System.out.println(error);
             }
@@ -629,24 +629,13 @@ public class Board extends Application {
         controls.getChildren().addAll(controlNodes);
     }
 
-    private void loadGame(Stage stage) throws IOException {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Load Game");
-        fileChooser.getExtensionFilters().add(SAVE_EXTENSION_FILTER);
-        File file = fileChooser.showOpenDialog(stage);
-        if (file != null) {
-            BufferedReader br = new BufferedReader(new FileReader(file));
+    private void loadGameAction(Stage stage) throws IOException {
+        File tmp = showLoadGameFileChooser(stage);
+        if (tmp != null) {
+            BufferedReader br = new BufferedReader(new FileReader(tmp));
             String saveString = br.readLine();
-            System.out.println(saveString);
-            if (FocusGame.isSaveStringValid(saveString)) {
-                String[] saveArray = saveString.split(",");
-                resetBoard();
-                game.nextChallenge(Integer.parseInt(saveArray[0]));
-                makeChallenge(game.getChallenge());
-                if (saveArray.length == 2) {
-                    game.addPiecesToBoard(saveArray[1]);
-                    makePiecePlacementsFromString(saveArray[1]);
-                }
+            if (saveString != null && FocusGame.isSaveStringValid(saveString)) {
+                loadGame(saveString);
             } else {
                 Alert alert = new Alert(Alert.AlertType.ERROR, "", ButtonType.OK);
                 alert.setHeaderText("Invalid Save File");
@@ -654,6 +643,21 @@ public class Board extends Application {
                 alert.showAndWait();
             }
         }
+    }
+
+    private void loadGame(String saveString) {
+        resetBoard();
+        String[] saveArray = saveString.split(",");
+        game.nextChallenge(Integer.parseInt(saveArray[0]));
+        makeChallenge(game.getChallenge());
+        if (saveArray.length == 2) {
+            game.addPiecesToBoard(saveArray[1]);
+            makePiecePlacementsFromString(saveArray[1]);
+        }
+    }
+
+    private File showLoadGameFileChooser(Stage stage) {
+        return loadFileChooser.showOpenDialog(stage);
     }
 
     private void saveGameAction(Stage stage) throws IOException {
@@ -676,6 +680,7 @@ public class Board extends Application {
     }
 
     private boolean saveToFile(File file, String saveString) throws IOException {
+        userMessage.setText("Saving....");
         if (file != null) {
             try (PrintWriter out = new PrintWriter(file.getAbsolutePath())) {
                 out.println(saveString);
@@ -684,12 +689,8 @@ public class Board extends Application {
                 return false;
             }
         }
-        userMessage.setText("Saved!");
+        userMessage.setText("Saved! - " + new SimpleDateFormat("H:mm:ss").format(new Date()));
         return true;
-    }
-
-    private void loadGameAction() {
-
     }
 
     private void resetBoardAction() {
@@ -846,7 +847,7 @@ public class Board extends Application {
     private void makeFileChoosers() {
         saveFileChooser.setTitle("Save Game");
         saveFileChooser.getExtensionFilters().add(SAVE_EXTENSION_FILTER);
-        loadFileChooser.setTitle("Save Game");
+        loadFileChooser.setTitle("Load Game");
         loadFileChooser.getExtensionFilters().add(SAVE_EXTENSION_FILTER);
     }
 
