@@ -269,6 +269,16 @@ public class FocusGame {
         Set<String> viablePlacements3 = new HashSet<>();
         Set<String> viablePlacements4 = new HashSet<>();
 
+
+
+        /*need to optimize the time for first filter (no matter the order) to filter through findpossibilities
+        Time
+        1.150: 558, 389, 121, 82
+        856: 540, 157, 86 ,73
+        1.107: 571, 249, 184, 103
+        1.106: 596. 277, 155, 77
+        */
+
          for(String x : findPossibilities()){
              char piece1 = x.charAt(0);
              PieceType piece2 = getPieceTypeFromChar(piece1);
@@ -276,6 +286,28 @@ public class FocusGame {
                  viablePlacements1.add(x);
              }
          }
+
+        /*Option two for first filter, use list of available piecetypes to directly construct string rather than
+        generate all then filter to save time.
+       Times
+       1.87 : 542, 337, 169 ,39
+        1.344: 562, 534, 183, 65
+        1.423: 685, 421, 265, 52
+        1.638: 530, 585, 451, 72
+        */
+
+        /*
+        for(PieceType x : AvailablePiece){
+            Set<String> viablePlacements12 = new HashSet<String>(AvailablePiece.size()*180);
+            char u = PieceType.getCharFromPieceType(x);
+            for(String y : findPossibilities2(u)){
+                    viablePlacements12.add(y);
+                    for(String g : viablePlacements12){
+                        viablePlacements1.add(g);
+                }}}*/
+
+
+
         for (String x : viablePlacements1){
             if(isPlacementStringValid(placement+x)) {
                 viablePlacements2.add(x);
@@ -289,12 +321,11 @@ public class FocusGame {
         for(String x : viablePlacements3){
             if(consistentWithChallengeMidGame(placement+x, challenge)){
                 viablePlacements4.add(x);
-                //System.out.println("Added 4");
             }
         }
 
-        /*System.out.println("AP:" + AvailablePiece);
-        System.out.println("VP:" + viablePlacements4);*/
+        /*System.out.println("AP:" + AvailablePiece); best time 925ms when collapsed together
+        System.out.println("VP:" + viablePlacements4); best time 864ms when split into 4 filters */
         if (viablePlacements4.isEmpty()){
             return null;
         } else {
@@ -328,6 +359,20 @@ public class FocusGame {
                 for (int k = 0; k < 5; k++) {
                     for (int l = 0; l < 4; l++) {
                         String placeholder = ""+ u + "" + j + "" + k + "" + l;
+                        AllPossibleMoves.add(placeholder);
+                    }
+                }
+            }
+        }
+
+        return AllPossibleMoves;
+    }
+    private static Set<String> findPossibilities2(char character) {
+        Set<String> AllPossibleMoves = new HashSet<>();
+     {for (int j = 0; j < 9; j++) {
+                for (int k = 0; k < 5; k++) {
+                    for (int l = 0; l < 4; l++) {
+                        String placeholder = ""+ character + "" + j + "" + k + "" + l;
                         AllPossibleMoves.add(placeholder);
                     }
                 }
