@@ -106,6 +106,7 @@ public class Board extends Application {
 
     private FileChooser saveFileChooser = new FileChooser();
     private FileChooser loadFileChooser = new FileChooser();
+    private Alert autosaveAlert = new Alert(Alert.AlertType.NONE, "Would you like to turn autosave on?",ButtonType.YES,ButtonType.NO);
 
     private FocusGame game = new FocusGame();
 
@@ -636,6 +637,13 @@ public class Board extends Application {
             String saveString = br.readLine();
             if (saveString != null && FocusGame.isSaveStringValid(saveString)) {
                 loadGame(saveString);
+                if (showAutoSaveAlert()) {
+                    CURRENT_SAVEFILE = tmp;
+                    AUTOSAVE = true;
+                    userMessage.setText("Loaded file - autosave turned on");
+                } else {
+                    userMessage.setText("Loaded file");
+                }
             } else {
                 Alert alert = new Alert(Alert.AlertType.ERROR, "", ButtonType.OK);
                 alert.setHeaderText("Invalid Save File");
@@ -656,20 +664,31 @@ public class Board extends Application {
         }
     }
 
+    private boolean showAutoSaveAlert() {
+        autosaveAlert.showAndWait();
+        if (autosaveAlert.getResult() == ButtonType.YES) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     private File showLoadGameFileChooser(Stage stage) {
         return loadFileChooser.showOpenDialog(stage);
     }
 
     private void saveGameAction(Stage stage) throws IOException {
         File tmp = showSaveFileChooser(stage);
-        if (saveToFile(tmp, game.getSaveString())) {
+        if (tmp != null && saveToFile(tmp, game.getSaveString())) {
             System.out.println("SAVED SUCCESSFULLY");
-            sendMessage("Saved - AUTOSAVE turned on");
-            CURRENT_SAVEFILE = tmp;
-            AUTOSAVE = true;
+            if (showAutoSaveAlert()) {
+                CURRENT_SAVEFILE = tmp;
+                AUTOSAVE = true;
+                userMessage.setText("Saved file - autosave turned on");
+            } else {
+                userMessage.setText("Saved file");
+            }
         } else {
-            AUTOSAVE = false;
-            CURRENT_SAVEFILE = null;
             System.out.println("ERROR WITH SAVING");
         }
     }
