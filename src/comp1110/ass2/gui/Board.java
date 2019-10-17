@@ -61,7 +61,7 @@ public class Board extends Application {
 
     private static final double CONTROLS_HEIGHT = 30; // height of controls
     private static final double CHALLENGE_PIECE_OPACITY = 0.3;
-    private static final String VERSION = "0.3-d2g";
+    private static final String VERSION = "1.0";
 
     private static final String URI_BASE = "assets/";
     private static final Image ICON_IMAGE = new Image(Board.class.getResourceAsStream(URI_BASE + "icon.png"));
@@ -214,48 +214,37 @@ public class Board extends Application {
                 if (e.getClickCount() == 2) { // checks if it is a double click (to return it home)
                     snapToHome();
                 } else {
-                    // debug information
                     if (placed) {
                         game.undoOperation(game.getBoardPlacementString(),placement);
                     }
-
-                    // set mouse pointer location
                     mX = e.getSceneX();
                     mY = e.getSceneY();
-
-                    // make translucent for dragging
                     setOpacity(0.6);
-
-                    // sets currentPiece to this (allows for rotation to work)
                     currentPiece = this;
-
                 }
             });
 
             setOnMouseDragged(e -> {
                 toFront();
-                // change in x and y position of mouse
+
                 double deltaX = e.getSceneX() - mX;
                 double deltaY = e.getSceneY() - mY;
-                // changes layout
+
                 setLayoutX(getLayoutX() + deltaX);
                 setLayoutY(getLayoutY() + deltaY);
-                // gets new mouse location
+
                 mX = e.getSceneX();
                 mY = e.getSceneY();
                 e.consume();
             });
-            // Dragging ended
+
             setOnMouseReleased(e -> {
-                // tries to place it to the board
-                try {
+                try { // wrapped in case of error with autosaving
                     snapToBoard();
                 } catch (IOException ex) {
                     ex.printStackTrace();
                 }
-                // changes the currentPiece back to null
                 currentPiece = null;
-                // make solid again
                 setOpacity(1.0);
             });
         }
@@ -273,16 +262,14 @@ public class Board extends Application {
             if (!xyOnBoard(aX,aY)) {
                 snapToHome();
             } else {
-                location = getLocationFromSceneXY(aX,aY); // approximate location
+                location = getLocationFromSceneXY(aX,aY);
                 // builds placement string
                 placement = pieceType.toString().toLowerCase() + location.getX() + location.getY() + orientation.toInt();
-                if (game.checkPieceToBoard(placement)) { // if valid, piece can be placed
-                    System.out.println("Placement " + placement + " is valid.");
+                if (game.checkPieceToBoard(placement)) {
                     placePiece(new Piece(placement));
                     placed = true;
                     makePlacement(placement);
-                } else { // otherwise return home
-                    System.out.println("Placement " + placement + " is NOT valid.");
+                } else {
                     snapToHome();
                 }
             }
@@ -333,7 +320,6 @@ public class Board extends Application {
         private void setRotation(Orientation orientation) {
             setRotate(orientation.toInt()*90);
         }
-
     }
 
     /**
@@ -362,6 +348,11 @@ public class Board extends Application {
         return new Location((int)Math.round(approxX),(int)Math.round(approxY));
     }
 
+    /**
+     * Attempts to place a piece as a hint on the board.
+     * Piece is chosen at random from solutions string.
+     * @throws IOException Autosave
+     */
     private void showHint() throws IOException {
         if (HINTS_LIMITED && HINTS_COUNTER >= HINTS_LIMIT) {
             Alert hintAlert = new Alert(Alert.AlertType.NONE,"No more hints!",ButtonType.OK);
@@ -377,7 +368,6 @@ public class Board extends Application {
             for (PieceTile p : pieceTilesList) {
                 if (p.pieceType == hintPiece.getPieceType()) {
                     if (p.placed) {
-                        System.out.println("Piece " + p.pieceType.toString() + " is already placed at " + p.placement);
                         game.undoOperation(game.getBoardPlacementString(), p.placement);
                     }
                     p.placement = hintPlacement;
@@ -475,19 +465,23 @@ public class Board extends Application {
         }
     }
 
+    /**
+     * Checks if all the pieces have been placed on the board
+     * @return true if all pieces have been placed
+     */
     private boolean allPiecesPlaced() {
-        boolean flag = false;
         for (PieceTile p : pieceTilesList) {
-            flag = p.placed;
+            if (!p.placed) {
+                return false;
+            }
         }
-        System.out.println("ALL PIECES PLACED:" + flag);
-        return flag;
+        return true;
     }
 
     /**
-     * Makes game controls
+     * Makes game controls and GUI
      */
-    private void makeControls(Stage stage) throws IOException {
+    private void makeControls(Stage stage) {
         ArrayList<Node> controlNodes = new ArrayList<Node>();
 
         // Board Title
@@ -514,8 +508,8 @@ public class Board extends Application {
         difficulty.setMajorTickUnit(1);
         difficulty.setMinorTickCount(0);
         difficulty.setSnapToTicks(true);
-        //controlNodes.add(difficulty);
-        //controlNodes.add(difficultyText);
+        controlNodes.add(difficulty);
+        controlNodes.add(difficultyText);
 
         // Buttons
         HBox controlBox = new HBox();
@@ -555,7 +549,7 @@ public class Board extends Application {
         });
 
         Button help = new Button("Help");
-        help.setOnAction(e -> showHelp());
+        help.setOnAction(e -> helpStage.show());
 
         Button loadGame = new Button("Load Game");
         loadGame.setOnAction(e -> {
@@ -567,13 +561,7 @@ public class Board extends Application {
         });
 
         Button saveGame = new Button("Save Game");
-        saveGame.setOnAction(e -> {
-            try {
-                saveGameAction(stage);
-            } catch (IOException error) {
-                System.out.println(error);
-            }
-        });
+        saveGame.setOnAction(e -> saveGameAction(stage));
 
         Button toggleChallenge = new Button();
         toggleChallenge.setMnemonicParsing(true);
@@ -630,6 +618,62 @@ public class Board extends Application {
         controls.getChildren().addAll(controlNodes);
     }
 
+    /* ACTIONS FOR CONTROL EVENT HANDLERS */
+
+    /**
+     * Sets key events for scene
+     * Z - used to rotate pieces
+     * @param scene Scene to set events on
+     */
+    private void setKeyEvents(Scene scene) {
+        scene.setOnKeyPressed(e -> {
+            KeyCode key = e.getCode();
+            if (key == KeyCode.Z) {
+                if (currentPiece != null) {
+                    currentPiece.rotate();
+                }
+            } else if (key == KeyCode.H) {
+                try {
+                    showHint();
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }
+            e.consume();
+        });
+    }
+
+    /**
+     * Action for resetting the board
+     */
+    private void resetBoardAction() {
+        Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION,"Are you sure you want to reset the board?",ButtonType.YES,ButtonType.NO);
+        confirmation.setTitle("Reset Board");
+        confirmation.setHeaderText("Reset Board?");
+        confirmation.showAndWait();
+        if (confirmation.getResult() == ButtonType.YES) {
+            resetBoard();
+        }
+    }
+
+    /**
+     * Action for starting a new game
+     */
+    private void newGameAction() {
+        Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION,"Are you sure you want to start a new game?",ButtonType.YES,ButtonType.NO);
+        confirmation.setTitle("New Game");
+        confirmation.setHeaderText("New Game?");
+        confirmation.showAndWait();
+        if (confirmation.getResult() == ButtonType.YES) {
+            newGame();
+        }
+    }
+
+    /**
+     * Action for load game button
+     * @param stage the stage to show the load game file chooser from
+     * @throws IOException
+     */
     private void loadGameAction(Stage stage) throws IOException {
         File tmp = showLoadGameFileChooser(stage);
         if (tmp != null) {
@@ -653,6 +697,30 @@ public class Board extends Application {
         }
     }
 
+    /**
+     * Save game action
+     * @param stage The stage to show the save file chooser on
+     * @throws IOException
+     */
+    private void saveGameAction(Stage stage) {
+        File tmp = showSaveFileChooser(stage);
+        if (tmp != null && saveToFile(tmp, game.getSaveString())) {
+            if (showAutoSaveAlert()) {
+                CURRENT_SAVEFILE = tmp;
+                AUTOSAVE = true;
+                userMessage.setText("Saved file - autosave turned on");
+            } else {
+                userMessage.setText("Saved file");
+            }
+        } else {
+            System.out.println("ERROR WITH SAVING - FILE IS NULL");
+        }
+    }
+
+    /**
+     * Sets the board and game instance fields given a save string
+     * @param saveString A valid save string
+     */
     private void loadGame(String saveString) {
         resetBoard();
         String[] saveArray = saveString.split(",");
@@ -664,41 +732,41 @@ public class Board extends Application {
         }
     }
 
+    /**
+     * Alert for user asking if autosave should be turned on for the file just saved/loaded
+     * @return true if user clicks yes on alert
+     */
     private boolean showAutoSaveAlert() {
         autosaveAlert.showAndWait();
-        if (autosaveAlert.getResult() == ButtonType.YES) {
-            return true;
-        } else {
-            return false;
-        }
+        return autosaveAlert.getResult() == ButtonType.YES;
     }
 
+    /**
+     * Shows the load game file chooser window
+     * @param stage The stage to show the FileChooser on
+     * @return the File selected from the FileChooser
+     */
     private File showLoadGameFileChooser(Stage stage) {
         return loadFileChooser.showOpenDialog(stage);
     }
 
-    private void saveGameAction(Stage stage) throws IOException {
-        File tmp = showSaveFileChooser(stage);
-        if (tmp != null && saveToFile(tmp, game.getSaveString())) {
-            System.out.println("SAVED SUCCESSFULLY");
-            if (showAutoSaveAlert()) {
-                CURRENT_SAVEFILE = tmp;
-                AUTOSAVE = true;
-                userMessage.setText("Saved file - autosave turned on");
-            } else {
-                userMessage.setText("Saved file");
-            }
-        } else {
-            System.out.println("ERROR WITH SAVING");
-        }
-    }
-
-    private File showSaveFileChooser(Stage stage) throws IOException {
+    /**
+     * Shows the file chooser for saving the game
+     * @param stage The stage to show the file chooser on
+     * @return File selected from FileChooser
+     */
+    private File showSaveFileChooser(Stage stage) {
         saveFileChooser.setInitialFileName("IQ_FOCUS_SAVE_" + new SimpleDateFormat("ddMMyyyy_HHmmss").format(new Date()));
         return saveFileChooser.showSaveDialog(stage);
     }
 
-    private boolean saveToFile(File file, String saveString) throws IOException {
+    /**
+     * Saves a save string to file
+     * @param file The File to save the game to
+     * @param saveString A save string of the current board state
+     * @return true for success
+     */
+    private boolean saveToFile(File file, String saveString) {
         userMessage.setText("Saving....");
         if (file != null) {
             try (PrintWriter out = new PrintWriter(file.getAbsolutePath())) {
@@ -712,26 +780,10 @@ public class Board extends Application {
         return true;
     }
 
-    private void resetBoardAction() {
-        Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION,"Are you sure you want to reset the board?",ButtonType.YES,ButtonType.NO);
-        confirmation.setTitle("Reset Board");
-        confirmation.setHeaderText("Reset Board?");
-        confirmation.showAndWait();
-        if (confirmation.getResult() == ButtonType.YES) {
-            resetBoard();
-        }
-    }
-
-    private void newGameAction() {
-        Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION,"Are you sure you want to start a new game?",ButtonType.YES,ButtonType.NO);
-        confirmation.setTitle("New Game");
-        confirmation.setHeaderText("New Game?");
-        confirmation.showAndWait();
-        if (confirmation.getResult() == ButtonType.YES) {
-            newGame();
-        }
-    }
-
+    /**
+     * Makes piece placements to board given placement string
+     * @param placementString A valid placement string
+     */
     private void makePiecePlacementsFromString(String placementString) {
         for (String p : FocusGame.splitPlacementString(placementString)) {
             Piece piece = new Piece(p);
@@ -742,11 +794,67 @@ public class Board extends Application {
                     pT.placed = true;
                     pT.orientation = piece.getOrientation();
                     pT.setRotation(piece.getOrientation());
+                    pT.location = piece.getLocation();
                 }
             }
         }
     }
 
+    /**
+     * Check if the challenge has been completed
+     */
+    private void checkCompletion() {
+        if (game.checkCompletion()) {
+            root.setOpacity(0.7);
+            Alert completed = new Alert(Alert.AlertType.NONE,
+                    "Congratulations! You completed this challenge! " +
+                    "\nClick next to move onto the next puzzle.",
+                    ButtonType.NEXT);
+            completed.setTitle("Challenge complete");
+            completed.showAndWait();
+            if (completed.getResult() == ButtonType.NEXT) {
+                game.nextChallenge(game.currentChallengeNumber+1);
+                HINTS_COUNTER = HINTS_LIMIT;
+                makeChallenge(game.getChallenge());
+                resetBoard();
+            }
+            root.setOpacity(1.0);
+        }
+    }
+
+    /**
+     * Start a new game
+     */
+    private void newGame() {
+        game.newGame();
+        resetBoard();
+        makeChallenge(game.getChallenge());
+    }
+
+    /**
+     * Reset board state
+     */
+    private void resetBoard() {
+        game.resetBoard();
+        for (PieceTile p : pieceTilesList) {
+            p.snapToHome();
+        }
+    }
+
+    /**
+     * Sets up user messages
+     */
+    private void makeBoardMessages() {
+        boardMessages.getChildren().add(userMessage);
+        boardMessages.setLayoutY(15);
+        boardMessages.setLayoutX(5);
+        userMessage.setFont(new Font("Tahoma", 15));
+    }
+
+    /**
+     * Sets up help window
+     * @param stage Stage to show help on
+     */
     private void makeHelp(Stage stage) {
         Scene scene = new Scene(helpRoot,HELP_WINDOW_WIDTH,HELP_WINDOW_HEIGHT);
         ImageView banner = new ImageView(new Image(Board.class.getResourceAsStream(URI_BASE + "help-banner.jpg")));
@@ -791,10 +899,6 @@ public class Board extends Application {
         stage.setTitle("IQ FOCUS - Help");
         stage.getIcons().add(ICON_IMAGE);
         stage.setScene(scene);
-    }
-
-    private void showHelp() {
-        helpStage.show();
     }
 
     /**
@@ -863,6 +967,9 @@ public class Board extends Application {
         challengeSquares.getChildren().add(challengeTitle);
     }
 
+    /**
+     * Makes file choosers for saving and loading game
+     */
     private void makeFileChoosers() {
         saveFileChooser.setTitle("Save Game");
         saveFileChooser.getExtensionFilters().add(SAVE_EXTENSION_FILTER);
@@ -882,84 +989,7 @@ public class Board extends Application {
         BOARD_ABS_Y = BOARD_Y + BOARD_PADDING_TOP*BOARD_SCALE_FACTOR;
     }
 
-    /**
-     * Sets key events for scene
-     * Z - used to rotate pieces
-     * @param scene Scene to set events on
-     */
-    private void setKeyEvents(Scene scene) {
-        scene.setOnKeyPressed(e -> {
-            KeyCode key = e.getCode();
-            if (key == KeyCode.Z) {
-                if (currentPiece != null) {
-                    currentPiece.rotate();
-                }
-            } else if (key == KeyCode.SLASH) {
-                try {
-                    showHint();
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
-            } /*else if (key == KeyCode.R) {
-                resetBoardAction();
-            }*/
-            e.consume();
-        });
-    }
-
-    /**
-     * Check if the challenge has been completed
-     */
-    private void checkCompletion() {
-        if (game.checkCompletion()) {
-            root.setOpacity(0.7);
-            Alert completed = new Alert(Alert.AlertType.NONE,
-                    "Congratulations! You completed this challenge! " +
-                    "\nClick next to move onto the next puzzle.",
-                    ButtonType.NEXT);
-            completed.setTitle("Challenge complete");
-            completed.showAndWait();
-            if (completed.getResult() == ButtonType.NEXT) {
-                System.out.println("calling this");
-                game.nextChallenge(game.currentChallengeNumber+1);
-                HINTS_COUNTER = HINTS_LIMIT;
-                makeChallenge(game.getChallenge());
-                resetBoard();
-            }
-            root.setOpacity(1.0);
-        }
-    }
-
-    /**
-     * Start a new game
-     */
-    private void newGame() {
-        game.newGame();
-        resetBoard();
-        makeChallenge(game.getChallenge());
-    }
-
-    /**
-     * Reset board state
-     */
-    private void resetBoard() {
-        game.resetBoard();
-        for (PieceTile p : pieceTilesList) {
-            p.snapToHome();
-        }
-    }
-
-    private void makeBoardMessages() {
-        boardMessages.getChildren().add(userMessage);
-        boardMessages.setLayoutY(15);
-        boardMessages.setLayoutX(5);
-        userMessage.setFont(new Font("Tahoma", 15));
-    }
-
-    private void sendMessage(String text) {
-        userMessage.setText(text);
-    }
-
+    /* JAVA FX SET UP */
     public static void main(String[] args) {
         launch(args);
     }
