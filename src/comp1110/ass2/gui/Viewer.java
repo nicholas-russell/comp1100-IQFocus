@@ -141,22 +141,6 @@ public class Viewer extends Application {
                 }
                 break;
             case Two:
-                switch (pieceType) {
-                    case A:
-                    case B:
-                    case C:
-                    case D:
-                    case E:
-                    case F:
-                    case G:
-                    case H:
-                    case I:
-                    case J:
-                        offsets[0] = 0;
-                        offsets[1] = 0;
-                        break;
-                }
-                break;
             case Zero:
             default:
                 break;
