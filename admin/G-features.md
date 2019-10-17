@@ -8,6 +8,7 @@ of our project implements the following features:
  - A basic playable game that snaps pieces to the board and checks for validity (Task 7)
  - Generates simple challenges (Task 8)
  - Implements hints (Task 10)
- - Implements interesting starting challenges (Task 11)
+ - Save and load functions for the game
+ - Instructions for the new player
+ - Hide and show challenge for the game
 
-additional features...
