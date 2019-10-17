@@ -1,9 +1,10 @@
 package comp1110.ass2;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import comp1110.ass2.gui.Viewer;
+import javafx.application.Application;
+
+import java.util.*;
+
 import static comp1110.ass2.State.*;
 
 /**
@@ -12,7 +13,7 @@ import static comp1110.ass2.State.*;
  * The game is based directly on Smart Games' IQ-Focus game
  * (https://www.smartgames.eu/uk/one-player-games/iq-focus)
  *
- * @author Yuhui Wang, Matthew Tein
+ * @author Yuhui Wang, Matthew Tein, Nicholas Russell
  * @version 0.2-d2f
  * @since 01/10/2019
  */
@@ -24,13 +25,126 @@ public class FocusGame {
      * be Empty at the start(can be replaced by other colors).
      */
 
+    public int currentChallengeNumber;
+    public Solution currentChallenge;
+
+    public int getChallengeNumber() {
+        return currentChallengeNumber + 1;
+    }
+
+    public boolean checkCompletionGenerated(String challenge) {
+        if (getBoardPlacementString().length() != 40) {
+            return false;
+        }
+        int x = 0;
+        int y = 0;
+        for (Character c : challenge.toCharArray()) {
+            if (x > 2) {
+                y++;
+            }
+            if (board[1+y][3+x] != State.getColorStateFromChar(c)) {
+                return false;
+            }
+            x++;
+        }
+
+        return true;
+    }
+
+    private boolean challengePartiallyCorrect(String challenge) {
+        int x = 0;
+        int y = 0;
+        for (Character c : challenge.toCharArray()) {
+            if (x > 2) {
+                x = 0;
+                y++;
+            }
+            //System.out.println((1+y) + ", " + (3+x) + " = " + board[1+y][3+x].toString() + " should be " + c);
+            if (board[1+y][3+x] != State.getColorStateFromChar(c) && board[1+y][3+x] != EMPTY) {
+                System.out.println("END TREE");
+                return false;
+            }
+            x++;
+        }
+        return true;
+    }
+
+    public void newGame() {
+        resetBoard();
+        currentChallengeNumber = 0;
+        currentChallenge = Solution.getChallenge(currentChallengeNumber);
+    }
+
+    public void nextChallenge(int challengeNumber) {
+        System.out.println(challengeNumber);
+        if (challengeNumber >= Solution.SOLUTIONS.length) {
+            System.out.println("making challenge 0");
+            currentChallengeNumber = 0;
+        } else {
+            System.out.println("making challenge " + challengeNumber);
+            currentChallengeNumber = challengeNumber;
+        }
+        currentChallenge = Solution.getChallenge(currentChallengeNumber);
+    }
+
+    public String getChallenge() {
+        return currentChallenge.getObjective();
+    }
+
+    public boolean checkCompletion() {
+        return currentChallenge.isSolutionCorrect(orderPlacementString(getBoardPlacementString()));
+    }
+
+    public String getNextHint() {
+        ArrayList<String> currentPieces = splitPlacementString(getBoardPlacementString());
+        ArrayList<String> solutionPieces = splitPlacementString(currentChallenge.getSolution());
+        for (String p : currentPieces) {
+            if (solutionPieces.contains(p)) {
+                solutionPieces.remove(p);
+            }
+        }
+        Random r = new Random();
+        return solutionPieces.get(r.nextInt(solutionPieces.size()));
+    }
+
+    public static ArrayList<String> splitPlacementString(String placementString) {
+        int l = placementString.length();
+        char[] placementStringArray = placementString.toCharArray();
+        ArrayList<String> placements = new ArrayList<>();
+        int i = 0;
+        while (i < l) {
+            char[] p = new char[4];
+            p[0] = placementStringArray[i];
+            p[1] = placementStringArray[i+1];
+            p[2] = placementStringArray[i+2];
+            p[3] = placementStringArray[i+3];
+            placements.add(new String(p));
+            i += 4;
+        }
+        return placements;
+    }
+
+    public String getSaveString() {
+        return currentChallengeNumber + "," + getBoardPlacementString();
+    }
+
+    public static boolean isSaveStringValid(String saveString) {
+        String[] saveArray = saveString.split(",");
+        if (saveArray.length == 1) {
+            return Solution.SOLUTIONS.length > Integer.parseInt(saveArray[0]);
+        } else {
+            return saveArray.length == 2
+                    && isPlacementStringValid(saveArray[1])
+                    && Solution.SOLUTIONS.length > Integer.parseInt(saveArray[0]);
+        }
+    }
 
     /**
      * This is written by Yuhui Wang
      * public State[][] board = new State [5][9];
      */
-    State[][] saved = new State[5][9];
-    String current = new String();
+    private State[][] saved = new State[5][9];
+    private String current = "";
     public State[][] board = {
             {EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY},
             {EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY},
@@ -114,8 +228,7 @@ public class FocusGame {
      * @return True if the placement sequence is valid
      */
     public static boolean isPlacementStringValid(String placement) {
-        boolean result = new FocusGame().addPiecesToBoard(placement);
-        return result;
+        return new FocusGame().addPiecesToBoard(placement);
     }
 
 
@@ -145,152 +258,164 @@ public class FocusGame {
      * @param row       The cell's row.
      * @return A set of viable piece placements, or null if there are none.
      */
-    static Set<String> getViablePiecePlacements(String placement, String challenge, int col, int row) {
-        // FIXME Task 6: determine the set of all viable piece placements given existing placements and a challenge
-        Set result = new HashSet();
-        System.out.println(placement);
-
+    public static Set<String> getViablePiecePlacements(String placement, String challenge, int col, int row) {
         //Find a list of Non-placed PieceTypes
-        ArrayList<PieceType> AvaliablePiece = new ArrayList<PieceType>();
+        ArrayList<PieceType> AvailablePiece = new ArrayList<PieceType>();
         for (int i = 'a'; i < 'a' + 10; i++) {
             if (!placement.contains(String.valueOf((char) i)))
-                AvaliablePiece.add(PieceType.valueOf(String.valueOf((char) (i + 'A' - 'a'))));
+                AvailablePiece.add(PieceType.valueOf(String.valueOf((char) (i + 'A' - 'a'))));
+        }
+        //Matthew - Continuing on Yuhui's Work
 
+        Set<String> viablePlacements1 = new HashSet<>();
+        Set<String> viablePlacements2 = new HashSet<>();
+        Set<String> viablePlacements3 = new HashSet<>();
+        Set<String> viablePlacements4 = new HashSet<>();
+
+
+
+        /*need to optimize the time for first filter (no matter the order) to filter through findpossibilities
+        Time
+        1.150: 558, 389, 121, 82
+        856: 540, 157, 86 ,73
+        1.107: 571, 249, 184, 103
+        1.106: 596. 277, 155, 77
+        */
+
+         for(String x : findPossibilities()){
+             char piece1 = x.charAt(0);
+             PieceType piece2 = getPieceTypeFromChar(piece1);
+             if(AvailablePiece.contains(piece2)){
+                 viablePlacements1.add(x);
+             }
+         }
+
+        /*Option two for first filter, use list of available piecetypes to directly construct string rather than
+        generate all then filter to save time.
+       Times
+       1.87 : 542, 337, 169 ,39
+        1.344: 562, 534, 183, 65
+        1.423: 685, 421, 265, 52
+        1.638: 530, 585, 451, 72
+        */
+
+        /*
+        for(PieceType x : AvailablePiece){
+            Set<String> viablePlacements12 = new HashSet<String>(AvailablePiece.size()*180);
+            char u = PieceType.getCharFromPieceType(x);
+            for(String y : findPossibilities2(u)){
+                    viablePlacements12.add(y);
+                    for(String g : viablePlacements12){
+                        viablePlacements1.add(g);
+                }}}*/
+
+
+
+        for (String x : viablePlacements1){
+            if(isPlacementStringValid(placement+x)) {
+                viablePlacements2.add(x);
+            }
+        }
+        for(String x : viablePlacements2){
+            if(testAddPieceToBoard(placement+x, row, col)) {
+                viablePlacements3.add(x);
+            }
+        }
+        for(String x : viablePlacements3){
+            if(consistentWithChallengeMidGame(placement+x, challenge)){
+                viablePlacements4.add(x);
+            }
         }
 
-
-
-        //Matthew - Continueing on Yuhui's Work
-
-
-        //Filtering if valid. Will need to compresss the following filters once sorted through
-        ArrayList<String> possibleSinglePlacements = new ArrayList<>();
-        for (String x : findPossibilities()){
-            if(isPlacementStringValid(x) == true){
-                possibleSinglePlacements.add(x);
-
-            }
-            else{
-            }
+        /*System.out.println("AP:" + AvailablePiece); best time 925ms when collapsed together
+        System.out.println("VP:" + viablePlacements4); best time 864ms when split into 4 filters */
+        if (viablePlacements4.isEmpty()){
+            return null;
+        } else {
+            return viablePlacements4;
         }
-        Set<String> viablePlacements = new HashSet<>();
-        //Filter if matches challenge Square
-        for(String x : possibleSinglePlacements){
-            boolean answer = new FocusGame().consistentWithChallenge(x, challenge);
-            if(answer == true){
-                viablePlacements.add(x);
+    }
+
+
+    //Written By Matthew Tein
+    // For Task6 : need to return just states of squares on board
+    public static boolean testAddPieceToBoard(String testPlacement, int row, int col) {
+        FocusGame Board1 = new FocusGame();
+        if(Board1.addPiecesToBoard(testPlacement)){
+            State targetCell = Board1.board[row][col];
+            if(targetCell == WHITE || targetCell == GREEN || targetCell  == RED || targetCell  == BLUE){
+                return true;
             }
-            else{
-            }
+            else {return false;}
         }
-        for (String x : viablePlacements){
-            char piece = x.charAt(0);
-            String piecel = String.valueOf(piece);
-            PieceType.valueOf(piecel);
-            if(AvaliablePiece.contains(x)){
-            }
-            else {
-                viablePlacements.remove(x);
-            }
-        }
+        else return false;
 
-        //Need to Add Last filter that checks corresponding c-square ofthe given int row and int col
-        for(String x : viablePlacements){
-           // State.getStateOnTile();
-            if(true){
-
-            }
-        }
-
-        //for debugging
-        System.out.println(AvaliablePiece);
-        System.out.println(viablePlacements);
-
-        return viablePlacements;
     }
 
     // Written by Matthew Tein - Generates all possible piece placements
     //      Used in tandem with getViablePiecePlacements
-    public static Set<String> findPossibilities() {
+    private static Set<String> findPossibilities() {
         Set<String> AllPossibleMoves = new HashSet<>();
-        char u;
-
         for (int h = 0; h < 10; h++) {
-            switch (h){
-                case 0: u = 'a';
-                    break;
-                case 1: u = 'b';
-                    break;
-                case 2: u = 'c';
-                    break;
-                case 3: u = 'd';
-                    break;
-                case 4: u = 'e';
-                    break;
-                case 5: u = 'f';
-                    break;
-                case 6: u = 'g';
-                    break;
-                case 7: u = 'h';
-                    break;
-                case 8: u = 'i';
-                    break;
-                case 9: u = 'j';
-                    break;
-                default:
-                    u = 'a';
-                    break;
-
-            }
-            for (int j = 0; j < 8; j++) {
-                for (int k = 0; k < 4; k++) {
-                    for (int l = 0; l < 3; l++) {
+            char u = (char)(h+97);
+            for (int j = 0; j < 9; j++) {
+                for (int k = 0; k < 5; k++) {
+                    for (int l = 0; l < 4; l++) {
                         String placeholder = ""+ u + "" + j + "" + k + "" + l;
                         AllPossibleMoves.add(placeholder);
                     }
                 }
             }
         }
+
+        return AllPossibleMoves;
+    }
+    private static Set<String> findPossibilities2(char character) {
+        Set<String> AllPossibleMoves = new HashSet<>();
+     {for (int j = 0; j < 9; j++) {
+                for (int k = 0; k < 5; k++) {
+                    for (int l = 0; l < 4; l++) {
+                        String placeholder = ""+ character + "" + j + "" + k + "" + l;
+                        AllPossibleMoves.add(placeholder);
+                    }
+                }
+            }
+        }
+
         return AllPossibleMoves;
     }
 
-
-
-
-
-
-
-    public boolean pieceCover(String placement, int col, int row) {
-        FocusGame Board = new FocusGame();
-        boolean valid = Board.addPiecesToBoard(placement);
-        boolean cover = (Board.board[col][row] != EMPTY);
-        boolean result = valid && cover;
-        return result;
-    }
-
-
-    public boolean consistentWithChallenge(String placement, String challenge) {
-        FocusGame Board = new FocusGame();
-        if (Board.addPiecesToBoard(placement)) {
+    private static boolean consistentWithChallengeMidGame(String placement, String challenge) {
+        FocusGame board = new FocusGame();
+        if (board.addPiecesToBoard(placement)) {
             for (int i = 0; i < 9; i++) {
-                State tmp = Board.board[1 + i / 3][3 + i % 3];
+                State tmp1 = board.board[1 + i / 3][3 + i % 3];
                 switch (challenge.charAt(i)) {
                     case 'R':
-                        if (tmp != RED) return false;
+                        if (tmp1 != RED && tmp1 != EMPTY) return false;
                         break;
                     case 'W':
-                        if (tmp != WHITE) return false;
+                        if (tmp1 != WHITE && tmp1 != EMPTY) return false;
                         break;
                     case 'B':
-                        if (tmp != BLUE) return false;
+                        if (tmp1 != BLUE && tmp1!= EMPTY) return false;
                         break;
                     case 'G':
-                        if (tmp != GREEN) return false;
+                        if (tmp1 != GREEN && tmp1 != EMPTY) return false;
                         break;
                 }
             }
             return true;
         } else return false;
+    }
+
+    /**
+     * Written By Matthew Tein
+     * @param inputchar char from placement String
+     * @return PieceType of corresponding char
+     */
+    public  static PieceType getPieceTypeFromChar(char inputchar){
+        return PieceType.getPieceTypeFromChar(inputchar);
     }
 
     /**
@@ -311,11 +436,167 @@ public class FocusGame {
      * should call on task 6 multiple times- like game tree to decide solutions
      */
     public static String getSolution(String challenge) {
-        // FIXME Task 9: determine the solution to the game, given a particular challenge
+        FocusGame g = recursion(challenge,new FocusGame());
+        System.out.println(g.current);
+        return g.current;
+    }
 
-
-
+    private static FocusGame recursion(String challenge, FocusGame game) {
+        ArrayList<String> pL = getAllPiecesWithCurrentState(challenge,game.current);
+        for (String s : pL) {
+            FocusGame g = new FocusGame();
+            g.addPiecesToBoard(game.current);
+            g.addPieceToBoard(s);
+            //System.out.println("From prev level: " + game.current);
+            System.out.println(g.current);
+            if (g.getBoardPlacementString().length() == 40) {
+                System.out.println("full string");
+                if (g.checkCompletionGenerated(challenge)) {
+                    System.out.println("----> Correct solution!");
+                    return g;
+                } else {
+                    System.out.println("----> not a solution!");
+                    break;
+                }
+            } else {
+                ArrayList<String> pieces = getAllPiecesWithCurrentState(challenge, g.current);
+                System.out.println(pieces);
+                if (g.challengePartiallyCorrect(challenge) && !pieces.isEmpty() && !g.anyPiecesIsolated() && pieces.size() > (10 - g.current.length()/4)) {
+                    System.out.println("----> partially correct ");
+                    recursion(challenge,g);
+                } else {
+                    System.out.println("----> not partially correct!");
+                    break;
+                }
+            }
+        }
         return null;
+    }
+
+    private boolean anyPiecesIsolated() {
+        int x = 0;
+        int y = 0;
+        boolean flag = false;
+        while (x != 9) {
+            if (x == 8) {
+                x = 0;
+                y++;
+            }
+            if (y == 5) {
+                break;
+            }
+            if (board[y][x] == EMPTY) {
+                //System.out.println("x:" + x + ", y:" + y + ", pos:" + getPositionsToCheck(x,y));
+                switch (getPositionsToCheck(x,y)) {
+                    case "LRTB":
+                        if(board[y+1][x] != EMPTY && board[y-1][x] != EMPTY && board[y][x+1] != EMPTY && board[y][x-1] != EMPTY) {
+                            flag = true;
+                            break;
+                        }
+                        break;
+                    case "LTB":
+                        if(board[y+1][x] != EMPTY && board[y-1][x] != EMPTY && board[y][x-1] != EMPTY) {
+                            flag = true;
+                            break;
+                        }
+                        break;
+                    case "RTB":
+                        if(board[y+1][x] != EMPTY && board[y-1][x] != EMPTY && board[y][x+1] != EMPTY) {
+                            flag = true;
+                            break;
+                        }
+                        break;
+                    case "LRT":
+                        if(board[y-1][x] != EMPTY && board[y][x+1] != EMPTY && board[y][x-1] != EMPTY) {
+                            flag = true;
+                            break;
+                        }
+                        break;
+                    case "LRB":
+                        if(board[y+1][x] != EMPTY && board[y][x+1] != EMPTY && board[y][x-1] != EMPTY) {
+                            flag = true;
+                            break;
+                        }
+                        break;
+                    case "RB":
+                        if(board[y+1][x] != EMPTY && board[y][x+1] != EMPTY) {
+                            flag = true;
+                            break;
+                        }
+                        break;
+                    case "LB":
+                        if(board[y+1][x] != EMPTY && board[y][x-1] != EMPTY) {
+                            flag = true;
+                            break;
+                        }
+                        break;
+                    case "LT":
+                        if(board[y-1][x] != EMPTY && board[y][x-1] != EMPTY) {
+                            flag = true;
+                            break;
+                        }
+                        break;
+                    case "RT":
+                        if(board[y-1][x] != EMPTY && board[y][x+1] != EMPTY) {
+                            flag = true;
+                            break;
+                        }
+                        break;
+                    default:
+                        System.out.println("error : " + (getPositionsToCheck(x,y)) + " not in switch");
+                }
+            }
+            x++;
+        }
+        return flag;
+    }
+
+    private String getPositionsToCheck(int x, int y) {
+        char[] rtn = {'L','R','T','B'};
+        if (y - 1 < 0) {
+            rtn[2] = 'X';
+        }
+        if (x - 1 < 0) {
+            rtn[0] = 'X';
+        }
+        if (x + 1 > 8) {
+            rtn[1] = 'X';
+        }
+        if (y + 1 > 4) {
+            rtn[3] = 'X';
+        }
+        return new String(rtn).replace("X","");
+    }
+
+    private static ArrayList<String> getAllPiecesWithCurrentState(String challenge, String boardPlacement) {
+        ArrayList<String> pieces = new ArrayList<>();
+        int x = 0;
+        int y = 0;
+        while (x <= 8) {
+            while (y <= 4) {
+                    Set<String> availablePlacements = getViablePiecePlacements(boardPlacement,challenge,x,y);
+                    if (availablePlacements != null) {
+                        for (String s : availablePlacements) {
+                            if (!pieces.contains(s)) {
+                                pieces.add(s);
+                            }
+                        }
+                    }
+                y++;
+            }
+            x++;
+        }
+        return pieces;
+    }
+
+    public static void main(String[] args) {
+        /*FocusGame g = new FocusGame();
+        g.addPiecesToBoard("e003a121g622f610d310c430i100");
+        System.out.println(g.anyPiecesIsolated());
+        g.resetBoard();
+        g.addPieceToBoard("e003");
+        System.out.println(g.anyPiecesIsolated());*/
+        getSolution("RRRBWBBRB");
     }
 
     /**
@@ -331,7 +612,6 @@ public class FocusGame {
                 {EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY},
                 {NULL, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, NULL}
         };
-
     }
 
     /**
@@ -339,7 +619,7 @@ public class FocusGame {
      * Save the current board state of the game.(An necessary function for a game and also important
      * method for finding solution)
      */
-    public void saveState() {
+    private void saveState() {
         saved = board.clone();
         for (int i = 0; i < board.length; i++)
             saved[i] = board[i].clone();
@@ -350,8 +630,7 @@ public class FocusGame {
      * Load the current board state of the game.(An necessary function for a game and also important
      * method for finding solution)
      */
-    public void loadState() {
-
+    private void loadState() {
         for (int i = 0; i < board.length; i++)
             board[i] = saved[i].clone();
     }
@@ -391,19 +670,15 @@ public class FocusGame {
      * @return True if all the pieces in the placement string can be added to the board.
      */
     public boolean addPiecesToBoard(String placement) {
-        boolean result = true;
-        result = isPlacementStringWellFormed(placement);
+        boolean result = isPlacementStringWellFormed(placement);
         saveState();
         if (result) {
             for (int i = 0; i < placement.length(); i += 4) {
-                Piece p = new Piece(placement.substring(i, i + 4));
-                int x = p.getLocation().getX();
-                int y = p.getLocation().getY();
-
-                if (checkPieceToBoard(placement.substring(i, i + 4)))
-                    addPieceToBoard(placement.substring(i, i + 4));
+                String  p = placement.substring(i,i+4);
+                if (checkPieceToBoard(p))
+                    addPieceToBoard(p);
                 else
-                    result = false;
+                    return false;
             }
         }
         else
@@ -413,7 +688,7 @@ public class FocusGame {
 
     /**
      * This is written by Yuhui Wang
-     * @param piecePlacement The pieceplacement need to be checked before adding to board
+     * @param piecePlacement The piece placement need to be checked before adding to board
      * @return True if the piece can be added to board(without overlap or out-of-bounds
      */
     public boolean checkPieceToBoard(String piecePlacement) {
@@ -437,7 +712,7 @@ public class FocusGame {
      */
     public void addPieceToBoard(String piecePlacement) {
         current += piecePlacement;
-        System.out.println(current);
+
         Piece p = new Piece(piecePlacement);
         int x = p.getLocation().getX();
         int y = p.getLocation().getY();
@@ -459,4 +734,25 @@ public class FocusGame {
         return current;
     }
 
+    /**
+     * Orders placement string into alphabetically and valid order
+     * @param placementString an unordered placement string
+     * @return ordered placement string
+     */
+
+    private static String orderPlacementString(String placementString) {
+        int l = placementString.length();
+        String orderedPlacementString = "";
+        ArrayList<String> placements = splitPlacementString(placementString);
+        Collections.sort(placements);
+        for (String p : placements) {
+            orderedPlacementString = orderedPlacementString + p;
+        }
+        return orderedPlacementString;
+    }
+
 }
+
+
+
+

@@ -141,22 +141,6 @@ public class Viewer extends Application {
                 }
                 break;
             case Two:
-                switch (pieceType) {
-                    case A:
-                    case B:
-                    case C:
-                    case D:
-                    case E:
-                    case F:
-                    case G:
-                    case H:
-                    case I:
-                    case J:
-                        offsets[0] = 0;
-                        offsets[1] = 0;
-                        break;
-                }
-                break;
             case Zero:
             default:
                 break;
@@ -207,7 +191,7 @@ public class Viewer extends Application {
      *
      * @param placement A valid placement string
      */
-    void makePlacement(String placement) {
+    public void makePlacement(String placement) {
         errors.getChildren().clear();
         pieces.getChildren().clear();
         if (!FocusGame.isPlacementStringValid(placement)) {
@@ -266,4 +250,5 @@ public class Viewer extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
     }
+
 }

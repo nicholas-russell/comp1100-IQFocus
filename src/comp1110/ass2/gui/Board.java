@@ -1,6 +1,7 @@
 package comp1110.ass2.gui;
 
 import comp1110.ass2.*;
+import javafx.animation.FadeTransition;
 import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
@@ -15,19 +16,16 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontPosture;
-import javafx.scene.text.FontWeight;
-import javafx.scene.text.Text;
+import javafx.scene.text.*;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
+import java.io.*;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Random;
-
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 
 /**
  * This program implements the controller and view for
@@ -37,7 +35,7 @@ import java.io.InputStream;
  * (https://www.smartgames.eu/uk/one-player-games/iq-focus)
  *
  * @author Nicholas Russell, Matt Tein
- * @version 0.2-d2f
+ * @version 0.2-d2g
  * @since 1/10/2019
  */
 
@@ -52,20 +50,30 @@ public class Board extends Application {
 
     private static final int WINDOW_WIDTH = 933;
     private static final int WINDOW_HEIGHT = 700;
-
+    private static final int HELP_WINDOW_WIDTH = 680;
+    private static final int HELP_WINDOW_HEIGHT = 400;
     private static final int BOARD_PADDING_TOP = 87; // grey part of board on top
     private static final int BOARD_PADDING_LEFT = 41; // grey part of board on left
-    private static final int BOARD_PADDING_RIGHT = 43; // grey part of board on right -- not equal to left
-
     private static final int BOARD_MARGIN_TOP = 100; // margin of board to top of screen
     private static final int BOARD_MARGIN_BOTTOM = 20; // margin of board underneath
-
     /* Scale factor for Board, will also scale everything else at the same time. */
     private static final double BOARD_SCALE_FACTOR = 0.65;
 
     private static final double CONTROLS_HEIGHT = 30; // height of controls
+    private static final double CHALLENGE_PIECE_OPACITY = 0.3;
+    private static final String VERSION = "1.0";
 
-    private static final String VERSION = "0.2-d2f";
+    private static final String URI_BASE = "assets/";
+    private static final Image ICON_IMAGE = new Image(Board.class.getResourceAsStream(URI_BASE + "icon.png"));
+    private static final FileChooser.ExtensionFilter SAVE_EXTENSION_FILTER = new FileChooser.ExtensionFilter("IQ Focus Save (*.iqs)", "*.iqs");
+
+    private boolean SHOW_CHALLENGE = true; // show challenge on board
+    private Boolean HINTS_LIMITED = true;
+    private int HINTS_LIMIT = 3;
+    private int HINTS_COUNTER;
+
+    private boolean AUTOSAVE = false;
+    private File CURRENT_SAVEFILE = null;
 
     private PieceTile currentPiece; // current piece selected
 
@@ -75,23 +83,30 @@ public class Board extends Application {
     private double CONTROLS_POS_Y;
     private double BOARD_X;
     private double BOARD_Y;
+    private double BOARD_ABS_X;
+    private double BOARD_ABS_Y;
     private double BOARD_HEIGHT;
     private double BOARD_WIDTH;
     private double SCALED_SQUARE_SIZE;
-    private double BOARD_PADDING_LEFT_SCALED;
-    private double BOARD_PADDING_TOP_SCALED;
 
-    private static final String URI_BASE = "assets/";
+    private PieceTile[] pieceTilesList = new PieceTile[10];
 
-    private final Group root = new Group();
-    private final Group controls = new Group();
-    private Pane boardPieces = new Pane();
+    private Group root = new Group();
+    private Group controls = new Group();
     private Pane board = new Pane();
-    private Pane errors = new Pane();
     private Pane pieceTiles = new Pane();
     private Pane challengeSquares = new Pane();
-    private PieceTile[] pieceTilesList = new PieceTile[10];
-    private Group debugShapes = new Group();
+    private Pane challengeSquaresBoard = new Pane();
+    private Pane boardMessages = new Pane();
+    private Text userMessage = new Text();
+    private Text hintCounter = new Text();
+
+    private Stage helpStage = new Stage();
+    private Group helpRoot = new Group();
+
+    private FileChooser saveFileChooser = new FileChooser();
+    private FileChooser loadFileChooser = new FileChooser();
+    private Alert autosaveAlert = new Alert(Alert.AlertType.NONE, "Would you like to turn autosave on?",ButtonType.YES,ButtonType.NO);
 
     private FocusGame game = new FocusGame();
 
@@ -99,106 +114,42 @@ public class Board extends Application {
      * These methods implement hints and challenge generation for the FocusGame.
      */
 
-    /* challengeSquare is a 9 character String, with each character corresponding to the
-    state of one of the squares that makes up the central 3x3 challange square
-    *
-    *                         [0][1][2]
-    *                         [3][4][5]
-    *                         [6][7][8]
-    */
-    private String challenge;
-
-    // FIXME Task 8: Implement challenges (you may use challenges and assets provided for you in comp1110.ass2.gui.assets: sq-b.png, sq-g.png, sq-r.png & sq-w.png)
-    public String challengeEncoding (String challenge, String boardState) {
-        //Example of what encoding would look like, also need to covert Char to Variable Colour, B -> Blue, R -> Red
-        char[] encodingArray = challenge.toCharArray();
-        // ChallengeSquare0 = encodingArray[0];
-        //When Board Updates (e.g piece is placed) the squares of the challenge square are checked against the
-        //stored states encoded above. If all states match should end the game and print victory Screen/message.
-        return challenge;
-        }
-    public String getChallenge() {
-       return challenge;
-    }
-
-    /* Implementing Challegnes from TestUtility.
-
-    *How encoding the objective central 9 squares work. The Objective 3x3 square is split into the 3 rows. Starting from
-    * 0, each square is encoded with a number for example 0, then the square to the right is encoded with the next
-    * corresponding number e.g. 1. So the encoding for the 3x3 objective square will look like this,
-    *
-    *                         [0][1][2]
-    *                         [3][4][5]
-    *                         [6][7][8]
-    *
-    * Then we can implement challenges by assigning colours to the corresponding squares of the objective square.
-    *
-    *       This encoding design is provided in the Assets folder under the file challenge_encoding.png
-     */
-
-    // FIXME Task 10: Implement hints
-    public class hints {
-    }
-
-    /* When the User holds down the "/" key, they are suppose to "see" one or more boardPieces they can play to help them
-    * towards the solution!
-     * Used in tandem with Javafx method found on line 131
-     *
-    * The easiest method would be to simply return in the interface the letter of the corresponding piece/s such as A,
-    * G or D.
-    *
-    * Second Method would be to somehow highlight the piece, outlining or distinguishing it from the other boardPieces.
-    */
-
     // FIXME Task 11: Generate interesting challenges (each challenge may have just one solution)
-    private final Random randomThing = new Random();
-    private int g;
-    private String[] pack = new String[9];
-
     public String challengeGenerator (int difficulty) {
+        String[] pack = new String[9];
+        String challenge = "";
+
+
         //Generate Completely Random String
-        if (difficulty == 0){
-            for(int j = 0; j < 9; j++){
+        if (difficulty == 0) {
+            for (int j = 0; j < 9; j++) {
                 String g = generateRandomColor();
                 pack[j] = g;
             }
             challenge = pack[0] + pack[1] + pack[2] + pack[3] + pack[4] + pack[5] + pack[6] + pack[7] + pack[8];
             return challenge;
         }
+        //Generate Difficulty 1 (EASY)
         if (difficulty == 1) {
             //Generate challenge
-
-            //Assign challenge
-            challenge = "BBBBBBBBB";
-
             return challenge;
         }
-        if (difficulty == 2){
+        //Generate Difficulty 2 (MEDIUM)
+        if (difficulty == 2) {
             return challenge;
         }
-
-        if (difficulty == 3){
+        //Generate Difficulty 3 (HARD)
+        if (difficulty == 3) {
             return challenge;
         }
         return challenge;
 
-        /* The current system is crude, but the idea is that the user may input an Int ranging from 1 - 3, 1 = easy
-        *2 = medium, 3 = hard, NOTE WE CAN PLAY AROUND WITH THIS AS THE DIFFICULTY AND NUMBERS ARE ARBITRARY
-        * . The System then generates a 9 char String which can be read by the challengeEncoding
-        * method under task 8.
-        *
-        *
-        - How To Generate Different levels of difficulty?
-        * Although generating a random 9 char string is not that hard, difficulty depends on the number of solutions
-        * available for a given challenge square.
-        *
-         */
     }
-
 
     //Generates a random color, random numbers 0-3 corresponding to one of the 4 colors states
     private String generateRandomColor() {
-        int g = randomThing.nextInt(4);
+        Random random = new Random();
+        int g = random.nextInt(4);
         switch (g) {
             case 0:
                 return "B";
@@ -214,7 +165,7 @@ public class Board extends Application {
     }
 
     /**
-     * This is the primary class that implements functionality
+     * This is the primary class that implements piece functionality
      * in the game.
      *
      * @author Nicholas Russell
@@ -239,7 +190,7 @@ public class Board extends Application {
         Location location;
         String placement;
 
-        PieceTile(PieceType p) {
+        PieceTile(PieceType p) throws IOException {
 
             this.pieceType = p;
             this.orientation = Orientation.Zero;
@@ -263,47 +214,37 @@ public class Board extends Application {
                 if (e.getClickCount() == 2) { // checks if it is a double click (to return it home)
                     snapToHome();
                 } else {
-                    // debug information
                     if (placed) {
                         game.undoOperation(game.getBoardPlacementString(),placement);
                     }
-                    System.out.println("===============================");
-                    System.out.println("NEW PIECE MOVEMENT");
-                    System.out.println("You've pressed on " + pieceType.toString());
-
-                    // set mouse pointer location
                     mX = e.getSceneX();
                     mY = e.getSceneY();
-
-                    // make translucent for dragging
                     setOpacity(0.6);
-
-                    // sets currentPiece to this (allows for rotation to work)
                     currentPiece = this;
-
                 }
             });
 
             setOnMouseDragged(e -> {
                 toFront();
-                // change in x and y position of mouse
+
                 double deltaX = e.getSceneX() - mX;
                 double deltaY = e.getSceneY() - mY;
-                // changes layout
+
                 setLayoutX(getLayoutX() + deltaX);
                 setLayoutY(getLayoutY() + deltaY);
-                // gets new mouse location
+
                 mX = e.getSceneX();
                 mY = e.getSceneY();
                 e.consume();
             });
-            // Dragging ended
+
             setOnMouseReleased(e -> {
-                // tries to place it to the board
-                snapToBoard();
-                // changes the currentPiece back to null
+                try { // wrapped in case of error with autosaving
+                    snapToBoard();
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
                 currentPiece = null;
-                // make solid again
                 setOpacity(1.0);
             });
         }
@@ -312,29 +253,23 @@ public class Board extends Application {
          * Attempts to place the piece given the x and y locations of it.
          */
 
-        private void snapToBoard() {
+        private void snapToBoard() throws IOException {
             // offsets account for the orientation
             double[] offsets = Viewer.getOrientationOffsets(pieceType,orientation);
             double aX = SCALED_SQUARE_SIZE*offsets[0]*-1+getLayoutX();
             double aY = SCALED_SQUARE_SIZE*offsets[1]*-1+getLayoutY();
 
-            //debugAddCircle(aX,aY); -- uncomment if you'd like to see where the x/y location is
-            System.out.println("Dropped coordinates: " + aX + ", " + aY);
-
             if (!xyOnBoard(aX,aY)) {
-                System.out.println("Not on board");
                 snapToHome();
             } else {
-                location = getLocationFromSceneXY(aX,aY); // approximate location
+                location = getLocationFromSceneXY(aX,aY);
                 // builds placement string
                 placement = pieceType.toString().toLowerCase() + location.getX() + location.getY() + orientation.toInt();
-                if (game.checkPieceToBoard(placement)) { // if valid, piece can be placed
-                    System.out.println("Placement " + placement + " is valid.");
+                if (game.checkPieceToBoard(placement)) {
                     placePiece(new Piece(placement));
                     placed = true;
                     makePlacement(placement);
-                } else { // otherwise return home
-                    System.out.println("Placement " + placement + " is NOT valid.");
+                } else {
                     snapToHome();
                 }
             }
@@ -352,7 +287,6 @@ public class Board extends Application {
                 game.undoOperation(game.getBoardPlacementString(),placement);
                 placement = null;
             }
-            System.out.println(game.getBoardPlacementString());;
             placed = false;
         }
 
@@ -362,10 +296,9 @@ public class Board extends Application {
          */
         private void placePiece(Piece piece) {
             this.placed = true;
-            System.out.println(this.orientation);
             double[] offsets = Viewer.getOrientationOffsets(piece.getPieceType(),piece.getOrientation());
-            setLayoutX(BOARD_X + BOARD_PADDING_LEFT_SCALED + SCALED_SQUARE_SIZE*(piece.getLocation().getX()+offsets[0]));
-            setLayoutY(BOARD_Y + BOARD_PADDING_TOP_SCALED+ SCALED_SQUARE_SIZE*(piece.getLocation().getY()+offsets[1]));
+            setLayoutX(BOARD_ABS_X + SCALED_SQUARE_SIZE*(piece.getLocation().getX()+offsets[0]));
+            setLayoutY(BOARD_ABS_Y + SCALED_SQUARE_SIZE*(piece.getLocation().getY()+offsets[1]));
         }
 
         /**
@@ -381,9 +314,12 @@ public class Board extends Application {
             } else {
                 orientation = Orientation.Zero;
             }
-            setRotate(orientation.toInt()*90);
+            setRotation(orientation);
         }
 
+        private void setRotation(Orientation orientation) {
+            setRotate(orientation.toInt()*90);
+        }
     }
 
     /**
@@ -398,34 +334,6 @@ public class Board extends Application {
         squareImageView.setFitHeight(SCALED_SQUARE_SIZE);
         squareImageView.setPreserveRatio(true);
         return squareImageView;
-    }
-
-    /**
-     * Gets board location given location of top left of image view
-     * @param mX screen x value of top left of a piece's ImageView
-     * @param mY screen y value of top left of a piece's ImageView
-     * @return Instance of Location with valid x,y co-ords, or FALSE/NULL if not valid
-     */
-    public Location getLocationFromSceneXY(double mX, double mY) {
-        double approxX = (mX-BOARD_X-BOARD_PADDING_LEFT_SCALED)/SCALED_SQUARE_SIZE;
-        double approxY = (mY-BOARD_Y-BOARD_PADDING_TOP_SCALED)/SCALED_SQUARE_SIZE;
-        System.out.println("Approx location: " + Math.round(approxX) + ", " + Math.round(approxY));
-        return new Location((int)Math.round(approxX),(int)Math.round(approxY));
-    }
-
-    /**
-     * DEBUG ONLY
-     * Will place a circle of radius 10 at given x and y locations
-     * @param x -- X location of circle
-     * @param y -- Y location of circle
-     */
-    private void debugAddCircle(double x, double y) {
-        Circle circle = new Circle();
-        circle.setCenterX(x);
-        circle.setCenterY(y);
-        circle.setRadius(10);
-        circle.setFill(Color.BLACK);
-        debugShapes.getChildren().add(circle);
     }
 
     /**
@@ -486,6 +394,18 @@ public class Board extends Application {
     }
 
     /**
+     * Gets board location given location of top left of image view
+     * @param mX screen x value of top left of a piece's ImageView
+     * @param mY screen y value of top left of a piece's ImageView
+     * @return Instance of Location with valid x,y co-ords, or FALSE/NULL if not valid
+     */
+    public Location getLocationFromSceneXY(double mX, double mY) {
+        double approxX = (mX-BOARD_ABS_X)/SCALED_SQUARE_SIZE;
+        double approxY = (mY-BOARD_ABS_Y)/SCALED_SQUARE_SIZE;
+        return new Location((int)Math.round(approxX),(int)Math.round(approxY));
+    }
+
+    /**
      * Returns true if x/y location is on the board on screen
      * @param x x location in window
      * @param y y location in window
@@ -493,24 +413,41 @@ public class Board extends Application {
      */
     public boolean xyOnBoard(double x, double y) {
         double errorMargin = 20;
-        return x >= BOARD_X+BOARD_PADDING_LEFT_SCALED-errorMargin && x <= (BOARD_X+BOARD_WIDTH)
-                && y >= BOARD_Y+BOARD_PADDING_TOP_SCALED-errorMargin && y <= (BOARD_Y+BOARD_HEIGHT);
+        return x >= BOARD_ABS_X-errorMargin && x <= (BOARD_X+BOARD_WIDTH)
+                && y >= BOARD_ABS_Y-errorMargin && y <= (BOARD_Y+BOARD_HEIGHT);
     }
 
     /**
      * Make a piece placement on the board logic
      * @param placement valid placement string
      */
-    private void makePlacement(String placement) {
-        System.out.println("Making placement " + placement);
+    private void makePlacement(String placement) throws IOException {
         game.addPieceToBoard(placement);
-        //checkCompletion(); // -- always returning true until method implemented in FocusGame
+        if (allPiecesPlaced()) {
+            checkCompletion();
+        }
+        if (AUTOSAVE) {
+            saveToFile(CURRENT_SAVEFILE,game.getSaveString());
+        }
     }
 
     /**
-     * Makes game controls
+     * Checks if all the pieces have been placed on the board
+     * @return true if all pieces have been placed
      */
-    private void makeControls() {
+    private boolean allPiecesPlaced() {
+        for (PieceTile p : pieceTilesList) {
+            if (!p.placed) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Makes game controls and GUI
+     */
+    private void makeControls(Stage stage) {
         ArrayList<Node> controlNodes = new ArrayList<Node>();
 
         // Board Title
@@ -542,23 +479,73 @@ public class Board extends Application {
 
         // Buttons
         HBox controlBox = new HBox();
-        controlBox.setSpacing(40);
+        controlBox.setSpacing(20);
         controlBox.setMinWidth(WINDOW_WIDTH);
         controlBox.setLayoutY(CONTROLS_POS_Y);
         controlBox.setAlignment(Pos.CENTER);
 
         Button newGame = new Button("New Game");
-        newGame.setOnAction(e -> newGame());
+        newGame.setOnAction(e -> {
+            newGameAction();
+        });
 
-        Button resetBoard = new Button("Reset Board");
-        resetBoard.setOnAction(e -> resetBoard());
+        Button resetBoard = new Button();
+        resetBoard.setMnemonicParsing(true);
+        resetBoard.setText("_Reset Board");
+        resetBoard.setOnAction(e -> {
+            resetBoardAction();
+        });
 
+        /**
         Button newChallenge = new Button("Random Challenge");
         newChallenge.setOnAction(e -> {
             System.out.println("New Challenge of difficulty " + difficulty.getValue());
         });
+        **/
 
-        controlBox.getChildren().addAll(newGame,resetBoard,newChallenge);
+        Button hint = new Button();
+        hint.setMnemonicParsing(true);
+        hint.setText("_Hint");
+        hint.setOnAction(e -> {
+            try {
+                showHint();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        });
+
+        Button help = new Button("Help");
+        help.setOnAction(e -> helpStage.show());
+
+        Button loadGame = new Button("Load Game");
+        loadGame.setOnAction(e -> {
+            try {
+                loadGameAction(stage);
+            } catch (IOException error) {
+                System.out.println(error);
+            }
+        });
+
+        Button saveGame = new Button("Save Game");
+        saveGame.setOnAction(e -> saveGameAction(stage));
+
+        Button toggleChallenge = new Button();
+        toggleChallenge.setMnemonicParsing(true);
+        toggleChallenge.setText("Hide _Challenge");
+        toggleChallenge.setMinWidth(110);
+        toggleChallenge.setOnAction(e -> {
+            if (SHOW_CHALLENGE) {
+                SHOW_CHALLENGE = false;
+                toggleChallenge.setText("Show _Challenge");
+                challengeSquaresBoard.setOpacity(0);
+            } else {
+                SHOW_CHALLENGE = true;
+                toggleChallenge.setText("Hide _Challenge");
+                challengeSquaresBoard.setOpacity(CHALLENGE_PIECE_OPACITY);
+            }
+        });
+
+        controlBox.getChildren().addAll(newGame,resetBoard,toggleChallenge,hint,saveGame,loadGame,help);
 
         for (Node n : controlBox.getChildren()) {
             if (n instanceof Button) {
@@ -568,6 +555,23 @@ public class Board extends Application {
 
         controlNodes.add(controlBox);
 
+        if (HINTS_LIMITED) {
+            hintCounter.setText("Hints remaining: " + (HINTS_LIMIT-HINTS_COUNTER));
+            hintCounter.setFont(new Font("Tahoma", 15));
+            hintCounter.setX(BOARD_X+(BOARD_WIDTH-hintCounter.getLayoutBounds().getWidth())/2);
+            hintCounter.setY(BOARD_Y+BOARD_HEIGHT+17);
+        }
+        controlNodes.add(hintCounter);
+
+        Text info = new Text();
+        info.setWrappingWidth(SCALED_SQUARE_SIZE*3);
+        info.setText("Place all the pieces on the board that forms the 3x3 challenge shown!" +
+                "\n\nPress Z to rotate pieces");
+        info.setX(WINDOW_WIDTH-CHALLENGE_POS_X-SCALED_SQUARE_SIZE*3);
+        info.setFont(new Font("Tahoma", 15));
+        info.setY(CHALLENGE_POS_Y);
+        info.setTextAlignment(TextAlignment.CENTER);
+        controlNodes.add(info);
 
         // Version number
         Text version = new Text("Version " + VERSION);
@@ -578,6 +582,323 @@ public class Board extends Application {
         controlNodes.add(version);
 
         controls.getChildren().addAll(controlNodes);
+    }
+
+
+    /* ACTIONS FOR CONTROL EVENT HANDLERS */
+    /**
+     * Attempts to place a piece as a hint on the board.
+     * Piece is chosen at random from solutions string.
+     * @throws IOException Autosave
+     */
+    private void showHint() throws IOException {
+        if (HINTS_LIMITED && HINTS_COUNTER >= HINTS_LIMIT) {
+            Alert hintAlert = new Alert(Alert.AlertType.NONE,"No more hints!",ButtonType.OK);
+            hintAlert.setTitle("No more hints!!");
+            hintAlert.showAndWait();
+        } else {
+            if (HINTS_LIMITED) {
+                HINTS_COUNTER++;
+                hintCounter.setText("Hints remaining: " + (HINTS_LIMIT-HINTS_COUNTER));
+            }
+            String hintPlacement = game.getNextHint();
+            Piece hintPiece = new Piece(hintPlacement);
+            for (PieceTile p : pieceTilesList) {
+                if (p.pieceType == hintPiece.getPieceType()) {
+                    if (p.placed) {
+                        game.undoOperation(game.getBoardPlacementString(), p.placement);
+                    }
+                    p.placement = hintPlacement;
+                    p.placePiece(hintPiece);
+                    p.placed = true;
+                    p.setRotation(hintPiece.getOrientation());
+                    p.orientation = hintPiece.getOrientation();
+                    p.location = hintPiece.getLocation();
+                    makePlacement(hintPlacement);
+                }
+            }
+        }
+    }
+
+    /**
+     * Sets key events for scene
+     * Z - used to rotate pieces
+     * @param scene Scene to set events on
+     */
+    private void setKeyEvents(Scene scene) {
+        scene.setOnKeyPressed(e -> {
+            KeyCode key = e.getCode();
+            if (key == KeyCode.Z) {
+                if (currentPiece != null) {
+                    currentPiece.rotate();
+                }
+            } else if (key == KeyCode.H) {
+                try {
+                    showHint();
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }
+            e.consume();
+        });
+    }
+
+    /**
+     * Action for resetting the board
+     */
+    private void resetBoardAction() {
+        Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION,"Are you sure you want to reset the board?",ButtonType.YES,ButtonType.NO);
+        confirmation.setTitle("Reset Board");
+        confirmation.setHeaderText("Reset Board?");
+        confirmation.showAndWait();
+        if (confirmation.getResult() == ButtonType.YES) {
+            resetBoard();
+        }
+    }
+
+    /**
+     * Action for starting a new game
+     */
+    private void newGameAction() {
+        Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION,"Are you sure you want to start a new game?",ButtonType.YES,ButtonType.NO);
+        confirmation.setTitle("New Game");
+        confirmation.setHeaderText("New Game?");
+        confirmation.showAndWait();
+        if (confirmation.getResult() == ButtonType.YES) {
+            newGame();
+        }
+    }
+
+    /**
+     * Action for load game button
+     * @param stage the stage to show the load game file chooser from
+     * @throws IOException
+     */
+    private void loadGameAction(Stage stage) throws IOException {
+        File tmp = showLoadGameFileChooser(stage);
+        if (tmp != null) {
+            BufferedReader br = new BufferedReader(new FileReader(tmp));
+            String saveString = br.readLine();
+            if (saveString != null && FocusGame.isSaveStringValid(saveString)) {
+                loadGame(saveString);
+                if (showAutoSaveAlert()) {
+                    CURRENT_SAVEFILE = tmp;
+                    AUTOSAVE = true;
+                    userMessage.setText("Loaded file - autosave turned on");
+                } else {
+                    userMessage.setText("Loaded file");
+                }
+            } else {
+                Alert alert = new Alert(Alert.AlertType.ERROR, "", ButtonType.OK);
+                alert.setHeaderText("Invalid Save File");
+                alert.setTitle("Error - Invalid Save");
+                alert.showAndWait();
+            }
+        }
+    }
+
+    /**
+     * Save game action
+     * @param stage The stage to show the save file chooser on
+     * @throws IOException
+     */
+    private void saveGameAction(Stage stage) {
+        File tmp = showSaveFileChooser(stage);
+        if (tmp != null && saveToFile(tmp, game.getSaveString())) {
+            if (showAutoSaveAlert()) {
+                CURRENT_SAVEFILE = tmp;
+                AUTOSAVE = true;
+                userMessage.setText("Saved file - autosave turned on");
+            } else {
+                userMessage.setText("Saved file");
+            }
+        } else {
+            System.out.println("ERROR WITH SAVING - FILE IS NULL");
+        }
+    }
+
+    /**
+     * Sets the board and game instance fields given a save string
+     * @param saveString A valid save string
+     */
+    private void loadGame(String saveString) {
+        resetBoard();
+        String[] saveArray = saveString.split(",");
+        game.nextChallenge(Integer.parseInt(saveArray[0]));
+        makeChallenge(game.getChallenge());
+        if (saveArray.length == 2) {
+            game.addPiecesToBoard(saveArray[1]);
+            makePiecePlacementsFromString(saveArray[1]);
+        }
+    }
+
+    /**
+     * Alert for user asking if autosave should be turned on for the file just saved/loaded
+     * @return true if user clicks yes on alert
+     */
+    private boolean showAutoSaveAlert() {
+        autosaveAlert.showAndWait();
+        return autosaveAlert.getResult() == ButtonType.YES;
+    }
+
+    /**
+     * Shows the load game file chooser window
+     * @param stage The stage to show the FileChooser on
+     * @return the File selected from the FileChooser
+     */
+    private File showLoadGameFileChooser(Stage stage) {
+        return loadFileChooser.showOpenDialog(stage);
+    }
+
+    /**
+     * Shows the file chooser for saving the game
+     * @param stage The stage to show the file chooser on
+     * @return File selected from FileChooser
+     */
+    private File showSaveFileChooser(Stage stage) {
+        saveFileChooser.setInitialFileName("IQ_FOCUS_SAVE_" + new SimpleDateFormat("ddMMyyyy_HHmmss").format(new Date()));
+        return saveFileChooser.showSaveDialog(stage);
+    }
+
+    /**
+     * Saves a save string to file
+     * @param file The File to save the game to
+     * @param saveString A save string of the current board state
+     * @return true for success
+     */
+    private boolean saveToFile(File file, String saveString) {
+        userMessage.setText("Saving....");
+        if (file != null) {
+            try (PrintWriter out = new PrintWriter(file.getAbsolutePath())) {
+                out.println(saveString);
+            } catch (IOException e) {
+                System.out.println(e);
+                return false;
+            }
+        }
+        userMessage.setText("Saved! - " + new SimpleDateFormat("H:mm:ss").format(new Date()));
+        return true;
+    }
+
+    /**
+     * Makes piece placements to board given placement string
+     * @param placementString A valid placement string
+     */
+    private void makePiecePlacementsFromString(String placementString) {
+        for (String p : FocusGame.splitPlacementString(placementString)) {
+            Piece piece = new Piece(p);
+            for (PieceTile pT : pieceTilesList) {
+                if (pT.pieceType == piece.getPieceType()) {
+                    pT.placement = p;
+                    pT.placePiece(piece);
+                    pT.placed = true;
+                    pT.orientation = piece.getOrientation();
+                    pT.setRotation(piece.getOrientation());
+                    pT.location = piece.getLocation();
+                }
+            }
+        }
+    }
+
+    /**
+     * Check if the challenge has been completed
+     */
+    private void checkCompletion() {
+        if (game.checkCompletion()) {
+            root.setOpacity(0.7);
+            Alert completed = new Alert(Alert.AlertType.NONE,
+                    "Congratulations! You completed this challenge! " +
+                    "\nClick next to move onto the next puzzle.",
+                    ButtonType.NEXT);
+            completed.setTitle("Challenge complete");
+            completed.showAndWait();
+            if (completed.getResult() == ButtonType.NEXT) {
+                game.nextChallenge(game.currentChallengeNumber+1);
+                HINTS_COUNTER = 0;
+                makeChallenge(game.getChallenge());
+                resetBoard();
+            }
+            root.setOpacity(1.0);
+        }
+    }
+
+    /**
+     * Start a new game
+     */
+    private void newGame() {
+        game.newGame();
+        resetBoard();
+        makeChallenge(game.getChallenge());
+    }
+
+    /**
+     * Reset board state
+     */
+    private void resetBoard() {
+        game.resetBoard();
+        for (PieceTile p : pieceTilesList) {
+            p.snapToHome();
+        }
+    }
+
+    /**
+     * Sets up user messages
+     */
+    private void makeBoardMessages() {
+        boardMessages.getChildren().add(userMessage);
+        boardMessages.setLayoutY(15);
+        boardMessages.setLayoutX(5);
+        userMessage.setFont(new Font("Tahoma", 15));
+    }
+
+    /**
+     * Sets up help window
+     * @param stage Stage to show help on
+     */
+    private void makeHelp(Stage stage) {
+        Scene scene = new Scene(helpRoot,HELP_WINDOW_WIDTH,HELP_WINDOW_HEIGHT);
+        ImageView banner = new ImageView(new Image(Board.class.getResourceAsStream(URI_BASE + "help-banner.jpg")));
+        banner.setPreserveRatio(true);
+        banner.setFitHeight(HELP_WINDOW_HEIGHT);
+
+        double xOff = HELP_WINDOW_WIDTH/2+10;
+
+        Text helpTitle = new Text("IQ FOCUS - Help");
+        helpTitle.setFont(new Font("Tahoma", 20));
+        helpTitle.setX(xOff);
+        helpTitle.setY(20);
+
+        Text helpBody = new Text();
+        helpBody.setFont(new Font("Tahoma", 12));
+        helpBody.setWrappingWidth(HELP_WINDOW_WIDTH/2-20);
+        helpBody.setX(xOff);
+        helpBody.setY(40);
+        helpBody.setText("To complete the challenge, you must place all the pieces on the board and form the challenge given in the centre squares." +
+                "\n\nControls" +
+                "\nZ - Rotate piece" +
+                "\nALT+H - Hint" +
+                "\nALT+R - Reset Board" +
+                "\nALT+C - Toggle challenge on board");
+
+        Text aboutTitle = new Text();
+        aboutTitle.setText("About");
+        aboutTitle.setFont(new Font("Tahoma", 14));
+        aboutTitle.setX(xOff);
+        aboutTitle.setY(40+helpBody.getLayoutBounds().getHeight()+10);
+
+        Text aboutBody = new Text();
+        aboutBody.setText("The game is based directly on Smart Games' IQ-Focus game available at: \nhttps://www.smartgames.eu/uk/one-player-games/iq-focus" +
+                "\n\nThis application was coded by Nicholas Russell, Yuhui Wang and Matthew Tein for a COMP1110 (ANU) assignment");
+        aboutBody.setX(xOff);
+        aboutBody.setY(40+helpBody.getLayoutBounds().getHeight()+10+20);
+        aboutBody.setFont(new Font("Tahoma", 12));
+        aboutBody.setWrappingWidth(HELP_WINDOW_WIDTH/2-20);
+
+        helpRoot.getChildren().addAll(banner,helpTitle,helpBody, aboutTitle, aboutBody);
+
+        stage.setTitle("IQ FOCUS - Help");
+        stage.getIcons().add(ICON_IMAGE);
+        stage.setScene(scene);
     }
 
     /**
@@ -602,7 +923,7 @@ public class Board extends Application {
     /**
      * Loads PieceTiles onto screen
      */
-    private void makePieceTiles() {
+    private void makePieceTiles() throws IOException {
         int i = 0;
         for (PieceType p : PieceType.values()) {
             pieceTilesList[i] = new PieceTile(p);
@@ -617,11 +938,13 @@ public class Board extends Application {
      */
     private void makeChallenge(String challengeString) {
         challengeSquares.getChildren().clear();
+        challengeSquaresBoard.getChildren().clear();
         char[] challengeChar = challengeString.toCharArray();
         int row = 0;
         int col = 0;
         for (Character c : challengeChar) {
             ImageView chSq = getSquareImageFromFile(c);
+            ImageView chSqBd = getSquareImageFromFile(c);
             if (col > 2) {
                 col = 0;
                 row++;
@@ -629,9 +952,14 @@ public class Board extends Application {
             chSq.setX(CHALLENGE_POS_X+col*SCALED_SQUARE_SIZE);
             chSq.setY(CHALLENGE_POS_Y+row*SCALED_SQUARE_SIZE);
             challengeSquares.getChildren().add(chSq);
+
+            chSqBd.setX(BOARD_ABS_X+SCALED_SQUARE_SIZE*3+col*SCALED_SQUARE_SIZE);
+            chSqBd.setY(BOARD_ABS_Y+SCALED_SQUARE_SIZE*1+row*SCALED_SQUARE_SIZE);
+            challengeSquaresBoard.getChildren().add(chSqBd);
             col++;
         }
-        Text challengeTitle = new Text("Challenge");
+        challengeSquaresBoard.setOpacity(CHALLENGE_PIECE_OPACITY);
+        Text challengeTitle = new Text("Challenge #" + game.getChallengeNumber());
         challengeTitle.setFont(Font.font("Tahoma", FontWeight.BOLD, 20));
         challengeTitle.setFill(Color.BLACK);
         challengeTitle.setX(CHALLENGE_POS_X+(SCALED_SQUARE_SIZE*3-challengeTitle.getLayoutBounds().getWidth())/2);
@@ -640,20 +968,13 @@ public class Board extends Application {
     }
 
     /**
-     * Prints debug statements on start up
+     * Makes file choosers for saving and loading game
      */
-    private void debug() {
-        System.out.println("DEBUG");
-        System.out.println("===========================================");
-        System.out.println("Calculated Values");
-        System.out.println("BOARD_X=" + BOARD_X);
-        System.out.println("BOARD_Y=" + BOARD_Y);
-        System.out.println("BOARD_HEIGHT=" + BOARD_HEIGHT);
-        System.out.println("BOARD_WIDTH=" + BOARD_WIDTH);
-        System.out.println("SCALED_SQUARE_SIZE=" + SCALED_SQUARE_SIZE);
-        System.out.println("BOARD_PADDING_LEFT_SCALED=" + BOARD_PADDING_LEFT_SCALED);
-        System.out.println("BOARD_PADDING_TOP_SCALED=" + BOARD_PADDING_TOP_SCALED);
-
+    private void makeFileChoosers() {
+        saveFileChooser.setTitle("Save Game");
+        saveFileChooser.getExtensionFilters().add(SAVE_EXTENSION_FILTER);
+        loadFileChooser.setTitle("Load Game");
+        loadFileChooser.getExtensionFilters().add(SAVE_EXTENSION_FILTER);
     }
 
     /**
@@ -664,66 +985,19 @@ public class Board extends Application {
         CHALLENGE_POS_X = (WINDOW_WIDTH-BOARD_WIDTH)/4-1.5*SCALED_SQUARE_SIZE;
         CHALLENGE_POS_Y = BOARD_HEIGHT/2-1.5*SCALED_SQUARE_SIZE+BOARD_MARGIN_TOP;
         CONTROLS_POS_Y = BOARD_Y - CONTROLS_HEIGHT - 10;
-        BOARD_PADDING_LEFT_SCALED = BOARD_PADDING_LEFT*BOARD_SCALE_FACTOR;
-        BOARD_PADDING_TOP_SCALED = BOARD_PADDING_TOP*BOARD_SCALE_FACTOR;
+        BOARD_ABS_X = BOARD_X + BOARD_PADDING_LEFT*BOARD_SCALE_FACTOR;
+        BOARD_ABS_Y = BOARD_Y + BOARD_PADDING_TOP*BOARD_SCALE_FACTOR;
     }
 
-    /**
-     * Sets key events for scene
-     * Z - used to rotate pieces
-     * @param scene Scene to set events on
-     */
-    private void setKeyEvents(Scene scene) {
-        scene.setOnKeyPressed(e -> {
-            KeyCode key = e.getCode();
-            if (key == KeyCode.Z) {
-                if (currentPiece != null) {
-                    currentPiece.rotate();
-                }
-                e.consume();
-            }
-        });
-    }
-
-    /**
-     * TODO
-     * Check if the challenge has been completed
-     */
-    private void checkCompletion() {
-        //if game.checkCompletion() -> show congratulating message
-        board.setOpacity(0.5);
-        pieceTiles.setOpacity(0.5);
-        Alert completed = new Alert(Alert.AlertType.NONE,"Congratulations! You completed this challenge! Would you like to start a new game?", ButtonType.NEXT,ButtonType.NO);
-        completed.setTitle("Challenge complete");
-        completed.showAndWait();
-    }
-
-    /**
-     * TODO
-     * Start a new game
-     */
-    private void newGame() {
-        //game.newGame
-        //makeChallenge(game.getChallenge);
-        resetBoard();
-        makeChallenge("RRRBWBBRB");
-    }
-
-    /**
-     * Reset board state
-     */
-    private void resetBoard() {
-        game.resetBoard();
-        for (PieceTile p : pieceTilesList) {
-            p.snapToHome();
-        }
-        debugShapes.getChildren().clear();
+    /* JAVA FX SET UP */
+    public static void main(String[] args) {
+        launch(args);
     }
 
     @Override
     public void start(Stage primaryStage) throws Exception {
         primaryStage.setTitle("IQ Focus Puzzle");
-        primaryStage.getIcons().add(new Image(Board.class.getResourceAsStream(URI_BASE + "icon.png")));
+        primaryStage.getIcons().add(ICON_IMAGE);
         primaryStage.setResizable(false);
 
         Scene scene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
@@ -731,23 +1005,22 @@ public class Board extends Application {
         root.getChildren().addAll(
                 challengeSquares,
                 board,
-                boardPieces,
+                challengeSquaresBoard,
                 pieceTiles,
-                errors,
                 controls,
-                debugShapes
+                boardMessages
         );
 
         setKeyEvents(scene);
         makeBoard();
         initVariables();
-
+        makeBoardMessages();
         makePieceTiles();
-        makeControls();
-        debug(); // -- comment out in production
+        makeControls(primaryStage);
 
         newGame();
-
+        makeHelp(helpStage);
+        makeFileChoosers();
         primaryStage.setScene(scene);
         primaryStage.show();
     }
