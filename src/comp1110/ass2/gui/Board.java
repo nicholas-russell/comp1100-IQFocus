@@ -68,7 +68,7 @@ public class Board extends Application {
     private static final FileChooser.ExtensionFilter SAVE_EXTENSION_FILTER = new FileChooser.ExtensionFilter("IQ Focus Save (*.iqs)", "*.iqs");
 
     private boolean SHOW_CHALLENGE = true; // show challenge on board
-    private Boolean HINTS_LIMITED = false;
+    private Boolean HINTS_LIMITED = true;
     private int HINTS_LIMIT = 3;
     private int HINTS_COUNTER;
 
@@ -814,7 +814,7 @@ public class Board extends Application {
             completed.showAndWait();
             if (completed.getResult() == ButtonType.NEXT) {
                 game.nextChallenge(game.currentChallengeNumber+1);
-                HINTS_COUNTER = HINTS_LIMIT;
+                HINTS_COUNTER = 0;
                 makeChallenge(game.getChallenge());
                 resetBoard();
             }
