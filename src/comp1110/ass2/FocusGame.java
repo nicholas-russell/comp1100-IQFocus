@@ -76,12 +76,15 @@ public class FocusGame {
     }
 
     public void nextChallenge(int challengeNumber) {
-        if (challengeNumber > Solution.SOLUTIONS.length) {
-            // what to do here????
+        System.out.println(challengeNumber);
+        if (challengeNumber >= Solution.SOLUTIONS.length) {
+            System.out.println("making challenge 0");
+            currentChallengeNumber = 0;
         } else {
+            System.out.println("making challenge " + challengeNumber);
             currentChallengeNumber = challengeNumber;
-            currentChallenge = Solution.getChallenge(currentChallengeNumber);
         }
+        currentChallenge = Solution.getChallenge(currentChallengeNumber);
     }
 
     public String getChallenge() {

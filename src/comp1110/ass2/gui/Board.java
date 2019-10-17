@@ -920,6 +920,7 @@ public class Board extends Application {
             completed.setTitle("Challenge complete");
             completed.showAndWait();
             if (completed.getResult() == ButtonType.NEXT) {
+                System.out.println("calling this");
                 game.nextChallenge(game.currentChallengeNumber+1);
                 HINTS_COUNTER = HINTS_LIMIT;
                 makeChallenge(game.getChallenge());
