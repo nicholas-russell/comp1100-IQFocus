@@ -457,6 +457,7 @@ public class FocusGame {
                 }
             } else {
                 ArrayList<String> pieces = getAllPiecesWithCurrentState(challenge, g.current);
+                System.out.println(pieces);
                 if (g.challengePartiallyCorrect(challenge) && !pieces.isEmpty() && !g.anyPiecesIsolated() && pieces.size() > (10 - g.current.length()/4)) {
                     System.out.println("----> partially correct ");
                     recursion(challenge,g);
@@ -592,7 +593,7 @@ public class FocusGame {
         g.resetBoard();
         g.addPieceToBoard("e003");
         System.out.println(g.anyPiecesIsolated());*/
-        //getSolution("RRRBWBBRB");
+        getSolution("RRRBWBBRB");
     }
 
     /**
