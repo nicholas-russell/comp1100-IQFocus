@@ -9,6 +9,7 @@ of our project implements the following features:
  - Generates simple challenges (Task 8)
  - Implements hints (Task 10)
  - Save and load functions for the game
- - Instructions for the new player
+ - Autosaving functions
+ - Instructions for the new player, and an about window
  - Hide and show challenge for the game
 

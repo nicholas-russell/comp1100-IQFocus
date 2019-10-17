@@ -337,52 +337,6 @@ public class Board extends Application {
     }
 
     /**
-     * Gets board location given location of top left of image view
-     * @param mX screen x value of top left of a piece's ImageView
-     * @param mY screen y value of top left of a piece's ImageView
-     * @return Instance of Location with valid x,y co-ords, or FALSE/NULL if not valid
-     */
-    public Location getLocationFromSceneXY(double mX, double mY) {
-        double approxX = (mX-BOARD_ABS_X)/SCALED_SQUARE_SIZE;
-        double approxY = (mY-BOARD_ABS_Y)/SCALED_SQUARE_SIZE;
-        return new Location((int)Math.round(approxX),(int)Math.round(approxY));
-    }
-
-    /**
-     * Attempts to place a piece as a hint on the board.
-     * Piece is chosen at random from solutions string.
-     * @throws IOException Autosave
-     */
-    private void showHint() throws IOException {
-        if (HINTS_LIMITED && HINTS_COUNTER >= HINTS_LIMIT) {
-            Alert hintAlert = new Alert(Alert.AlertType.NONE,"No more hints!",ButtonType.OK);
-            hintAlert.setTitle("No more hints!!");
-            hintAlert.showAndWait();
-        } else {
-            if (HINTS_LIMITED) {
-                HINTS_COUNTER++;
-                hintCounter.setText("Hints remaining: " + (HINTS_LIMIT-HINTS_COUNTER));
-            }
-            String hintPlacement = game.getNextHint();
-            Piece hintPiece = new Piece(hintPlacement);
-            for (PieceTile p : pieceTilesList) {
-                if (p.pieceType == hintPiece.getPieceType()) {
-                    if (p.placed) {
-                        game.undoOperation(game.getBoardPlacementString(), p.placement);
-                    }
-                    p.placement = hintPlacement;
-                    p.placePiece(hintPiece);
-                    p.placed = true;
-                    p.setRotation(hintPiece.getOrientation());
-                    p.orientation = hintPiece.getOrientation();
-                    p.location = hintPiece.getLocation();
-                    makePlacement(hintPlacement);
-                }
-            }
-        }
-    }
-
-    /**
      * Gets 'home' co-ordinates for Piece
      * @param p the PieceType
      * @return two element array with x and y co-ordinate
@@ -437,6 +391,18 @@ public class Board extends Application {
                 break;
         }
         return c;
+    }
+
+    /**
+     * Gets board location given location of top left of image view
+     * @param mX screen x value of top left of a piece's ImageView
+     * @param mY screen y value of top left of a piece's ImageView
+     * @return Instance of Location with valid x,y co-ords, or FALSE/NULL if not valid
+     */
+    public Location getLocationFromSceneXY(double mX, double mY) {
+        double approxX = (mX-BOARD_ABS_X)/SCALED_SQUARE_SIZE;
+        double approxY = (mY-BOARD_ABS_Y)/SCALED_SQUARE_SIZE;
+        return new Location((int)Math.round(approxX),(int)Math.round(approxY));
     }
 
     /**
@@ -618,7 +584,41 @@ public class Board extends Application {
         controls.getChildren().addAll(controlNodes);
     }
 
+
     /* ACTIONS FOR CONTROL EVENT HANDLERS */
+    /**
+     * Attempts to place a piece as a hint on the board.
+     * Piece is chosen at random from solutions string.
+     * @throws IOException Autosave
+     */
+    private void showHint() throws IOException {
+        if (HINTS_LIMITED && HINTS_COUNTER >= HINTS_LIMIT) {
+            Alert hintAlert = new Alert(Alert.AlertType.NONE,"No more hints!",ButtonType.OK);
+            hintAlert.setTitle("No more hints!!");
+            hintAlert.showAndWait();
+        } else {
+            if (HINTS_LIMITED) {
+                HINTS_COUNTER++;
+                hintCounter.setText("Hints remaining: " + (HINTS_LIMIT-HINTS_COUNTER));
+            }
+            String hintPlacement = game.getNextHint();
+            Piece hintPiece = new Piece(hintPlacement);
+            for (PieceTile p : pieceTilesList) {
+                if (p.pieceType == hintPiece.getPieceType()) {
+                    if (p.placed) {
+                        game.undoOperation(game.getBoardPlacementString(), p.placement);
+                    }
+                    p.placement = hintPlacement;
+                    p.placePiece(hintPiece);
+                    p.placed = true;
+                    p.setRotation(hintPiece.getOrientation());
+                    p.orientation = hintPiece.getOrientation();
+                    p.location = hintPiece.getLocation();
+                    makePlacement(hintPlacement);
+                }
+            }
+        }
+    }
 
     /**
      * Sets key events for scene
